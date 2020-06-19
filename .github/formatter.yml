@@ -1,9 +1,6 @@
 name: Formatter
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 jobs:
 
