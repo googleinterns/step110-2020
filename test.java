@@ -4,4 +4,6 @@ public class test {
           + "asdjfklasjdgkljasdlkgjklasdjglsadjgs"
           + "jkaldsjflkasjdgkljadsklgj"
           + "akjdsklfa;sdf";
+  String b =
+      "asdfadsf" + "asdjfklasjdgkljasdlkgjklasdjglsadjgs"+ "jkaldsjflkasjdgkljadsklgj"+ "akjdsklfa;sdf";
 }
