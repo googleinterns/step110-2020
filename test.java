@@ -1,3 +1,7 @@
 public class test {
-	String a = "asdfadsf" + "asdjfklasjdgkljasdlkgjklasdjglsadjgs" + "jkaldsjflkasjdgkljadsklgj" + "akjdsklfa;sdf";
+  String a =
+      "asdfadsf"
+          + "asdjfklasjdgkljasdlkgjklasdjglsadjgs"
+          + "jkaldsjflkasjdgkljadsklgj"
+          + "akjdsklfa;sdf";
 }
