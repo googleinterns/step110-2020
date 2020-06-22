@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body onload="getEntertainmentItems()">
+    <label for="searchValue">Entertainment Item:</label>
+    <input
+      type="text"
+      name="searchValue"
+      id="searchValue"
+      oninput="getEntertainmentItems()"
+    />
+    <select
+      name="sortingMode"
+      id="sortingMode"
+      onchange="getEntertainmentItems()"
+      required
+    >
+      <option value="TITLE_INCREASING_ALPHABETICAL_ORDER" selected
+        >Increasing Alphabetical Order (Title)</option
+      >
+      <option value="TITLE_DECREASING_ALPHABETICAL_ORDER"
+        >Decreasing Alphabetical Order (Title)</option
+      >
+    </select>
+    <form action="/entertainment-item-form.html">
+      <input type="submit" value="Add Entertainment Item" />
+    </form>
+    <ul id="entertainmentItemsContainer"></ul>
+  </body>
+</html>
