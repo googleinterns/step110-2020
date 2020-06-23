@@ -6,24 +6,24 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </head>
-  <body onload="getEntertainmentItems()">
+  <body onload="getDashboardItems()">
     <label for="searchValue">Entertainment Item:</label>
     <input
       type="text"
       name="searchValue"
       id="searchValue"
-      oninput="getEntertainmentItems()"
+      oninput="getDashboardItems()"
     />
     <select
-      name="sortingMode"
-      id="sortingMode"
-      onchange="getEntertainmentItems()"
+      name="sortingDirection"
+      id="sortingDirection"
+      onchange="getDashboardItems()"
       required
     >
-      <option value="TITLE_INCREASING_ALPHABETICAL_ORDER" selected
+      <option value="ASCENDING" selected
         >Increasing Alphabetical Order (Title)</option
       >
-      <option value="TITLE_DECREASING_ALPHABETICAL_ORDER"
+      <option value="DESCENDING"
         >Decreasing Alphabetical Order (Title)</option
       >
     </select>
