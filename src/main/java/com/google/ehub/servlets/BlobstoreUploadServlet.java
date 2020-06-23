@@ -13,10 +13,19 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/blobstore-upload")
 public class BlobstoreUploadServlet extends HttpServlet {
+  private static String SERVLET_REDIRECT_URL_PARAMETER_KEY = "servletRedirectURL";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String servletRedirectURL = request.getParameter(SERVLET_REDIRECT_URL_PARAMETER_KEY);
+
+    if (servletRedirectURL == null || servletRedirectURL.isEmpty()) {
+      System.err.println("BlobstoreUploadServlet: No servlet redirect URL specified!");
+      return;
+    }
+
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-    String uploadURL = blobstoreService.createUploadUrl("/entertainment-item-data");
+    String uploadURL = blobstoreService.createUploadUrl(servletRedirectURL);
 
     response.setContentType("text/html");
     response.getWriter().println(uploadURL);

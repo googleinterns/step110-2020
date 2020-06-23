@@ -1,11 +1,11 @@
 /**
- * Fetches entertainment items from EntertainmentItemServlet
- * and loads them into the DOM.
+ * Fetches entertainment items from DashboardServlet
+ * to populate the Dashboard.
  */
-function getEntertainmentItems() {
+function getDashboardItems() {
   fetch(
-      '/entertainment-item-data?searchValue=' + $('#searchValue').val() +
-      '&sortingMode=' + $('#sortingMode').val())
+      '/dashboard?searchValue=' + $('#searchValue').val() +
+      '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
       .then((entertainmentItemsList) => {
         const entertainmentItemsContainer = $('#entertainmentItemsContainer');
@@ -23,11 +23,11 @@ function getEntertainmentItems() {
 }
 
 /**
- * Fetches Blobstore Servlet to get upload URL and then display submission form
+ * Fetches BlobstoreServlet to get upload URL and then display submission form
  * when it becomes available.
  */
 function getEntertainmentItemForm() {
-  fetch('/blobstore-upload')
+  fetch('/blobstore-upload?servletRedirectURL=/item-submission')
       .then((response) => response.text())
       .then((imageUploadURL) => {
         const entertainmentItemForm = $('#entertainmentItemForm');
