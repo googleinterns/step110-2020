@@ -30,16 +30,16 @@ public class DashboardServlet extends HttpServlet {
       return;
     }
 
-    SortDirection sortDirEnum = SortDirection.valueOf(sortingDirection);
+    SortDirection sortDir = SortDirection.valueOf(sortingDirection);
 
     List<EntertainmentItem> entertainmentItemList;
 
     if (searchValue.isEmpty()) {
       entertainmentItemList =
-          EntertainmentItemDatastore.queryAllEntertainmentItemsWithTitleOrder(sortDirEnum);
+          EntertainmentItemDatastore.getInstance().queryAllItemsWithTitleOrder(sortDir);
     } else {
       entertainmentItemList =
-          EntertainmentItemDatastore.queryEntertainmentItemsByTitle(searchValue, sortDirEnum);
+          EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(searchValue, sortDir);
     }
 
     response.setContentType("application/json");
@@ -58,8 +58,8 @@ public class DashboardServlet extends HttpServlet {
       return false;
     }
 
-    for (SortDirection sortDirEnum : SortDirection.values()) {
-      if (sortDirEnum.name().equals(sortingDirection)) {
+    for (SortDirection sortDir : SortDirection.values()) {
+      if (sortDir.name().equals(sortingDirection)) {
         return true;
       }
     }

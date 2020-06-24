@@ -25,16 +25,14 @@ public class ItemSubmissionServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String title = request.getParameter(TITLE_PARAMETER_KEY);
     String description = request.getParameter(DESCRIPTION_PARAMETER_KEY);
-    Optional<String> imageURLOptional =
-        BlobstoreURLUtility.getUploadURL(request, IMAGE_URL_PARAMETER_KEY);
+    Optional<String> imageURL = BlobstoreURLUtility.getUploadURL(request, IMAGE_URL_PARAMETER_KEY);
 
-    if (!arePostRequestParametersValid(title, description, imageURLOptional)) {
+    if (!arePostRequestParametersValid(title, description, imageURL)) {
       System.err.println("ItemSubmissionServlet: Post Request parameters not specified!");
       return;
     }
 
-    EntertainmentItemDatastore.addEntertainmentItemToDatastore(
-        title, description, imageURLOptional.get());
+    EntertainmentItemDatastore.getInstance().addItemToDatastore(title, description, imageURL.get());
 
     response.sendRedirect("/index.html");
   }
@@ -44,13 +42,13 @@ public class ItemSubmissionServlet extends HttpServlet {
    *
    * @param title the title given in the Post request parameter
    * @param description the description given in the Post request parameter
-   * @param imageURLOptional the image URL given by Blobstore wrapped in an {@link Optional}
+   * @param imageURL the image URL given by Blobstore wrapped in an {@link Optional}
    * @return true if the parameters given in the Post request are valid, false otherwise
    */
   private static boolean arePostRequestParametersValid(
-      String title, String description, Optional<String> imageURLOptional) {
+      String title, String description, Optional<String> imageURL) {
     return (title != null && !title.isEmpty() && title.length() <= MAX_TITLE_CHARS)
         && (description != null && !description.isEmpty())
-        && (imageURLOptional != null && imageURLOptional.isPresent());
+        && (imageURL != null && imageURL.isPresent());
   }
 }
