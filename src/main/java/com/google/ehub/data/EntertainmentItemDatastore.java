@@ -3,6 +3,7 @@ package com.google.ehub.data;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
@@ -12,19 +13,38 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.ehub.utility.NextIncreasingLexicographicStringUtility;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 
 /**
- * Manages EntertainmentItems stored in Datastore.
+ * Singleton class that manages EntertainmentItems stored in Datastore.
  */
 public final class EntertainmentItemDatastore {
-  public static final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
-  public static final String TITLE_PROPERTY_KEY = "title";
-  public static final String LOWERCASE_TITLE_PROPERTY_KEY = "lowercaseTitle";
-  public static final String DESCRIPTION_PROPERTY_KEY = "description";
-  public static final String IMAGE_URL_PROPERTY_KEY = "imageURL";
+  private final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
+  private final String UNIQUE_ID_PROPERTY_KEY = "uniqueID";
+  private final String TITLE_PROPERTY_KEY = "title";
+  private final String LOWERCASE_TITLE_PROPERTY_KEY = "lowercaseTitle";
+  private final String DESCRIPTION_PROPERTY_KEY = "description";
+  private final String IMAGE_URL_PROPERTY_KEY = "imageURL";
 
-  private static DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+
+  private static EntertainmentItemDatastore instance;
+
+  private EntertainmentItemDatastore() {}
+
+  /**
+   * Gives access to the single instance of the class, and creates this instance if it was not
+   * initialized previously.
+   *
+   * @return single instance of the class
+   */
+  public static EntertainmentItemDatastore getInstance() {
+    if (instance == null) {
+      instance = new EntertainmentItemDatastore();
+    }
+
+    return instance;
+  }
 
   /**
    * Adds an EntertainmentItem to Datastore.
@@ -33,8 +53,7 @@ public final class EntertainmentItemDatastore {
    * @param description description of the entertainment item
    * @param imageURL URL to the image of the entertainment item stored in Blobstore
    */
-  public static void addEntertainmentItemToDatastore(
-      String title, String description, String imageURL) {
+  public void addItemToDatastore(String title, String description, String imageURL) {
     Entity entertainmentItemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
 
     entertainmentItemEntity.setProperty(TITLE_PROPERTY_KEY, title);
@@ -46,20 +65,45 @@ public final class EntertainmentItemDatastore {
   }
 
   /**
+   * Finds a single entertainment item based on unique id.
+   *
+   * @param uniqueID id used to identify the EntertainmentItem Entity in the Datastore
+   * @return the EntertainmentItem found in Datastore wrapped in an {@link Optional}, the
+   * optional object will be empty if the EntertainmentItem Entity was not found
+   */
+  public Optional<EntertainmentItem> querySingleItem(long uniqueID) {
+    Query query =
+        new Query(ENTERTAINMENT_ITEM_KIND)
+            .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL,
+                KeyFactory.createKey(ENTERTAINMENT_ITEM_KIND, uniqueID)));
+    PreparedQuery queryResults = datastoreService.prepare(query);
+
+    Entity entertainmentItemEntity = queryResults.asSingleEntity();
+
+    if (entertainmentItemEntity == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(getItemFromEntity(entertainmentItemEntity));
+  }
+
+  /**
    * Queries all entertainment items found in Datastore.
    *
    * @return list with all entertainment items found in Datastore
    */
-  public static List<EntertainmentItem> queryAllEntertainmentItems() {
+  public List<EntertainmentItem> queryAllEntertainmentItems() {
     return getListFromQuery(new Query(ENTERTAINMENT_ITEM_KIND));
   }
 
   /**
    * Queries all entertainment items found in Datastore and orders them based on title with the
-   * given sorting direction
+   * given sorting direction.
+   *
+   * @param sortDirection the sort direction used to order the entertainment items based on title
+   * @return list with all the entertainment items following the specified sort direction
    */
-  public static List<EntertainmentItem> queryAllEntertainmentItemsWithTitleOrder(
-      SortDirection sortDirection) {
+  public List<EntertainmentItem> queryAllItemsWithTitleOrder(SortDirection sortDirection) {
     return getListFromQuery(
         new Query(ENTERTAINMENT_ITEM_KIND).addSort(LOWERCASE_TITLE_PROPERTY_KEY, sortDirection));
   }
@@ -71,7 +115,7 @@ public final class EntertainmentItemDatastore {
    * @param sortDirection the sort direction used to order the entertainment items based on title
    * @return list with the entertainment items that match the title prefix and sorting direction
    */
-  public static List<EntertainmentItem> queryEntertainmentItemsByTitle(
+  public List<EntertainmentItem> queryItemsByTitlePrefix(
       String title, SortDirection sortDirection) {
     return getListFromQuery(
         new Query(ENTERTAINMENT_ITEM_KIND)
@@ -84,21 +128,24 @@ public final class EntertainmentItemDatastore {
                         title.toLowerCase())))));
   }
 
-  private static List<EntertainmentItem> getListFromQuery(Query query) {
+  private List<EntertainmentItem> getListFromQuery(Query query) {
     PreparedQuery queryResults = datastoreService.prepare(query);
 
     List<EntertainmentItem> entertainmentItemList = new ArrayList<>();
 
     for (Entity entertainmentItemEntity : queryResults.asIterable()) {
-      String title = (String) entertainmentItemEntity.getProperty(TITLE_PROPERTY_KEY);
-      String description = (String) entertainmentItemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
-      String imageURL = (String) entertainmentItemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
-
-      entertainmentItemList.add(new EntertainmentItem(title, description, imageURL));
+      entertainmentItemList.add(getItemFromEntity(entertainmentItemEntity));
     }
 
     return entertainmentItemList;
   }
 
-  private EntertainmentItemDatastore() {}
+  private EntertainmentItem getItemFromEntity(Entity entertainmentItemEntity) {
+    long uniqueID = entertainmentItemEntity.getKey().getId();
+    String title = (String) entertainmentItemEntity.getProperty(TITLE_PROPERTY_KEY);
+    String description = (String) entertainmentItemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
+    String imageURL = (String) entertainmentItemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
+
+    return new EntertainmentItem(uniqueID, title, description, imageURL);
+  }
 }
