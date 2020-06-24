@@ -21,24 +21,38 @@ import javax.servlet.http.HttpServletRequest;
 public final class BlobstoreURLUtility {
   /**
    * Finds the URL that points to the uploaded file in Blobstore.
+   * This method is meant to be used for forms that accept input for only a single file.
    *
    * @param request the request sent by the upload form submission
    * @param formUploadElem the ID of the element in the form that selects the file to upload
-   * @return the upload URL of the submitted file wrapped in an {@link Optional}
+   * @return the upload URL of the submitted file wrapped in an {@link Optional}, the Optional will
+   *     be empty if the form element given has no input that accepts an image file or the URL given
+   *     in the request is malformed
    */
   public static Optional<String> getUploadURL(HttpServletRequest request, String formUploadElem) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
+    /*
+     * Blobstore returns map with key: "name field inside HTML form",
+     * value: "list of keys for each file that were uploaded in the specified form element"
+     */
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+
+    /*
+     * Retrieving the blob keys that were present in the input tag with the with
+     * the name found in "formUploadElem"
+     */
     List<BlobKey> blobKeyList = blobs.get(formUploadElem);
 
     if (blobKeyList == null || blobKeyList.isEmpty()) {
       return Optional.empty();
     }
 
+    // The form accepts a single image file so there is only one element in the blob list.
     BlobKey blobKey = blobKeyList.get(0);
     BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
 
+    // If the file has 0 byte size then we discard it.
     if (blobInfo.getSize() == 0) {
       blobstoreService.delete(blobKey);
       return Optional.empty();
