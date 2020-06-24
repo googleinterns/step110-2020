@@ -12,9 +12,8 @@ function getDashboardItems() {
         entertainmentItemsContainer.empty();
 
         for (entertainmentItem of entertainmentItemsList) {
-          entertainmentItemsContainer.append(createEntertainmentItem(
-              entertainmentItem.title, entertainmentItem.description,
-              entertainmentItem.imageURL));
+          entertainmentItemsContainer.append(
+              createEntertainmentItemListElem(entertainmentItem));
         }
       })
       .catch((error) => {
@@ -43,17 +42,22 @@ function getEntertainmentItemForm() {
  * Creates a list element that displays information about
  * a specific entertainment item.
  *
- * @param { string } title - title associated with the entertainment item
- * @param { string } description - description associated with the entertianment
- *     item
- * @param { string } imageURL - URL to image stored in blobstore
+ * @param { EntertainmentItem } entertainmentItem the entertainment item whose
+ *     data will be displayed in the list element
  * @returns { jQuery } list element representing entertainment item
  */
-function createEntertainmentItem(title, description, imageURL) {
+function createEntertainmentItemListElem(entertainmentItem) {
   const entertainmentItemElem = $('<li></li>');
-  entertainmentItemElem.append($('<h3>' + title + '</h3>'));
-  entertainmentItemElem.append($('<p>' + description + '</h3>'));
-  entertainmentItemElem.append($('<img src="' + imageURL + '"/>'));
+  const entertainmentItemLink =
+      $('<a href="item-page.html/' + entertainmentItem.uniqueID + '"></a>');
+
+  entertainmentItemLink.append($('<h3>' + entertainmentItem.title + '</h3>'));
+  entertainmentItemLink.append(
+      $('<p>' + entertainmentItem.description + '</h3>'));
+  entertainmentItemLink.append(
+      $('<img src="' + entertainmentItem.imageURL + '"/>'));
+
+  entertainmentItemElem.append(entertainmentItemLink);
 
   return entertainmentItemElem;
 }
