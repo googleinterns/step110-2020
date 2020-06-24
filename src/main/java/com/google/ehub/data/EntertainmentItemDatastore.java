@@ -49,17 +49,17 @@ public final class EntertainmentItemDatastore {
   /**
    * Adds an EntertainmentItem to Datastore.
    *
-   * @param title title of the entertainment item
-   * @param description description of the entertainment item
-   * @param imageURL URL to the image of the entertainment item stored in Blobstore
+   * @param entertainmentItem entertainment item to add into Datastore
    */
-  public void addItemToDatastore(String title, String description, String imageURL) {
+  public void addItemToDatastore(EntertainmentItem entertainmentItem) {
     Entity entertainmentItemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
 
-    entertainmentItemEntity.setProperty(TITLE_PROPERTY_KEY, title);
-    entertainmentItemEntity.setProperty(LOWERCASE_TITLE_PROPERTY_KEY, title.toLowerCase());
-    entertainmentItemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, description);
-    entertainmentItemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, imageURL);
+    entertainmentItemEntity.setProperty(TITLE_PROPERTY_KEY, entertainmentItem.getTitle());
+    entertainmentItemEntity.setProperty(
+        LOWERCASE_TITLE_PROPERTY_KEY, entertainmentItem.getTitle().toLowerCase());
+    entertainmentItemEntity.setProperty(
+        DESCRIPTION_PROPERTY_KEY, entertainmentItem.getDescription());
+    entertainmentItemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, entertainmentItem.getImageURL());
 
     datastoreService.put(entertainmentItemEntity);
   }

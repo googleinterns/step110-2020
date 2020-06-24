@@ -1,5 +1,6 @@
 package com.google.ehub.servlets;
 
+import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.ehub.utility.BlobstoreURLUtility;
 import java.io.IOException;
@@ -32,7 +33,8 @@ public class ItemSubmissionServlet extends HttpServlet {
       return;
     }
 
-    EntertainmentItemDatastore.getInstance().addItemToDatastore(title, description, imageURL.get());
+    EntertainmentItemDatastore.getInstance().addItemToDatastore(
+        new EntertainmentItem(/* Unassigned ID */ -1, title, description, imageURL.get()));
 
     response.sendRedirect("/index.html");
   }
