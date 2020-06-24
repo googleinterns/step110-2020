@@ -4,14 +4,20 @@ package com.google.ehub.data;
  * Holds information for Entertainment Items used in Datastore.
  */
 public final class EntertainmentItem {
+  private final long uniqueID;
   private final String title;
   private final String description;
   private final String imageURL;
 
-  public EntertainmentItem(String title, String description, String imageURL) {
+  public EntertainmentItem(long uniqueID, String title, String description, String imageURL) {
+    this.uniqueID = uniqueID;
     this.title = title;
     this.description = description;
     this.imageURL = imageURL;
+  }
+
+  public long getUniqueID() {
+    return uniqueID;
   }
 
   public String getTitle() {
