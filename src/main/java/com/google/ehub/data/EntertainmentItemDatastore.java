@@ -51,7 +51,8 @@ public final class EntertainmentItemDatastore {
    * @param entertainmentItem entertainment item to add into Datastore
    */
   public void addItemToDatastore(EntertainmentItem entertainmentItem) {
-    Entity entertainmentItemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
+    Entity entertainmentItemEntity =
+        new Entity(ENTERTAINMENT_ITEM_KIND, entertainmentItem.getUniqueID());
 
     entertainmentItemEntity.setProperty(TITLE_PROPERTY_KEY, entertainmentItem.getTitle());
     entertainmentItemEntity.setProperty(
