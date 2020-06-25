@@ -21,14 +21,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   </head>
 
-  <body>
+  <body onload="getItemPageComments()">
     <div class="container">
       <img src="media/woww.png" />
       <h1>The Wolf of Wall Street(2013)</h1>
-      <p><b>R</b></p>
-      <p><b>3 hours</b></p>
-      <p><b>Comedy/Drama</b></p>
-      <br />
+      <br/>
+      <br>
       <p>
         Description: In 1987, Jordan Belfort (Leonardo DiCaprio) takes an
         entry-level job at a Wall Street brokerage firm. By the early 1990s,
@@ -42,7 +40,7 @@
       <footer>
         <ul id="comment-container"></ul>
         <form action="/itempagedata" method="POST">
-          <textarea name="text-input">Comment:</textarea>
+          <textarea name="text-input"></textarea>
           <br /><br />
           <input type="submit" />
         </form>
