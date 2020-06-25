@@ -45,21 +45,20 @@ public final class EntertainmentItemDatastore {
   }
 
   /**
-   * Adds an EntertainmentItem to Datastore.
+   * Adds an EntertainmentItem Entity to Datastore.
    *
-   * @param entertainmentItem entertainment item to add into Datastore
+   * @param title the title of the EntertainmentItem being added to Datastore
+   * @param description the description of the EntertainmentItem being added to Datastore
+   * @param imageUrl the image Url of the EntertainmentItem being added to Datastore
    */
-  public void addItemToDatastore(EntertainmentItem entertainmentItem) {
-    Entity entertainmentItemEntity =
-        new Entity(ENTERTAINMENT_ITEM_KIND, entertainmentItem.getUniqueID());
+  public void addItemToDatastore(String title, String description, String imageUrl) {
+    Entity entertainmentItemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
 
     // Unique Id is created by Datastore so it's not added as a property.
-    entertainmentItemEntity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, entertainmentItem.getTitle());
-    entertainmentItemEntity.setProperty(
-        NORMALIZED_TITLE_PROPERTY_KEY, entertainmentItem.getTitle().toLowerCase());
-    entertainmentItemEntity.setProperty(
-        DESCRIPTION_PROPERTY_KEY, entertainmentItem.getDescription());
-    entertainmentItemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, entertainmentItem.getImageURL());
+    entertainmentItemEntity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, title);
+    entertainmentItemEntity.setProperty(NORMALIZED_TITLE_PROPERTY_KEY, title.toLowerCase());
+    entertainmentItemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, description);
+    entertainmentItemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, imageUrl);
 
     datastoreService.put(entertainmentItemEntity);
   }
