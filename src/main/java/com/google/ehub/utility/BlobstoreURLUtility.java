@@ -32,16 +32,12 @@ public final class BlobstoreURLUtility {
   public static Optional<String> getUploadURL(HttpServletRequest request, String formUploadElem) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
-    /*
-     * Blobstore returns map with key: "name field inside HTML form",
-     * value: "list of keys for each file that were uploaded in the specified form element"
-     */
+    // Blobstore returns map with key: "name field inside HTML form",
+    // value: "list of keys for each file that were uploaded in the specified form element"
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
 
-    /*
-     * Retrieving the blob keys that were present in the input tag with the with
-     * the name found in "formUploadElem"
-     */
+    // Retrieving the blob keys that were present in the input tag with the with
+    // the name found in "formUploadElem"
     List<BlobKey> blobKeyList = blobs.get(formUploadElem);
 
     if (blobKeyList == null || blobKeyList.isEmpty()) {
