@@ -19,12 +19,11 @@ import java.util.Optional;
  * Singleton class that manages EntertainmentItems stored in Datastore.
  */
 public final class EntertainmentItemDatastore {
-  private final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
-  private final String UNIQUE_ID_PROPERTY_KEY = "uniqueID";
-  private final String TITLE_PROPERTY_KEY = "title";
-  private final String LOWERCASE_TITLE_PROPERTY_KEY = "lowercaseTitle";
-  private final String DESCRIPTION_PROPERTY_KEY = "description";
-  private final String IMAGE_URL_PROPERTY_KEY = "imageURL";
+  private static final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
+  private static final String TITLE_PROPERTY_KEY = "title";
+  private static final String LOWERCASE_TITLE_PROPERTY_KEY = "lowercaseTitle";
+  private static final String DESCRIPTION_PROPERTY_KEY = "description";
+  private static final String IMAGE_URL_PROPERTY_KEY = "imageURL";
 
   private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
@@ -71,7 +70,7 @@ public final class EntertainmentItemDatastore {
    * @return the EntertainmentItem found in Datastore wrapped in an {@link Optional}, the
    * optional object will be empty if the EntertainmentItem Entity was not found
    */
-  public Optional<EntertainmentItem> querySingleItem(long uniqueID) {
+  public Optional<EntertainmentItem> queryItem(long uniqueID) {
     Query query =
         new Query(ENTERTAINMENT_ITEM_KIND)
             .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL,
@@ -84,16 +83,17 @@ public final class EntertainmentItemDatastore {
       return Optional.empty();
     }
 
-    return Optional.of(getItemFromEntity(entertainmentItemEntity));
+    return Optional.of(createItemFromEntity(entertainmentItemEntity));
   }
 
   /**
    * Queries all entertainment items found in Datastore.
    *
-   * @return list with all entertainment items found in Datastore
+   * @return list with all entertainment items found in Datastore, the list will be empty if no
+   *     items were found
    */
-  public List<EntertainmentItem> queryAllEntertainmentItems() {
-    return getListFromQuery(new Query(ENTERTAINMENT_ITEM_KIND));
+  public List<EntertainmentItem> queryAllItems() {
+    return createListFromQuery(new Query(ENTERTAINMENT_ITEM_KIND));
   }
 
   /**
@@ -101,10 +101,11 @@ public final class EntertainmentItemDatastore {
    * given sorting direction.
    *
    * @param sortDirection the sort direction used to order the entertainment items based on title
-   * @return list with all the entertainment items following the specified sort direction
+   * @return list with all the entertainment items following the specified sort direction, the list
+   *     will be empty if no items were found
    */
   public List<EntertainmentItem> queryAllItemsWithTitleOrder(SortDirection sortDirection) {
-    return getListFromQuery(
+    return createListFromQuery(
         new Query(ENTERTAINMENT_ITEM_KIND).addSort(LOWERCASE_TITLE_PROPERTY_KEY, sortDirection));
   }
 
@@ -113,11 +114,12 @@ public final class EntertainmentItemDatastore {
    *
    * @param title the title prefix used to filter the query
    * @param sortDirection the sort direction used to order the entertainment items based on title
-   * @return list with the entertainment items that match the title prefix and sorting direction
+   * @return list with the entertainment items that match the title prefix and sorting direction,
+   *     the list will be empty if no items were found
    */
   public List<EntertainmentItem> queryItemsByTitlePrefix(
       String title, SortDirection sortDirection) {
-    return getListFromQuery(
+    return createListFromQuery(
         new Query(ENTERTAINMENT_ITEM_KIND)
             .addSort(LOWERCASE_TITLE_PROPERTY_KEY, sortDirection)
             .setFilter(CompositeFilterOperator.and(
@@ -128,19 +130,19 @@ public final class EntertainmentItemDatastore {
                         title.toLowerCase())))));
   }
 
-  private List<EntertainmentItem> getListFromQuery(Query query) {
+  private List<EntertainmentItem> createListFromQuery(Query query) {
     PreparedQuery queryResults = datastoreService.prepare(query);
 
     List<EntertainmentItem> entertainmentItemList = new ArrayList<>();
 
     for (Entity entertainmentItemEntity : queryResults.asIterable()) {
-      entertainmentItemList.add(getItemFromEntity(entertainmentItemEntity));
+      entertainmentItemList.add(createItemFromEntity(entertainmentItemEntity));
     }
 
     return entertainmentItemList;
   }
 
-  private EntertainmentItem getItemFromEntity(Entity entertainmentItemEntity) {
+  private static EntertainmentItem createItemFromEntity(Entity entertainmentItemEntity) {
     long uniqueID = entertainmentItemEntity.getKey().getId();
     String title = (String) entertainmentItemEntity.getProperty(TITLE_PROPERTY_KEY);
     String description = (String) entertainmentItemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
