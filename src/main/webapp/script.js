@@ -22,19 +22,19 @@ function getDashboardItems() {
 }
 
 /**
- * Fetches BlobstoreServlet to get upload URL and then display submission form
+ * Fetches BlobstoreServlet to get upload Url and then display submission form
  * when it becomes available.
  */
 function getEntertainmentItemForm() {
-  fetch('/blobstore-upload?servletRedirectURL=/item-submission')
+  fetch('/blobstore-upload?servletRedirectUrl=/item-submission')
       .then((response) => response.text())
-      .then((imageUploadURL) => {
+      .then((imageUploadUrl) => {
         const entertainmentItemForm = $('#entertainmentItemForm');
         entertainmentItemForm.removeClass('hidden');
-        entertainmentItemForm.attr('action', imageUploadURL);
+        entertainmentItemForm.attr('action', imageUploadUrl);
       })
       .catch((error) => {
-        console.log('failed to fetch upload URL from Blobstore: ' + error);
+        console.log('failed to fetch upload Url from Blobstore: ' + error);
       });
 }
 
@@ -55,7 +55,7 @@ function createEntertainmentItemListElem(entertainmentItem) {
   entertainmentItemLink.append(
       $('<p>' + entertainmentItem.description + '</h3>'));
   entertainmentItemLink.append(
-      $('<img src="' + entertainmentItem.imageURL + '"/>'));
+      $('<img src="' + entertainmentItem.imageUrl + '"/>'));
 
   entertainmentItemElem.append(entertainmentItemLink);
 

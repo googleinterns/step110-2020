@@ -7,13 +7,13 @@ public final class EntertainmentItem {
   private final long uniqueId;
   private final String title;
   private final String description;
-  private final String imageURL;
+  private final String imageUrl;
 
-  public EntertainmentItem(long uniqueId, String title, String description, String imageURL) {
+  public EntertainmentItem(long uniqueId, String title, String description, String imageUrl) {
     this.uniqueId = uniqueId;
     this.title = title;
     this.description = description;
-    this.imageURL = imageURL;
+    this.imageUrl = imageUrl;
   }
 
   public long getUniqueId() {
@@ -29,6 +29,6 @@ public final class EntertainmentItem {
   }
 
   public String getImageURL() {
-    return imageURL;
+    return imageUrl;
   }
 }

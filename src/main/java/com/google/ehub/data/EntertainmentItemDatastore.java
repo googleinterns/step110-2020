@@ -22,7 +22,7 @@ public final class EntertainmentItemDatastore {
   private static final String DISPLAY_TITLE_PROPERTY_KEY = "displayTitle";
   private static final String NORMALIZED_TITLE_PROPERTY_KEY = "normalizedTitle";
   private static final String DESCRIPTION_PROPERTY_KEY = "description";
-  private static final String IMAGE_URL_PROPERTY_KEY = "imageURL";
+  private static final String IMAGE_URL_PROPERTY_KEY = "imageUrl";
 
   private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
@@ -112,17 +112,17 @@ public final class EntertainmentItemDatastore {
   /**
    * Queries entertainment items with the specified title prefix and sorting direction.
    *
-   * @param title the title prefix used to filter the query
+   * @param titlePrefix the title prefix used to filter the query
    * @param sortDirection the sort direction used to order the entertainment items based on title
    * @return list with the entertainment items that match the title prefix and sorting direction,
    *     the list will be empty if no items were found
    */
   public List<EntertainmentItem> queryItemsByTitlePrefix(
-      String title, SortDirection sortDirection) {
+      String titlePrefix, SortDirection sortDirection) {
     return createListFromQuery(new Query(ENTERTAINMENT_ITEM_KIND)
                                    .addSort(NORMALIZED_TITLE_PROPERTY_KEY, sortDirection)
                                    .setFilter(QueryUtility.getPrefixFilter(
-                                       NORMALIZED_TITLE_PROPERTY_KEY, title.toLowerCase())));
+                                       NORMALIZED_TITLE_PROPERTY_KEY, titlePrefix.toLowerCase())));
   }
 
   private List<EntertainmentItem> createListFromQuery(Query query) {
@@ -141,8 +141,8 @@ public final class EntertainmentItemDatastore {
     long uniqueId = entertainmentItemEntity.getKey().getId();
     String title = (String) entertainmentItemEntity.getProperty(DISPLAY_TITLE_PROPERTY_KEY);
     String description = (String) entertainmentItemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
-    String imageURL = (String) entertainmentItemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
+    String imageUrl = (String) entertainmentItemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
 
-    return new EntertainmentItem(uniqueId, title, description, imageURL);
+    return new EntertainmentItem(uniqueId, title, description, imageUrl);
   }
 }

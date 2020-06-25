@@ -2,7 +2,7 @@ package com.google.ehub.servlets;
 
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
-import com.google.ehub.utility.BlobstoreURLUtility;
+import com.google.ehub.utility.BlobstoreUrlUtility;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ItemSubmissionServlet extends HttpServlet {
   private static final String TITLE_PARAMETER_KEY = "title";
   private static final String DESCRIPTION_PARAMETER_KEY = "description";
-  private static final String IMAGE_URL_PARAMETER_KEY = "imageURL";
+  private static final String IMAGE_URL_PARAMETER_KEY = "imageUrl";
 
   private static final int MAX_TITLE_CHARS = 64;
   private static final int MAX_DESCRIPTION_CHARS = 2048;
@@ -26,16 +26,16 @@ public class ItemSubmissionServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String title = request.getParameter(TITLE_PARAMETER_KEY);
     String description = request.getParameter(DESCRIPTION_PARAMETER_KEY);
-    Optional<String> imageURL = BlobstoreURLUtility.getUploadURL(request, IMAGE_URL_PARAMETER_KEY);
+    Optional<String> imageUrl = BlobstoreUrlUtility.getUploadUrl(request, IMAGE_URL_PARAMETER_KEY);
 
-    if (!arePostRequestParametersValid(title, description, imageURL)) {
+    if (!arePostRequestParametersValid(title, description, imageUrl)) {
       System.err.println("ItemSubmissionServlet: Post Request parameters not specified!");
       return;
     }
 
     // TODO(bryantriana): Fix assignment of items with unassigned Ids
     EntertainmentItemDatastore.getInstance().addItemToDatastore(
-        new EntertainmentItem(/* Unassigned Id */ -1, title, description, imageURL.get()));
+        new EntertainmentItem(/* Unassigned Id */ -1, title, description, imageUrl.get()));
 
     response.sendRedirect("/index.html");
   }
@@ -45,13 +45,13 @@ public class ItemSubmissionServlet extends HttpServlet {
    *
    * @param title the title given in the Post request parameter
    * @param description the description given in the Post request parameter
-   * @param imageURL the image URL given by Blobstore wrapped in an {@link Optional}
+   * @param imageUrl the image URL given by Blobstore wrapped in an {@link Optional}
    * @return true if the parameters given in the Post request are valid, false otherwise
    */
   private static boolean arePostRequestParametersValid(
-      String title, String description, Optional<String> imageURL) {
+      String title, String description, Optional<String> imageUrl) {
     return (title != null && !title.isEmpty() && title.length() <= MAX_TITLE_CHARS)
         && (description != null && !description.isEmpty())
-        && (imageURL != null && imageURL.isPresent());
+        && (imageUrl != null && imageUrl.isPresent());
   }
 }
