@@ -1,3 +1,8 @@
+function getItemId() {
+  const queryString = window.location.search;
+  console.log(queryString);
+}
+
 async function getItemPageComments() {
   const response = await fetch("/itempagedata");
   const comments = await response.json();
