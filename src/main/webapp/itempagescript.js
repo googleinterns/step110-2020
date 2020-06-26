@@ -3,9 +3,10 @@ async function getItemPageComments() {
   const comments = await response.json();
   const commentContainer = document.getElementById("comment-container");
   comments.forEach((commentObject) => {
+    const date = new Date(commentObject.timestamp);
     commentContainer.appendChild(
       createListElement(
-        commentObject.message + " " + "(" + commentObject.timestamp + ")"
+        commentObject.message + " - " + "(" + date.toUTCString() + ")"
       )
     );
   });
