@@ -11,53 +11,113 @@ function getDashboardItems() {
         const entertainmentItemsContainer = $('#entertainmentItemsContainer');
         entertainmentItemsContainer.empty();
 
-        for (entertainmentItem of entertainmentItemsList) {
-          entertainmentItemsContainer.append(
-              createEntertainmentItemListElem(entertainmentItem));
+        populateItemGrid(entertainmentItemsContainer, entertainmentItemsList);
+      })
+      .catch((error) => {
+        console.log(
+            'Failed to fetch entertainment items from DashboardServlet: ' +
+            error);
+      });
+}
+
+/**
+ * Fetches OMDb item information from OMDb API.
+ */
+function getOMDbItem() {
+  fetch('https://www.omdbapi.com/?apikey=a28d48cd&t=' + $('#itemTitle').val())
+      .then((response) => response.json())
+      .then((OMDbItem) => {
+        const OMDbItemEntry = $('#OMDbItemEntry');
+        OMDbItemEntry.empty();
+
+        if (OMDbItem.Response === 'False') {
+          OMDbItemEntry.append($('<p>Item not found!</p>'))
+        } else {
+          OMDbItemEntry.append(createOMDbItemCard(OMDbItem));
         }
       })
       .catch((error) => {
-        console.log('failed to fetch entertainment items: ' + error);
+        console.log('Failed to fetch movie from OMDb API: ' + error);
       });
 }
 
 /**
- * Fetches BlobstoreServlet to get upload Url and then display submission form
- * when it becomes available.
- */
-function getEntertainmentItemForm() {
-  fetch('/blobstore-upload?servletRedirectUrl=/item-submission')
-      .then((response) => response.text())
-      .then((imageUploadUrl) => {
-        const entertainmentItemForm = $('#entertainmentItemForm');
-        entertainmentItemForm.removeClass('hidden');
-        entertainmentItemForm.attr('action', imageUploadUrl);
-      })
-      .catch((error) => {
-        console.log('failed to fetch upload Url from Blobstore: ' + error);
-      });
-}
-
-/**
- * Creates a list element that displays information about
- * a specific entertainment item.
+ * Populates the item grid used in the Dashboard with all the entertainment
+ * items on the list.
  *
- * @param { EntertainmentItem } entertainmentItem the entertainment item whose
- *     data will be displayed in the list element
- * @returns { jQuery } list element representing entertainment item
+ * @param { jQuery } entertainmentItemsContainer - the div element used as a
+ *     parent in which to add the rows and columns of the grid
+ * @param { Array } entertainmentItemsList - the list of EntertainmentItems to
+ *     add to the grid
  */
-function createEntertainmentItemListElem(entertainmentItem) {
-  const entertainmentItemElem = $('<li></li>');
-  const entertainmentItemLink =
-      $('<a href="item-page.html/' + entertainmentItem.uniqueID + '"></a>');
+function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
+  let currItemIndex = 0;
 
-  entertainmentItemLink.append($('<h3>' + entertainmentItem.title + '</h3>'));
-  entertainmentItemLink.append(
-      $('<p>' + entertainmentItem.description + '</h3>'));
-  entertainmentItemLink.append(
-      $('<img src="' + entertainmentItem.imageUrl + '"/>'));
+  while (currItemIndex < entertainmentItemsList.length) {
+    const rowElem = $('<div class="row mb-4"></div>');
 
-  entertainmentItemElem.append(entertainmentItemLink);
+    const MAX_COLS_PER_ROW = 3;
 
-  return entertainmentItemElem;
+    for (let col = 1; col <= MAX_COLS_PER_ROW &&
+         currItemIndex < entertainmentItemsList.length;
+         col++, currItemIndex++) {
+      const colElem = $('<div class="col-md-4"</div>');
+      colElem.append(
+          createEntertainmentItemCard(entertainmentItemsList[currItemIndex]));
+
+      rowElem.append(colElem);
+    }
+
+    entertainmentItemsContainer.append(rowElem);
+  }
+}
+
+/**
+ * Creates a card element that displays poster image, title, and description
+ * about a specific entertainment item.
+ *
+ * @param { JSON } entertainmentItem the entertainment item whose
+ *     data will be displayed in the card element
+ * @returns { jQuery } card element representing the entertainment item
+ */
+function createEntertainmentItemCard(entertainmentItem) {
+  const card = $('<div class="card bg-light"></div>');
+  card.append(
+      $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
+  card.append(
+      $('<a class="stretched-link" href="item-page.html?itemId=' +
+        entertainmentItem.uniqueId + '"></a>'))
+
+  const cardBody = $('<div class="card-body"></div>');
+  cardBody.append(
+      $('<h5 class="card-title">' + entertainmentItem.title + '</h5>'));
+  cardBody.append(
+      $('<p class="card-text">' + entertainmentItem.description + '</p>'));
+
+  card.append(cardBody);
+
+  return card;
+}
+
+/**
+ * Creates a card element that displays poster image, title, and release date
+ * about an OMDbItem.
+ *
+ * @param { JSON } the OMDbItem whose data will be displayed in the card element
+ * @returns { jQuery } card element representing the OMDbItem
+ */
+function createOMDbItemCard(OMDbItem) {
+  const card = $('<div class="card bg-light"></div>');
+  card.append(
+      $('<img class="card-img-top mx-auto item-image" src="' + OMDbItem.Poster +
+        '">'));
+
+  const cardBody = $('<div class="card-body"></div>');
+  cardBody.append($('<h5 class="card-title">' + OMDbItem.Title + '</h5>'));
+  cardBody.append(
+      $('<p class="card-text">Released: ' + OMDbItem.Released + '</p>'));
+
+  card.append(cardBody);
+
+  return card;
 }
