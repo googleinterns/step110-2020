@@ -49,7 +49,8 @@ function getEntertainmentItemForm() {
 function createEntertainmentItemListElem(entertainmentItem) {
   const entertainmentItemElem = $('<li></li>');
   const entertainmentItemLink =
-      $('<a href="item-page.html/' + entertainmentItem.uniqueID + '"></a>');
+      $('<a href="item-page.html?itemId=' + entertainmentItem.uniqueId +
+        '"></a>');
 
   entertainmentItemLink.append($('<h3>' + entertainmentItem.title + '</h3>'));
   entertainmentItemLink.append(

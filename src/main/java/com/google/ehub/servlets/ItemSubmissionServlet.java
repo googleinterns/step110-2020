@@ -33,9 +33,7 @@ public class ItemSubmissionServlet extends HttpServlet {
       return;
     }
 
-    // TODO(bryantriana): Fix assignment of items with unassigned Ids
-    EntertainmentItemDatastore.getInstance().addItemToDatastore(
-        new EntertainmentItem(/* Unassigned Id */ -1, title, description, imageUrl.get()));
+    EntertainmentItemDatastore.getInstance().addItemToDatastore(title, description, imageUrl.get());
 
     response.sendRedirect("/index.html");
   }
