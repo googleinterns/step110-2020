@@ -76,7 +76,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
  * Creates a card element that displays poster image, title, and description
  * about a specific entertainment item.
  *
- * @param { JSON } entertainmentItem the entertainment item whose
+ * @param { JSON } entertainmentItem - the entertainment item whose
  *     data will be displayed in the card element
  * @returns { jQuery } card element representing the entertainment item
  */
@@ -103,7 +103,7 @@ function createEntertainmentItemCard(entertainmentItem) {
  * Creates a card element that displays poster image, title, and release date
  * about an OMDbItem.
  *
- * @param { JSON } the OMDbItem whose data will be displayed in the card element
+ * @param { JSON } OMDbItem - item whose data will be displayed in the card element
  * @returns { jQuery } card element representing the OMDbItem
  */
 function createOMDbItemCard(OMDbItem) {
