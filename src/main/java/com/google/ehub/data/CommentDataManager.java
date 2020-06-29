@@ -10,8 +10,9 @@ import java.util.*;
 
 public class CommentDataManager{
 
-  public void addItemComment(String message, long timestamp){
+  public void addItemComment(long itemId, String message, long timestamp){
     Entity commentEntity = new Entity("ItemPageComments");
+    commentEntity.setProperty("itemId", itemId);
     commentEntity.setProperty("message", message);
     commentEntity.setProperty("timestamp",timestamp);
 
@@ -20,16 +21,18 @@ public class CommentDataManager{
 
   }
 
-  public ArrayList<CommentData> retrieveItemComment(){
+  public ArrayList<CommentData> retrieveItemComment(long itemId){
     Query itemCommentQuery = new Query("ItemPageComments").addSort("timestamp",SortDirection.ASCENDING);
     DatastoreService itemCommentDatastoreRetrieval = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery itemCommentResults = itemCommentDatastoreRetrieval.prepare(itemCommentQuery);
     ArrayList<CommentData> results = new ArrayList<>();
     for (Entity entity : itemCommentResults.asIterable()) {
+      if(entity.getProperty("itemId") == itemId){
       String message = (String) entity.getProperty("message");
       long timestamp = (Long) entity.getProperty("timestamp");
       CommentData comments = new CommentData(message,timestamp);
       results.add(comments);
+    }
   }
     return results;
     

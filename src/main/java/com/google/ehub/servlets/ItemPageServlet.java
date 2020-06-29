@@ -22,6 +22,8 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.ehub.data.CommentData;
 import com.google.ehub.data.CommentDataManager;
+import com.google.ehub.data.EntertainmentItem;
+import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.*;
@@ -42,14 +44,19 @@ public class ItemPageServlet extends HttpServlet {
       Gson gson = new Gson();
       response.setContentType("application/json");
       response.getWriter().println(gson.toJson(comments));
+      
  }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long itemId = Long.parseLong(request.getParameter("itemId"));
+    Optional<EntertainmentItem> optionalItem = EntertainmentItemDatastore.getInstance().queryItem(itemId);
+    EntertainmentItem item = optionalItem.get();
+    System.out.println("Item:" + item);
     String message = request.getParameter("text-input");
     long timestamp = System.currentTimeMillis();
     CommentDataManager comments = new CommentDataManager();
-    comments.addItemComment(message,timestamp);
+    comments.addItemComment(itemId,message,timestamp);
     response.sendRedirect("/item-page.html");
     
     }
