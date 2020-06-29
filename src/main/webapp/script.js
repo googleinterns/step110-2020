@@ -21,19 +21,19 @@ function getDashboardItems() {
 }
 
 /**
- * Fetches OMDb item information from OMDb API.
+ * Fetches omdb item information from OMDb API.
  */
-function getOMDbItem() {
+function getOmdbItem() {
   fetch('https://www.omdbapi.com/?apikey=a28d48cd&t=' + $('#itemTitle').val())
       .then((response) => response.json())
-      .then((OMDbItem) => {
-        const OMDbItemEntry = $('#OMDbItemEntry');
-        OMDbItemEntry.empty();
+      .then((omdbItem) => {
+        const omdbItemEntry = $('#omdbItemEntry');
+        omdbItemEntry.empty();
 
-        if (OMDbItem.Response === 'False') {
-          OMDbItemEntry.append($('<p>Item not found!</p>'))
+        if (omdbItem.Response === 'False') {
+          omdbItemEntry.append($('<p>Item not found!</p>'))
         } else {
-          OMDbItemEntry.append(createOMDbItemCard(OMDbItem));
+          omdbItemEntry.append(createOmdbItemCard(omdbItem));
         }
       })
       .catch((error) => {
@@ -54,13 +54,18 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
   let currItemIndex = 0;
 
   while (currItemIndex < entertainmentItemsList.length) {
+    // The grid gets added a new row if there are items that still haven't been
+    // included.
     const rowElem = $('<div class="row mb-4"></div>');
 
-    const MAX_COLS_PER_ROW = 3;
+    const MAX_CELLS_PER_ROW = 3;
 
-    for (let col = 1; col <= MAX_COLS_PER_ROW &&
+    // The loop adds cells containing cards to the current row element until it
+    // reaches the maximum limit of cells per row, or if all the items on the
+    // list have been included.
+    for (let cell = 0; cell < MAX_CELLS_PER_ROW &&
          currItemIndex < entertainmentItemsList.length;
-         col++, currItemIndex++) {
+         cell++, currItemIndex++) {
       const colElem = $('<div class="col-md-4"</div>');
       colElem.append(
           createEntertainmentItemCard(entertainmentItemsList[currItemIndex]));
@@ -101,23 +106,41 @@ function createEntertainmentItemCard(entertainmentItem) {
 
 /**
  * Creates a card element that displays poster image, title, and release date
- * about an OMDbItem.
+ * about an omdb item.
  *
- * @param { JSON } OMDbItem - item whose data will be displayed in the card element
- * @returns { jQuery } card element representing the OMDbItem
+ * @param { JSON } omdbItem - item whose data will be displayed in the card
+ *     element
+ * @returns { jQuery } card element representing the omdbItem
  */
-function createOMDbItemCard(OMDbItem) {
+function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-      $('<img class="card-img-top mx-auto item-image" src="' + OMDbItem.Poster +
+      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
         '">'));
 
   const cardBody = $('<div class="card-body"></div>');
-  cardBody.append($('<h5 class="card-title">' + OMDbItem.Title + '</h5>'));
+  cardBody.append($('<h5 class="card-title">' + omdbItem.Title + '</h5>'));
   cardBody.append(
-      $('<p class="card-text">Released: ' + OMDbItem.Released + '</p>'));
+      $('<p class="card-text">Released: ' + omdbItem.Released + '</p>'));
 
   card.append(cardBody);
 
   return card;
+}
+
+/**
+ * Loads a selector from another HTML file so that it can be used in the current
+ * DOM.
+ *
+ * @param { string } selector - Selector that will be used across the document
+ *     to refer to the HTML element
+ * @param { string } filename - Filename of HTML file that is used to load the
+ *     element
+ *
+ * @example loadSelector("#navbar", "navbar.html")
+ */
+function loadSelector(selector, filename) {
+  $(document).ready(function() {
+    $(selector).load(filename);
+  });
 }
