@@ -1,4 +1,4 @@
-package com.google.sps.servlets;
+package com.google.ehub.data;
 
 public class UserProfile {
   private final String username;
@@ -23,9 +23,5 @@ public class UserProfile {
 
   public String getBio() {
     return bio;
-  }
-
-  public String getEmail() {
-    return email;
   }
 }

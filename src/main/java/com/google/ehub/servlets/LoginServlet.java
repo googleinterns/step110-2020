@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet {
       response.getWriter().println("<p>Hello " + userEmail + "!</p>");
       response.getWriter().println(logoutUrl);
     } else { // User is not Loggedin //TODO(oyins): create a "Create Account" button
-      String urlToRedirectToAfterUserLogsIn = "/ProfilePage.html";
+      String urlToRedirectToAfterUserLogsIn = "/CreateProfilePage.html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
 
       response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet {
   public String getEmail() {
     return userEmail;
   }
-
+ 
   private String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     if (value == null) {
