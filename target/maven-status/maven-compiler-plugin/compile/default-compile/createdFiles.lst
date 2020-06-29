@@ -1,3 +1,10 @@
+com/google/ehub/utility/QueryUtility.class
 com/google/sps/servlets/ItemPageServlet.class
-com/google/ehub/data/CommentData.class
+com/google/ehub/servlets/BlobstoreUploadServlet.class
 com/google/ehub/data/CommentDataManager.class
+com/google/ehub/data/CommentData.class
+com/google/ehub/servlets/ItemSubmissionServlet.class
+com/google/ehub/utility/BlobstoreUrlUtility.class
+com/google/ehub/data/EntertainmentItemDatastore.class
+com/google/ehub/data/EntertainmentItem.class
+com/google/ehub/servlets/DashboardServlet.class
