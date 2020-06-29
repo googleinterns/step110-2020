@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function loadItemPage(){
   sendItemIdToServlet();
   getItemPageComments();
@@ -23,6 +24,13 @@ function getItemId() {
 
 
 
+=======
+function getItemId() {
+  const queryString = window.location.search;
+  console.log(queryString);
+}
+
+>>>>>>> 3ccab2bc0d5465bb8e2ae6e00009a398744dc0b3
 async function getItemPageComments() {
   const response = await fetch("/itempagedata");
   const comments = await response.json();
