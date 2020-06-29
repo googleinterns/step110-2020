@@ -2,7 +2,16 @@ hidden {
   display: none;
 }
 
+.item-image {
+  width: 300px;
+  height: 445px;
+}
+
 .container {
   margin-top: 0px;
   text-align: center;
+}
+
+.selector-for-some-widget {
+  box-sizing: content-box;
 }
