@@ -21,7 +21,8 @@ function getDashboardItems() {
 }
 
 /**
- * Fetches omdb item information from OMDb API.
+ * Fetches omdb item information from OMDb API and displays the item that was
+ * found.
  */
 function getOmdbItem() {
   fetch('https://www.omdbapi.com/?apikey=a28d48cd&t=' + $('#itemTitle').val())
@@ -30,10 +31,18 @@ function getOmdbItem() {
         const omdbItemEntry = $('#omdbItemEntry');
         omdbItemEntry.empty();
 
+        const itemSubmissionButton = $('#itemSubmissionButton');
+        itemSubmissionButton.off('click');
+
         if (omdbItem.Response === 'False') {
-          omdbItemEntry.append($('<p>Item not found!</p>'))
+          omdbItemEntry.append($('<p>Item not found!</p>'));
+
+          itemSubmissionButton.addClass('d-none');
         } else {
           omdbItemEntry.append(createOmdbItemCard(omdbItem));
+
+          itemSubmissionButton.removeClass('d-none');
+          addItemSubmissionCallback(itemSubmissionButton, omdbItem);
         }
       })
       .catch((error) => {
@@ -129,12 +138,35 @@ function createOmdbItemCard(omdbItem) {
 }
 
 /**
+ * Adds a callback to the item submission button to send an omdbItem to the
+ * ItemSubmissionServlet using a Post request.
+ *
+ * @param { jQuery } submissionButton - the button in the dialog used to submit
+ *     an Entertainment Item
+ * @param { JSON } omdbItem - item that will be sent to the
+ *     ItemSubmissionServlet through a Post request
+ */
+function addItemSubmissionCallback(submissionButton, omdbItem) {
+  submissionButton.click(function() {
+    $.post('/item-submission', omdbItem)
+        .done(function() {
+          // If the item gets added, the page needs to reload to see the
+          // changes.
+          window.location.reload();
+        })
+        .fail(function() {
+          console.log('Failed to submit entertainment item!');
+        });
+  });
+}
+
+/**
  * Loads a selector from another HTML file so that it can be used in the current
  * DOM.
  *
- * @param { string } selector - Selector that will be used across the document
+ * @param { string } selector - selector that will be used across the document
  *     to refer to the HTML element
- * @param { string } filename - Filename of HTML file that is used to load the
+ * @param { string } filename - filename of HTML file that is used to load the
  *     element
  *
  * @example loadSelector("#navbar", "navbar.html")
