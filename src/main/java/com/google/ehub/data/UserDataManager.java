@@ -13,10 +13,10 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
 
 public class UserDataManager {
-  public  UserProfile getUserProfile(String email) {
-    
+  public UserProfile getUserProfile(String email) {
     ProfileDatastore data = new ProfileDatastore();
-    Filter propertyFilter = new FilterPredicate(data.getEmailProperty(), FilterOperator.EQUAL, email);
+    Filter propertyFilter =
+        new FilterPredicate(data.getEmailProperty(), FilterOperator.EQUAL, email);
     Query query = new Query(data.getItemKind()).setFilter(propertyFilter);
 
     PreparedQuery queryResults = data.getDatastore().prepare(query);
