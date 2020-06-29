@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="user_script.js"></script>
+  </head>
   <body onload="loadProfile()">
     <h1>My Profile Page</h1>
-    <div id="profile-container"></div>
-    <button formaction="/EditProfilePage.html">Edit Profile</button>
+
+    <h2>Name</h2>
+    <p id="name"></p>
+    <h2>Username</h2>
+    <p id="username"></p>
+    <h2>Bio</h2>
+    <p id="bio"></p>
+
+    <button id="edit" onclick="location.href = '/EditProfilePage.html';">
+      Edit Profile
+    </button>
   </body>
 </html>
