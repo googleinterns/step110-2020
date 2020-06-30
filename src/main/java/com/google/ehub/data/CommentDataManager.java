@@ -5,39 +5,40 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommentDataManager{
 
-  public void addItemComment(long itemId, String message, long timestamp){
-    Entity commentEntity = new Entity("ItemPageComments");
-    commentEntity.setProperty("itemId", itemId);
-    commentEntity.setProperty("message", message);
-    commentEntity.setProperty("timestamp",timestamp);
+  private static final String COMMENT_KIND_KEY = "comment";
+  private static final String ITEMID_PROPERTY_KEY = "itemId";
+  private static final String MESSAGE_PROPERTY_KEY = "message";
+  private static final String TIMESTAMP_PROPERTY_KEY = "timestampMillis";
+ 
+  public void addItemComment(long itemId, String message, long timestampMillis){
+    Entity commentEntity = new Entity(COMMENT_KIND_KEY);
+    commentEntity.setProperty(ITEMID_PROPERTY_KEY, itemId);
+    commentEntity.setProperty(MESSAGE_PROPERTY_KEY, message);
+    commentEntity.setProperty(TIMESTAMP_PROPERTY_KEY,timestampMillis);
 
     DatastoreService commentDatastoreInitialization = DatastoreServiceFactory.getDatastoreService();
     commentDatastoreInitialization.put(commentEntity);
-
   }
 
-
-  public ArrayList<CommentData> retrieveItemComment(long itemId){
-    Query itemCommentQuery = new Query("ItemPageComments").addSort("timestamp",SortDirection.ASCENDING);
+  public List<CommentData> retrieveComments(long itemId){
+    List<CommentData> results = new ArrayList<>();
+    Query itemCommentQuery = new Query(COMMENT_KIND_KEY).setFilter(new FilterPredicate(ITEMID_PROPERTY_KEY, FilterOperator.EQUAL, itemId)).addSort(TIMESTAMP_PROPERTY_KEY,SortDirection.ASCENDING);
     DatastoreService itemCommentDatastoreRetrieval = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery itemCommentResults = itemCommentDatastoreRetrieval.prepare(itemCommentQuery);
-    ArrayList<CommentData> results = new ArrayList<>();
     for (Entity entity : itemCommentResults.asIterable()) {
-      if(entity.getProperty("itemId") == itemId){
-      String message = (String) entity.getProperty("message");
-      long timestamp = (Long) entity.getProperty("timestamp");
-      CommentData comments = new CommentData(message,timestamp);
-      results.add(comments);
-
+      String message = (String) entity.getProperty(MESSAGE_PROPERTY_KEY);
+      long timestampMillis = (Long) entity.getProperty(TIMESTAMP_PROPERTY_KEY);	  
+      CommentData comment = new CommentData(itemId, message,timestampMillis);
+      results.add(comment);
     }
-  }
-    return results;
-    
+    return results;  
  }
-
 }
