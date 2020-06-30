@@ -16,15 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-  String userEmail;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
     if (userService.isUserLoggedIn()) {
-      userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/LoginPage.html";
+      String userEmail = userService.getCurrentUser().getEmail();
+      String urlToRedirectToAfterUserLogsOut = "/?authuser=0";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
       response.setContentType("text/html");
@@ -32,9 +31,8 @@ public class LoginServlet extends HttpServlet {
       response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
     } else {
       String urlToRedirectToAfterUserLogsIn = "/CreateProfilePage.html";
-
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-
+      //TODO(oyins): redirect to Profile Page after logging back in 
       response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
     }
   }
@@ -42,13 +40,5 @@ public class LoginServlet extends HttpServlet {
   public String getEmail() {
     UserService userService = UserServiceFactory.getUserService();
     return userService.getCurrentUser().getEmail();
-  }
-
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    String value = request.getParameter(name);
-    if (value == null) {
-      return defaultValue;
-    }
-    return value;
   }
 }

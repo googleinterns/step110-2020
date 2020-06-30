@@ -21,18 +21,22 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns HTML that contains the user's profile information.**/
 @WebServlet("/profile-data")
 public class ProfileServlet extends HttpServlet {
-  ProfileDatastore profileData = new ProfileDatastore();
-  UserProfile newUser;
+  
+  private static final String NAME_PROPERTY_KEY = "name";
+  private static final String EMAIL_PROPERTY_KEY = "email";
+  private static final String USERNAME_PROPERTY_KEY = "username";
+  private static final String BIO_PROPERTY_KEY = "bio";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ProfileDatastore data = new ProfileDatastore();
-    String name = request.getParameter("name");
-    String email = request.getParameter("email");
-    String username = request.getParameter("username");
-    String bio = request.getParameter("bio");
+    ProfileDatastore profileData = new ProfileDatastore();
 
-    if (!isValidParameter(name, email, username, bio)) {
+    String name = request.getParameter(NAME_PROPERTY_KEY);
+    String email = request.getParameter(EMAIL_PROPERTY_KEY);
+    String username = request.getParameter(USERNAME_PROPERTY_KEY );
+    String bio = request.getParameter(BIO_PROPERTY_KEY);
+
+    if (!areValidParameters(name, email, username, bio)) {
       System.err.println("ProfileServlet: Post Request parameters empty");
       return;
     }
@@ -43,19 +47,20 @@ public class ProfileServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserDataManager manager = new UserDataManager();
     LoginServlet login = new LoginServlet();
     String useremail = login.getEmail();
-    UserDataManager manager = new UserDataManager();
-    newUser = manager.getUserProfile(useremail);
+    UserProfile newUser = manager.getUserProfile(useremail);
 
     response.setContentType("application/json");
     response.getWriter().println(convertToJson(newUser));
   }
+
   private String convertToJson(UserProfile profile) {
     return new Gson().toJson(profile);
   }
 
-  private boolean isValidParameter(String name, String email, String username, String bio) {
+  private boolean areValidParameters(String name, String email, String username, String bio) {
     return (name != null && !name.isEmpty() && email != null && !email.isEmpty() && username != null
         && !username.isEmpty() && bio != null && !bio.isEmpty());
   }

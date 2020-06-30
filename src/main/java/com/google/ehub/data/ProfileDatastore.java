@@ -21,9 +21,6 @@ public final class ProfileDatastore {
 
   public void addUserProfileToDatastore(String name, String email, String username, String bio) {
     Entity userEntity = new Entity(PROFILE_ITEM_KIND);
-    LoginServlet login_instance = new LoginServlet();
-    System.out.println("Login email: " + login_instance.getEmail());
-    System.out.println("email:" + email);
 
     userEntity.setProperty(NAME_PROPERTY_KEY, name);
     userEntity.setProperty(EMAIL_PROPERTY_KEY, email);
@@ -42,13 +39,5 @@ public final class ProfileDatastore {
 
     return new UserProfile(name, username, bio, email);
   }
-  public String getEmailProperty() {
-    return EMAIL_PROPERTY_KEY;
-  }
-  public String getItemKind() {
-    return PROFILE_ITEM_KIND;
-  }
-  public DatastoreService getDatastore() {
-    return datastore;
-  }
+
 }
