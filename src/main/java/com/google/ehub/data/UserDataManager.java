@@ -12,6 +12,12 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
 
+/**
+* Finds a single entity using the email passed in and returns a UserProfile object from the found entity.  
+* 
+* @param email the email of the User being added to Datastore
+* @return a UserProfile object using the entity found
+*/
 public class UserDataManager {
   public UserProfile getUserProfile(String email) {
     if(email == null){
