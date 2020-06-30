@@ -1,3 +1,6 @@
+/** 
+* Fetches the json from ProfileServlet and displays the values on the Profile Page.
+ */
 function loadProfile() {
   fetch('/profile-data').then((response) => response.json()).then((profile) => {
     const nameSection = document.getElementById('name');
