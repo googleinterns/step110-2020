@@ -37,30 +37,31 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that compiles the data for the item page*/
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
+  long itemId;
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      List<CommentData> comments = commentObject.retrieveItemComment();
-      CommentDataManager commentObject = new CommentDataManager();
-      System.out.println("doGet: " + comments);
-      Gson gson = new Gson();
-      response.setContentType("application/json");
-      response.getWriter().println(gson.toJson(comments));
-
- }
+    itemId = Long.parseLong(request.getParameter("itemId").toString());
+    CommentDataManager commentObject = new CommentDataManager();
+    List<CommentData> comments = commentObject.retrieveComments(itemId);
+    System.out.println("doGet: " + comments);
+    Gson gson = new Gson();
+    response.setContentType("application/json");
+    response.getWriter().println(gson.toJson(comments));
+  }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long itemId = Long.parseLong(request.getParameter("itemId"));
-    Optional<EntertainmentItem> optionalItem = EntertainmentItemDatastore.getInstance().queryItem(itemId);
-        if(optionalItem.isPresent()){
+    Optional<EntertainmentItem> optionalItem =
+        EntertainmentItemDatastore.getInstance().queryItem(itemId);
+    if (optionalItem.isPresent()) {
       EntertainmentItem selectedItem = optionalItem.get();
       System.out.println("ItemPageServlet Selected item:" + selectedItem);
       Gson gson = new Gson();
       response.setContentType("application/json");
       response.getWriter().println(gson.toJson(selectedItem));
-      }
-      else{
-        System.out.println("optionalItem is absent");
-      }
+    } else {
+      System.out.println("optionalItem is absent");
     }
+  }
 }
