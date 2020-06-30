@@ -8,5 +8,7 @@ function loadProfile() {
 
     const bioSection = document.getElementById('bio');
     bioSection.innerHTML = profile.bio;
+  }).catch((error) => {
+      console.log('Fetching profile data servlet failed: ' + error);
   });
 }
