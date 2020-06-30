@@ -20,12 +20,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class EntertainmentItemDatastoreTest {
-  private final EntertainmentItemDatastore entertainmentItemDatastore =
-      EntertainmentItemDatastore.getInstance();
-  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-  private final LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-
   private static final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
   private static final String DISPLAY_TITLE_PROPERTY_KEY = "displayTitle";
   private static final String NORMALIZED_TITLE_PROPERTY_KEY = "normalizedTitle";
@@ -37,6 +31,12 @@ public class EntertainmentItemDatastoreTest {
 
   private static final String DESCRIPTION = "Blah....";
   private static final String IMAGE_URL = "Image.png";
+
+  private final EntertainmentItemDatastore entertainmentItemDatastore =
+      EntertainmentItemDatastore.getInstance();
+  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+  private final LocalServiceTestHelper helper =
+      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
   @Before
   public void init() {
@@ -58,18 +58,20 @@ public class EntertainmentItemDatastoreTest {
     List<Entity> entityList = queryResults.asList(FetchOptions.Builder.withDefaults());
 
     Assert.assertEquals(1, entityList.size());
-    Assert.assertEquals(true, entityList.get(0).hasProperty(DISPLAY_TITLE_PROPERTY_KEY));
-    Assert.assertEquals(true, entityList.get(0).hasProperty(NORMALIZED_TITLE_PROPERTY_KEY));
-    Assert.assertEquals(true, entityList.get(0).hasProperty(DESCRIPTION_PROPERTY_KEY));
-    Assert.assertEquals(true, entityList.get(0).hasProperty(IMAGE_URL_PROPERTY_KEY));
+    Assert.assertEquals(
+        TITLES_IN_ASCENDING_ORDER[0], entityList.get(0).getProperty(DISPLAY_TITLE_PROPERTY_KEY));
+    Assert.assertEquals(TITLES_IN_ASCENDING_ORDER[0].toLowerCase(),
+        entityList.get(0).getProperty(NORMALIZED_TITLE_PROPERTY_KEY));
+    Assert.assertEquals(DESCRIPTION, entityList.get(0).getProperty(DESCRIPTION_PROPERTY_KEY));
+    Assert.assertEquals(IMAGE_URL, entityList.get(0).getProperty(IMAGE_URL_PROPERTY_KEY));
   }
 
   @Test
   public void queryForNonExistentItem_OptionalHasNoItem() {
-    final long NON_EXISTENT_ID = 2312231;
-    Optional<EntertainmentItem> item = entertainmentItemDatastore.queryItem(NON_EXISTENT_ID);
+    Optional<EntertainmentItem> item =
+        entertainmentItemDatastore.queryItem(/* Non-Existent Id */ 23114121);
 
-    Assert.assertEquals(false, item.isPresent());
+    Assert.assertFalse(item.isPresent());
   }
 
   @Test
@@ -86,27 +88,27 @@ public class EntertainmentItemDatastoreTest {
     Optional<EntertainmentItem> item =
         entertainmentItemDatastore.queryItem(itemEntity.getKey().getId());
 
-    Assert.assertEquals(true, item.isPresent());
+    Assert.assertTrue(item.isPresent());
   }
 
   @Test
   public void queryForNonExistentItems_ItemListIsEmpty() {
     List<EntertainmentItem> itemList = entertainmentItemDatastore.queryAllItems();
 
-    Assert.assertEquals(true, itemList.isEmpty());
+    Assert.assertTrue(itemList.isEmpty());
   }
 
   @Test
   public void queryForExistentItems_ItemListHasAllItems() {
-    final int ITEMS_ADDED = 15;
+    final int itemsAdded = 15;
 
-    for (int i = 0; i < ITEMS_ADDED; i++) {
+    for (int i = 0; i < itemsAdded; i++) {
       datastoreService.put(new Entity(ENTERTAINMENT_ITEM_KIND));
     }
 
     List<EntertainmentItem> itemList = entertainmentItemDatastore.queryAllItems();
 
-    Assert.assertEquals(ITEMS_ADDED, itemList.size());
+    Assert.assertEquals(itemsAdded, itemList.size());
   }
 
   @Test
