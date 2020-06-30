@@ -31,18 +31,20 @@ function getOmdbItem() {
         const omdbItemEntry = $('#omdbItemEntry');
         omdbItemEntry.empty();
 
-        const itemSubmissionButton = $('#itemSubmissionButton');
-        itemSubmissionButton.off('click');
+        const submitButton = $('#submitButton');
+        submitButton.off('click');
 
         if (omdbItem.Response === 'False') {
           omdbItemEntry.append($('<p>Item not found!</p>'));
 
-          itemSubmissionButton.addClass('d-none');
+          submitButton.addClass('d-none');
         } else {
           omdbItemEntry.append(createOmdbItemCard(omdbItem));
 
-          itemSubmissionButton.removeClass('d-none');
-          addItemSubmissionCallback(itemSubmissionButton, omdbItem);
+          submitButton.removeClass('d-none');
+          submitButton.click(() => {
+            submitItem(omdbItem);
+          });
         }
       })
       .catch((error) => {
@@ -138,26 +140,21 @@ function createOmdbItemCard(omdbItem) {
 }
 
 /**
- * Adds a callback to the item submission button to send an omdbItem to the
- * ItemSubmissionServlet using a Post request.
+ * Sends an omdbItem to the ItemSubmissionServlet using a Post request.
  *
- * @param { jQuery } submissionButton - the button in the dialog used to submit
- *     an Entertainment Item
  * @param { JSON } omdbItem - item that will be sent to the
  *     ItemSubmissionServlet through a Post request
  */
-function addItemSubmissionCallback(submissionButton, omdbItem) {
-  submissionButton.click(function() {
-    $.post('/item-submission', omdbItem)
-        .done(function() {
-          // If the item gets added, the page needs to reload to see the
-          // changes.
-          window.location.reload();
-        })
-        .fail(function() {
-          console.log('Failed to submit entertainment item!');
-        });
-  });
+function submitItem(omdbItem) {
+  $.post('/item-submission', omdbItem)
+      .done(function() {
+        // If the item gets added, the page needs to reload to see the
+        // changes.
+        window.location.reload();
+      })
+      .fail(function() {
+        console.log('Failed to submit entertainment item!');
+      });
 }
 
 /**
