@@ -26,7 +26,8 @@ async function getItemPageComments() {
   const response = await fetch("/itempagedata");
   const comments = await response.json();
   const commentContainer = document.getElementById("comment-container");
-  comments.forEach((commentObject) => {
+  comments.for
+  Each((commentObject) => {
     const date = new Date(commentObject.timestamp);
     commentContainer.appendChild(
       createListElement(
