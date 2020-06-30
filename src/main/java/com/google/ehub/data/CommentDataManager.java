@@ -11,6 +11,9 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Singleton class that manages CommentData that is kept in the Datastore
+ */
 public class CommentDataManager{
 
   private static final String COMMENT_KIND_KEY = "comment";

@@ -26,7 +26,9 @@ import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,9 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ItemPageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<CommentData> comments = new ArrayList<>();
+      List<CommentData> comments = commentObject.retrieveItemComment();
       CommentDataManager commentObject = new CommentDataManager();
-      comments = commentObject.retrieveItemComment();
       System.out.println("doGet: " + comments);
       Gson gson = new Gson();
       response.setContentType("application/json");
@@ -51,6 +52,7 @@ public class ItemPageServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
     Optional<EntertainmentItem> optionalItem = EntertainmentItemDatastore.getInstance().queryItem(itemId);
+    if(optionalItem.isEmpt)
     EntertainmentItem item = optionalItem.get();
     System.out.println("Item:" + item);
     String message = request.getParameter("text-input");
