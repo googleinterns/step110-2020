@@ -52,14 +52,15 @@ public class ItemPageServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
     Optional<EntertainmentItem> optionalItem = EntertainmentItemDatastore.getInstance().queryItem(itemId);
-    if(optionalItem.isEmpt)
-    EntertainmentItem item = optionalItem.get();
-    System.out.println("Item:" + item);
-    String message = request.getParameter("text-input");
-    long timestamp = System.currentTimeMillis();
-    CommentDataManager comments = new CommentDataManager();
-    comments.addItemComment(itemId,message,timestamp);
-    response.sendRedirect("/item-page.html");
-    
+        if(optionalItem.isPresent()){
+      EntertainmentItem selectedItem = optionalItem.get();
+      System.out.println("ItemPageServlet Selected item:" + selectedItem);
+      Gson gson = new Gson();
+      response.setContentType("application/json");
+      response.getWriter().println(gson.toJson(selectedItem));
+      }
+      else{
+        System.out.println("optionalItem is absent");
+      }
     }
 }
