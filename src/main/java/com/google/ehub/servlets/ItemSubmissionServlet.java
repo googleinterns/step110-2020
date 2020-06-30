@@ -13,12 +13,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/item-submission")
 public class ItemSubmissionServlet extends HttpServlet {
+  // The value for each key is capitalized because they follow the format of a JSON omdbItem
   private static final String TITLE_PARAMETER_KEY = "Title";
   private static final String DESCRIPTION_PARAMETER_KEY = "Plot";
   private static final String IMAGE_URL_PARAMETER_KEY = "Poster";
 
-  private static final int MAX_TITLE_CHARS = 64;
-  private static final int MAX_DESCRIPTION_CHARS = 2048;
+  private static final int MAX_TITLE_CHARS = 150;
+  private static final int MAX_DESCRIPTION_CHARS = 500;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -27,7 +28,7 @@ public class ItemSubmissionServlet extends HttpServlet {
     String imageUrl = request.getParameter(IMAGE_URL_PARAMETER_KEY);
 
     if (!arePostRequestParametersValid(title, description, imageUrl)) {
-      System.err.println("ItemSubmissionServlet: Post Request parameters not specified!");
+      System.err.println("ItemSubmissionServlet: Post Request parameters not specified correctly!");
       return;
     }
 
@@ -47,7 +48,8 @@ public class ItemSubmissionServlet extends HttpServlet {
   private static boolean arePostRequestParametersValid(
       String title, String description, String imageUrl) {
     return (title != null && !title.isEmpty() && title.length() <= MAX_TITLE_CHARS)
-        && (description != null && !description.isEmpty())
+        && (description != null && !description.isEmpty()
+            && description.length() <= MAX_DESCRIPTION_CHARS)
         && (imageUrl != null && !imageUrl.isEmpty());
   }
 }
