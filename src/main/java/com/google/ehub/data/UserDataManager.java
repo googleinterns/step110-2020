@@ -14,15 +14,14 @@ import java.io.IOException;
 
 public class UserDataManager {
   public UserProfile getUserProfile(String email) {
-    ProfileDatastore data = new ProfileDatastore();
+    ProfileDatastore profileDatastore = new ProfileDatastore();
     Filter propertyFilter =
-        new FilterPredicate(data.EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
-    Query query = new Query(data.PROFILE_ITEM_KIND).setFilter(propertyFilter);
+        new FilterPredicate(ProfileDatastore.EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
+    Query query = new Query(ProfileDatastore.PROFILE_ITEM_KIND).setFilter(propertyFilter);
 
     PreparedQuery queryResults = DatastoreServiceFactory.getDatastoreService().prepare(query);
     Entity userEntity = queryResults.asSingleEntity();
 
-    return data.createUserProfileFromEntity(userEntity);
+    return profileDatastore.createUserProfileFromEntity(userEntity);
   }
-  // TODO(oyins):check if it is null with method
 }
