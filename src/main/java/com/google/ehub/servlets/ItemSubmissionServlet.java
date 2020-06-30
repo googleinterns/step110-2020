@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/item-submission")
 public class ItemSubmissionServlet extends HttpServlet {
-  // The value for each key is capitalized because they follow the format of a JSON omdbItem
+  // The value for each key is capitalized because they follow the format of a JSON omdbItem.
   private static final String TITLE_PARAMETER_KEY = "Title";
   private static final String DESCRIPTION_PARAMETER_KEY = "Plot";
   private static final String IMAGE_URL_PARAMETER_KEY = "Poster";
