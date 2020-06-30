@@ -1,5 +1,8 @@
 package com.google.ehub.data;
 
+/**
+ * Holds information for the User Profile used in Datastore.
+ */
 public class UserProfile {
   private final String username;
   private final String bio;

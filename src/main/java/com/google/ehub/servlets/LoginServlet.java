@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+* Handles the GET request from the user login page provided by the Users API.
+*/
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
@@ -36,7 +39,9 @@ public class LoginServlet extends HttpServlet {
       response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
     }
   }
-
+  /**
+   * Returns the email of the currently logged in user
+   */
   public String getEmail() {
     UserService userService = UserServiceFactory.getUserService();
     return userService.getCurrentUser().getEmail();

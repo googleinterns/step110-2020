@@ -18,7 +18,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns HTML that contains the user's profile information.**/
+/** 
+* Handles adding the form submission to the datastore in 
+* POST and returns json of the user's profile information
+* to client.
+*/
 @WebServlet("/profile-data")
 public class ProfileServlet extends HttpServlet {
   
@@ -55,11 +59,24 @@ public class ProfileServlet extends HttpServlet {
     response.setContentType("application/json");
     response.getWriter().println(convertToJson(newUser));
   }
-
+  /**
+   * Creates a json from the UserProfile object.
+   *
+   * @param profile the UserProfile object
+   * @return json file
+   */
   private String convertToJson(UserProfile profile) {
     return new Gson().toJson(profile);
   }
-
+  /**
+   * Checks if any of the request values are null.
+   *
+   * @param name the name of the User 
+   * @param email the email of the User 
+   * @param username the username of the User 
+   * @param bio the bio of the User 
+   * @return true if not null
+   */
   private boolean areValidParameters(String name, String email, String username, String bio) {
     return (name != null && !name.isEmpty() && email != null && !email.isEmpty() && username != null
         && !username.isEmpty() && bio != null && !bio.isEmpty());

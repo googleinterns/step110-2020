@@ -18,7 +18,14 @@ public final class ProfileDatastore {
   public static final String BIO_PROPERTY_KEY = "bio";
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
+ /**
+   * Adds a the User Profile variables to Datastore.
+   *
+   * @param name the name of the User being added to Datastore
+   * @param email the email of the User being added to Datastore
+   * @param username the username of the User being added to Datastore
+   * @param bio the bio of the User being added to Datastore
+   */
   public void addUserProfileToDatastore(String name, String email, String username, String bio) {
     Entity userEntity = new Entity(PROFILE_ITEM_KIND);
 
@@ -29,9 +36,13 @@ public final class ProfileDatastore {
 
     datastore.put(userEntity);
   }
-
+  /**
+   * Create a UserProfile object from a given entity.
+   *
+   * @param userEntity the User Entity in the Datastore
+   * @return a UserProfile object with correct credentials 
+   */
   public UserProfile createUserProfileFromEntity(Entity userEntity) {
-    long id = userEntity.getKey().getId();
     String name = (String) userEntity.getProperty(NAME_PROPERTY_KEY);
     String username = (String) userEntity.getProperty(USERNAME_PROPERTY_KEY);
     String bio = (String) userEntity.getProperty(BIO_PROPERTY_KEY);
