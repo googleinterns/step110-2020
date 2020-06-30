@@ -14,6 +14,9 @@ import java.io.IOException;
 
 public class UserDataManager {
   public UserProfile getUserProfile(String email) {
+    if(email == null){
+      return null;
+    }
     ProfileDatastore profileDatastore = new ProfileDatastore();
     Filter propertyFilter =
         new FilterPredicate(ProfileDatastore.EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
