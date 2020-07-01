@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h1>Edit Your Profile Page</h1>
-    <!--TODO(oyins): Make sure form submission edits Datastore, next PR-->
+    <h1>Create Your Profile Page</h1>
     <form action="/profile-data" method="POST">
       <label for="name">Name:</label><br />
-      <input type="text" name="name" /><br />
+      <input type="text" name="name" maxlength="25"/><br />
       <label for="email">Email:</label><br />
-      <input type="email" name="email" /><br />
+      <input type="email" name="email" maxlength="25"/><br />
       <label for="username">Username:</label><br />
-      <input type="text" name="username" /><br />
+      <input type="text" name="username" maxlength="20"/><br />
       <label for="bio">Bio:</label><br />
-      <input type="text" name="bio" /><br />
+      <input type="text" name="bio" maxlength="160"/><br />
       <input type="submit" value="Submit" />
     </form>
   </body>
