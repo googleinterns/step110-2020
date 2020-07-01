@@ -8,7 +8,6 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.data.ProfileDatastore;
-import com.google.ehub.data.UserDataManager;
 import com.google.ehub.data.UserProfile;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -59,7 +58,7 @@ public class ProfileServlet extends HttpServlet {
     response.setContentType("application/json");
     response.getWriter().println(convertToJson(newUser));
   }
-  
+
   /**
    * Creates a json from the UserProfile object.
    *
