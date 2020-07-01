@@ -34,7 +34,7 @@ public class ItemSubmissionServlet extends HttpServlet {
     }
 
     EntertainmentItemDatastore.getInstance().addItemToDatastore(
-        new EntertainmentItem(0, title, description, imageUrl));
+        new EntertainmentItem(/* Unassigned Id */ Optional.empty(), title, description, imageUrl));
 
     response.sendRedirect("/index.html");
   }

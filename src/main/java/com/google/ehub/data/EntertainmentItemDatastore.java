@@ -137,11 +137,11 @@ public final class EntertainmentItemDatastore {
   }
 
   private static EntertainmentItem createItemFromEntity(Entity entertainmentItemEntity) {
-    long uniqueId = entertainmentItemEntity.getKey().getId();
+    Long uniqueId = entertainmentItemEntity.getKey().getId();
     String title = (String) entertainmentItemEntity.getProperty(DISPLAY_TITLE_PROPERTY_KEY);
     String description = (String) entertainmentItemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
     String imageUrl = (String) entertainmentItemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
 
-    return new EntertainmentItem(uniqueId, title, description, imageUrl);
+    return new EntertainmentItem(Optional.of(uniqueId), title, description, imageUrl);
   }
 }

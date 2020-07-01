@@ -58,14 +58,5 @@ public final class DatastoreUtils {
     }
   }
 
-  /**
-   * Creates a unique Id
-   *
-   * @return a new Id for the entity in the form of a string
-   */
-  public static String createUniqueId() {
-    return "";
-  }
-
   private DatastoreUtils() {}
 }
