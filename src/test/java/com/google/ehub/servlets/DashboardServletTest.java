@@ -147,7 +147,7 @@ public class DashboardServletTest {
   }
 
   private static String getSearchValue(int characterLength) {
-    char[] searchValueChars = new char[MAX_SEARCH_VALUE_CHARS];
+    char[] searchValueChars = new char[characterLength];
     Arrays.fill(searchValueChars, 'a');
     return new String(searchValueChars);
   }
