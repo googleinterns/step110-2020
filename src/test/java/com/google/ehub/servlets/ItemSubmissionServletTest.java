@@ -34,7 +34,6 @@ public class ItemSubmissionServletTest {
   private static final int MAX_DESCRIPTION_CHARS = 500;
 
   @Mock HttpServletRequest request;
-
   @Mock HttpServletResponse response;
 
   @Before
