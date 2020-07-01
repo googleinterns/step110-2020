@@ -69,8 +69,8 @@ public class ItemPageServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
     String comment = request.getParameter(COMMENT_PROPERTY_KEY);
-    long timestamp = System.currentTimeMillis();
+    long timestampMillis = System.currentTimeMillis();
     CommentDataManager comments = new CommentDataManager();
-    comments.addItemComment(itemId, comment, timestamp);
+    comments.addItemComment(itemId, comment, timestampMillis);
   }
 }
