@@ -6,10 +6,13 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.sps.servlets.LoginServlet;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
 
-/**Manages the User Profiles stored in Datastore.**/
+/** Manages the User Profiles stored in Datastore. **/
 public final class ProfileDatastore {
   public static final String PROFILE_ITEM_KIND = "profile";
   public static final String NAME_PROPERTY_KEY = "name";
@@ -18,6 +21,7 @@ public final class ProfileDatastore {
   public static final String BIO_PROPERTY_KEY = "bio";
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
  /**
    * Adds a the User Profile variables to Datastore.
    *
@@ -36,6 +40,7 @@ public final class ProfileDatastore {
 
     datastore.put(userEntity);
   }
+
   /**
    * Create a UserProfile object from a given entity.
    *
@@ -49,6 +54,26 @@ public final class ProfileDatastore {
     String email = (String) userEntity.getProperty(EMAIL_PROPERTY_KEY);
 
     return new UserProfile(name, username, bio, email);
+  }
+
+  /**
+    * Finds a single entity using the email passed in and returns a UserProfile object from the found entity.  
+    * 
+    * @param email the email of the User being added to Datastore
+    * @return a UserProfile object using the entity found
+    */
+  public UserProfile getUserProfile(String email) {
+    if(email == null){
+      return null;
+    }
+    Filter propertyFilter =
+        new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
+    Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
+
+    PreparedQuery queryResults = datastore.prepare(query);
+    Entity userEntity = queryResults.asSingleEntity();
+
+    return createUserProfileFromEntity(userEntity);
   }
 
 }
