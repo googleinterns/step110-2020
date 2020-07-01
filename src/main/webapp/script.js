@@ -31,7 +31,7 @@ function getOmdbItem() {
         omdbItemEntry.empty();
 
         if (omdbItem.Response === 'False') {
-          omdbItemEntry.append($('<p>Item not found!</p>'))
+          omdbItemEntry.append($('<p>Item not found!</p>'));
         } else {
           omdbItemEntry.append(createOmdbItemCard(omdbItem));
         }
@@ -91,7 +91,7 @@ function createEntertainmentItemCard(entertainmentItem) {
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(
       $('<a class="stretched-link" href="item-page.html?itemId=' +
-        entertainmentItem.uniqueId + '"></a>'))
+        entertainmentItem.uniqueId + '"></a>'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(

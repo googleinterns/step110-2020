@@ -43,6 +43,9 @@ public class ItemPageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
+    if (itemId == null) {
+      System.out.println("itemId is null");
+    }
 
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
@@ -61,16 +64,27 @@ public class ItemPageServlet extends HttpServlet {
       response.setContentType("application/json");
       response.getWriter().println(new Gson().toJson(itemData));
     } else {
-      System.out.println("itemData is absent");
+      System.out.println("temPageServlet: itemData is absent");
     }
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
+    if (itemId == null) {
+      System.out.println("ItemPageServlet: itemId is null");
+    }
+
     String comment = request.getParameter(COMMENT_PROPERTY_KEY);
+    if (comment == null) {
+      System.out.println("temPageServlet: comment string is null");
+    }
     long timestampMillis = System.currentTimeMillis();
+    if (timestampMillis == null) {
+      System.out.println("temPageServlet: timestamp is null");
+    }
     CommentDataManager comments = new CommentDataManager();
     comments.addItemComment(itemId, comment, timestampMillis);
   }
+}
 }

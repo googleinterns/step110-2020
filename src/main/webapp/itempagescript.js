@@ -10,7 +10,7 @@ async function loadItemPage() {
         .then((ItemPageData) => {
           createSelectedItemCard(ItemPageData.item);
           getItemPageComments(ItemPageData.comments);
-        })
+        });
   } else {
     console.log('ItemId is null');
   }
@@ -40,39 +40,44 @@ function createSelectedItemCard(entertainmentItem) {
 function getItemId() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const itemId = urlParams.get('itemId');
-  return itemId;
-}
 
-/**
- * Sends comment data and ItemId to Servlet
- */
-function sendFormData() {
-  const itemId = getItemId();
-  const comment = document.getElementById('comment');
-  fetch(
-      `/itempagedata?=${itemId}`,
-      {method: 'post', body: JSON.stringify(comment)});
-}
+  if (urlParams.get('itemId')) {
+    return urlParams.get('itemId');
+  }
 
-/**
- * Function which builds the comment element from the ItemPageData object
- */
-function getItemPageComments(comments) {
-  const commentContainer = document.getElementById('comment-container');
-  comments.forEach((commentObject) => {
-    const date = new Date(commentObject.timestampMillis);
-    commentContainer.appendChild(createListElement(
-        commentObject.message + ' - ' +
-        '(' + date.toUTCString() + ')'));
-  });
-}
+  /**
+   * Sends comment data and ItemId to Servlet
+   */
+  function sendFormData() {
+    const itemId = getItemId();
+    const comment = document.getElementById('comment');
+    fetch(`/itempagedata?=${itemId}`, {
+      method: 'post',
+      body: JSON.stringify(comment)
+    }).catch((error) => {
+      console.log('Failed to fetch item data');
+    });
+  }
 
-/**
- * Creates list element which houses comments
- */
-function createListElement(comment) {
-  const liElement = document.createElement('li');
-  liElement.innerText = comment;
-  return liElement;
+  /**
+   * Function which builds the comment element from the ItemPageData object
+   */
+  function getItemPageComments(comments) {
+    const commentContainer = document.getElementById('comment-container');
+    comments.forEach((commentObject) => {
+      const date = new Date(commentObject.timestampMillis);
+      commentContainer.appendChild(createListElement(
+          commentObject.message + ' - ' +
+          '(' + date.toUTCString() + ')'));
+    });
+  }
+
+  /**
+   * Creates list element which houses comments
+   */
+  function createListElement(comment) {
+    const liElement = document.createElement('li');
+    liElement.innerText = comment;
+    return liElement;
+  }
 }
