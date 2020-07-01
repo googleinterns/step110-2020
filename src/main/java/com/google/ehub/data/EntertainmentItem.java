@@ -28,7 +28,7 @@ public final class EntertainmentItem {
     return description;
   }
 
-  public String getImageURL() {
+  public String getImageUrl() {
     return imageUrl;
   }
 }
