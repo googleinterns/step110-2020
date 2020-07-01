@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.ehub.utility.QueryUtility;
+import com.google.ehub.utility.DatastoreUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,18 +47,17 @@ public final class EntertainmentItemDatastore {
   /**
    * Adds an EntertainmentItem Entity to Datastore.
    *
-   * @param title the title of the EntertainmentItem being added to Datastore
-   * @param description the description of the EntertainmentItem being added to Datastore
-   * @param imageUrl the image Url of the EntertainmentItem being added to Datastore
+   * @param item the EntertainmentItem being added to Datastore
    */
-  public void addItemToDatastore(String title, String description, String imageUrl) {
+  public void addItemToDatastore(EntertainmentItem item) {
     Entity entertainmentItemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
 
     // Unique Id is created by Datastore so it's not added as a property.
-    entertainmentItemEntity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, title);
-    entertainmentItemEntity.setProperty(NORMALIZED_TITLE_PROPERTY_KEY, title.toLowerCase());
-    entertainmentItemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, description);
-    entertainmentItemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, imageUrl);
+    entertainmentItemEntity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, item.getTitle());
+    entertainmentItemEntity.setProperty(
+        NORMALIZED_TITLE_PROPERTY_KEY, item.getTitle().toLowerCase());
+    entertainmentItemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, item.getDescription());
+    entertainmentItemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, item.getImageUrl());
 
     datastoreService.put(entertainmentItemEntity);
   }
@@ -121,7 +120,7 @@ public final class EntertainmentItemDatastore {
       String titlePrefix, SortDirection sortDirection) {
     return createListFromQuery(new Query(ENTERTAINMENT_ITEM_KIND)
                                    .addSort(NORMALIZED_TITLE_PROPERTY_KEY, sortDirection)
-                                   .setFilter(QueryUtility.getPrefixFilter(
+                                   .setFilter(DatastoreUtils.getPrefixFilter(
                                        NORMALIZED_TITLE_PROPERTY_KEY, titlePrefix.toLowerCase())));
   }
 
