@@ -45,6 +45,9 @@ public final class ProfileDatastore {
    * @return a UserProfile object with correct credentials 
    */
   public UserProfile createUserProfileFromEntity(Entity userEntity) {
+    if (userEntity== null){
+      return null;
+    }
     String name = (String) userEntity.getProperty(NAME_PROPERTY_KEY);
     String username = (String) userEntity.getProperty(USERNAME_PROPERTY_KEY);
     String bio = (String) userEntity.getProperty(BIO_PROPERTY_KEY);
