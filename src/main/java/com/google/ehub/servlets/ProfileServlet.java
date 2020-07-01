@@ -59,6 +59,7 @@ public class ProfileServlet extends HttpServlet {
     response.setContentType("application/json");
     response.getWriter().println(convertToJson(newUser));
   }
+  
   /**
    * Creates a json from the UserProfile object.
    *
@@ -68,6 +69,7 @@ public class ProfileServlet extends HttpServlet {
   private String convertToJson(UserProfile profile) {
     return new Gson().toJson(profile);
   }
+
   /**
    * Checks if any of the request values are null.
    *
