@@ -83,11 +83,8 @@ public class ItemSubmissionServletTest {
 
   @Test
   public void postRequestWithExceedingTitleLength_NoItemIsAdded() throws IOException {
-    char[] titleChars = new char[500];
-    Arrays.fill(titleChars, 'a');
-    String largeTitle = new String(titleChars);
-
-    when(request.getParameter(TITLE_PARAMETER_KEY)).thenReturn(largeTitle);
+    when(request.getParameter(TITLE_PARAMETER_KEY))
+        .thenReturn(getStringOfLength(MAX_TITLE_CHARS + 1));
     when(request.getParameter(DESCRIPTION_PARAMETER_KEY)).thenReturn("Random Description");
     when(request.getParameter(IMAGE_URL_PARAMETER_KEY)).thenReturn("CoolImage.jpg");
 
@@ -98,16 +95,9 @@ public class ItemSubmissionServletTest {
 
   @Test
   public void postRequestWithMaximumValidLengthParams_ItemIsAdded() throws IOException {
-    char[] titleChars = new char[MAX_TITLE_CHARS];
-    Arrays.fill(titleChars, 'a');
-    String maxValidTitle = new String(titleChars);
-
-    char[] descriptionChars = new char[MAX_DESCRIPTION_CHARS];
-    Arrays.fill(descriptionChars, 'a');
-    String maxValidDescription = new String(descriptionChars);
-
-    when(request.getParameter(TITLE_PARAMETER_KEY)).thenReturn(maxValidTitle);
-    when(request.getParameter(DESCRIPTION_PARAMETER_KEY)).thenReturn(maxValidDescription);
+    when(request.getParameter(TITLE_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_TITLE_CHARS));
+    when(request.getParameter(DESCRIPTION_PARAMETER_KEY))
+        .thenReturn(getStringOfLength(MAX_DESCRIPTION_CHARS));
     when(request.getParameter(IMAGE_URL_PARAMETER_KEY)).thenReturn("CoolImage.jpg");
 
     servlet.doPost(request, response);
@@ -124,5 +114,11 @@ public class ItemSubmissionServletTest {
     servlet.doPost(request, response);
 
     Assert.assertEquals(0, entertainmentItemDatastore.queryAllItems().size());
+  }
+
+  private static String getStringOfLength(int characterLength) {
+    char[] chars = new char[characterLength];
+    Arrays.fill(chars, 'a');
+    return new String(chars);
   }
 }
