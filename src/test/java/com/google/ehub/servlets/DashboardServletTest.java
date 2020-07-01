@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -105,8 +106,8 @@ public class DashboardServletTest {
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
-        .println(new Gson().toJson(
-            Arrays.asList(new EntertainmentItem(/* Id */ 1, TITLE, DESCRIPTION, IMAGE_URL))));
+        .println(new Gson().toJson(Arrays.asList(new EntertainmentItem(
+            Optional.of(itemEntity.getKey().getId()), TITLE, DESCRIPTION, IMAGE_URL))));
   }
 
   @Test

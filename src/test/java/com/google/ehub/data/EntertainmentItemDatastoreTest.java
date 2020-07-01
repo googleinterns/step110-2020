@@ -29,7 +29,7 @@ public class EntertainmentItemDatastoreTest {
   private static final String[] TITLES_IN_ASCENDING_ORDER = {
       "Avengers", "Nemo", "Shrek", "Star Wars", "Transformers"};
 
-  private static final long ITEM_ID = 0;
+  private static final Optional<Long> ITEM_ID = Optional.of(0L);
   private static final String DESCRIPTION = "Blah....";
   private static final String IMAGE_URL = "Image.png";
 
