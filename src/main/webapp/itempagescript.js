@@ -16,7 +16,9 @@ async function loadItemPage() {
   }
 }
 
-
+/**
+ * Makes Entertainment Item into card
+ */
 function createSelectedItemCard(entertainmentItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
@@ -30,13 +32,6 @@ function createSelectedItemCard(entertainmentItem) {
   card.append(cardBody);
   const itemContainer = $('#item-container');
   itemContainer.append(card);
-}
-async function getItem() {
-  const itemId = getItemId();
-  console.log(itemId);
-  const response = await fetch(`/itempagedata?itemId=${itemId}`);
-  const selectedItem = await response.json();
-  createSelectedItemCard(selectedItem);
 }
 
 /**
