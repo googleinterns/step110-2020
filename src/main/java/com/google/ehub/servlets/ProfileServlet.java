@@ -29,10 +29,11 @@ public class ProfileServlet extends HttpServlet {
   private static final String EMAIL_PROPERTY_KEY = "email";
   private static final String USERNAME_PROPERTY_KEY = "username";
   private static final String BIO_PROPERTY_KEY = "bio";
+  ProfileDatastore profileData = new ProfileDatastore();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ProfileDatastore profileData = new ProfileDatastore();
+    
 
     String name = request.getParameter(NAME_PROPERTY_KEY);
     String email = request.getParameter(EMAIL_PROPERTY_KEY);
@@ -50,10 +51,9 @@ public class ProfileServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserDataManager manager = new UserDataManager();
     LoginServlet login = new LoginServlet();
     String useremail = login.getEmail();
-    UserProfile newUser = manager.getUserProfile(useremail);
+    UserProfile newUser = profileData.getUserProfile(useremail);
 
     response.setContentType("application/json");
     response.getWriter().println(convertToJson(newUser));
