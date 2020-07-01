@@ -1,13 +1,16 @@
 package com.google.ehub.data;
 
+/**
+ * Class that defines a CommentData object
+ */
 public class CommentData {
   private final Long itemId;
-  private final String message;
+  private final String comment;
   private final Long timestampMillis;
 
-  public CommentData(long itemId, String message, long timestampMillis) {
+  public CommentData(long itemId, String comment, long timestampMillis) {
     this.itemId = itemId;
-    this.message = message;
+    this.comment = comment;
     this.timestampMillis = timestampMillis;
   }
 }

@@ -24,6 +24,7 @@ import com.google.ehub.data.CommentData;
 import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
+import com.google.ehub.data.ItemPageData;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,31 +38,39 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that compiles the data for the item page*/
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
-  long itemId;
+  private static final String COMMENT_PROPERTY_KEY = "comment";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    itemId = Long.parseLong(request.getParameter("itemId").toString());
+    long itemId = Long.parseLong(request.getParameter("itemId"));
+
+    Optional<EntertainmentItem> optionalItem =
+        EntertainmentItemDatastore.getInstance().queryItem(itemId);
+
     CommentDataManager commentObject = new CommentDataManager();
     List<CommentData> comments = commentObject.retrieveComments(itemId);
     System.out.println("doGet: " + comments);
-    Gson gson = new Gson();
-    response.setContentType("application/json");
-    response.getWriter().println(gson.toJson(comments));
+
+    ItemPageData itemData;
+
+    if (optionalItem.isPresent()) {
+      EntertainmentItem selectedItem = optionalItem.get();
+      System.out.println("ItemPageServlet Selected item:" + selectedItem);
+
+      itemData = new ItemPageData(selectedItem, comments);
+      response.setContentType("application/json");
+      response.getWriter().println(new Gson().toJson(itemData));
+    } else {
+      System.out.println("itemData is absent");
+    }
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Optional<EntertainmentItem> optionalItem =
-        EntertainmentItemDatastore.getInstance().queryItem(itemId);
-    if (optionalItem.isPresent()) {
-      EntertainmentItem selectedItem = optionalItem.get();
-      System.out.println("ItemPageServlet Selected item:" + selectedItem);
-      Gson gson = new Gson();
-      response.setContentType("application/json");
-      response.getWriter().println(gson.toJson(selectedItem));
-    } else {
-      System.out.println("optionalItem is absent");
-    }
+    long itemId = Long.parseLong(request.getParameter("itemId"));
+    String comment = request.getParameter(COMMENT_PROPERTY_KEY);
+    long timestamp = System.currentTimeMillis();
+    CommentDataManager comments = new CommentDataManager();
+    comments.addItemComment(itemId, comment, timestamp);
   }
 }
