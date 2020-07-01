@@ -52,7 +52,8 @@ function sendFormData() {
   const comment = document.getElementById('comment');
   fetch(
       `/itempagedata?=${itemId}`,
-      {method: 'post', body: JSON.stringify(comment)});
+      {method: 'post', body: JSON.stringify(comment)}).catch((error) 
+      => { console.log('Failed to fetch item data'); });
 }
 
 /**
