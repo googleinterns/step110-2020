@@ -48,7 +48,7 @@ public class ItemPageServlet extends HttpServlet {
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
     CommentDataManager commentDataManager = new CommentDataManager();
-    List<CommentData> comments = comme.retrieveComments(itemId);
+    List<CommentData> comments = commentDataManager.retrieveComments(itemId);
     System.out.println("doGet: " + comments);
 
     if (optionalItem.isPresent()) {
