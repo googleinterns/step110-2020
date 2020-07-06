@@ -115,9 +115,10 @@ public class EntertainmentItemDatastoreTest {
 
   @Test
   public void queryForNonExistentItems_ItemListIsEmpty() {
-    List<EntertainmentItem> itemList = entertainmentItemDatastore.queryAllItems();
+    EntertainmentItemList itemList =
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults());
 
-    Assert.assertTrue(itemList.isEmpty());
+    Assert.assertTrue(itemList.getItemList().isEmpty());
   }
 
   @Test
@@ -128,9 +129,10 @@ public class EntertainmentItemDatastoreTest {
       datastoreService.put(new Entity(ENTERTAINMENT_ITEM_KIND));
     }
 
-    List<EntertainmentItem> itemList = entertainmentItemDatastore.queryAllItems();
+    EntertainmentItemList itemList =
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults());
 
-    Assert.assertEquals(itemsAdded, itemList.size());
+    Assert.assertEquals(itemsAdded, itemList.getItemList().size());
   }
 
   @Test
@@ -143,12 +145,12 @@ public class EntertainmentItemDatastoreTest {
       datastoreService.put(entity);
     }
 
-    List<EntertainmentItem> itemList =
-        entertainmentItemDatastore.queryAllItemsWithTitleOrder(SortDirection.ASCENDING);
-    String[] actual = new String[itemList.size()];
+    EntertainmentItemList itemList = entertainmentItemDatastore.queryAllItemsWithTitleOrder(
+        FetchOptions.Builder.withDefaults(), SortDirection.ASCENDING);
+    String[] actual = new String[itemList.getItemList().size()];
 
-    for (int i = 0; i < itemList.size(); ++i) {
-      actual[i] = itemList.get(i).getTitle();
+    for (int i = 0; i < actual.length; ++i) {
+      actual[i] = itemList.getItemList().get(i).getTitle();
     }
 
     Assert.assertArrayEquals(TITLES_IN_ASCENDING_ORDER, actual);
@@ -164,12 +166,12 @@ public class EntertainmentItemDatastoreTest {
       datastoreService.put(entity);
     }
 
-    List<EntertainmentItem> itemList =
-        entertainmentItemDatastore.queryItemsByTitlePrefix("S", SortDirection.DESCENDING);
-    String[] actual = new String[itemList.size()];
+    EntertainmentItemList itemList = entertainmentItemDatastore.queryItemsByTitlePrefix(
+        FetchOptions.Builder.withDefaults(), "S", SortDirection.DESCENDING);
+    String[] actual = new String[itemList.getItemList().size()];
 
-    for (int i = 0; i < itemList.size(); ++i) {
-      actual[i] = itemList.get(i).getTitle();
+    for (int i = 0; i < actual.length; ++i) {
+      actual[i] = itemList.getItemList().get(i).getTitle();
     }
 
     Assert.assertArrayEquals(
