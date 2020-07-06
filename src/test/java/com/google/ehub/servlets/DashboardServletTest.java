@@ -7,10 +7,13 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
+import com.google.ehub.data.EntertainmentItemList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -58,6 +61,7 @@ public class DashboardServletTest {
   private static final String WRITERS = "George Lucas";
   private static final String ACTORS = "Mark Hamill, Harrison Ford";
 
+  private static final int PAGE_SIZE = 18;
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
 
   private final DashboardServlet servlet = new DashboardServlet();
@@ -127,18 +131,8 @@ public class DashboardServletTest {
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
-        .println(new Gson().toJson(Arrays.asList(new EntertainmentItem.Builder()
-                                                     .setUniqueId(itemEntity.getKey().getId())
-                                                     .setTitle(TITLE)
-                                                     .setDescription(DESCRIPTION)
-                                                     .setImageUrl(IMAGE_URL)
-                                                     .setReleaseDate(RELEASE_DATE)
-                                                     .setRuntime(RUNTIME)
-                                                     .setGenre(GENRE)
-                                                     .setDirectors(DIRECTORS)
-                                                     .setWriters(WRITERS)
-                                                     .setActors(ACTORS)
-                                                     .build())));
+        .println(new Gson().toJson(EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(
+            FetchOptions.Builder.withLimit(PAGE_SIZE), TITLE, SortDirection.ASCENDING)));
   }
 
   @Test
@@ -175,7 +169,10 @@ public class DashboardServletTest {
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
-    verify(printWriter).println("[]");
+    verify(printWriter)
+        .println(
+            new Gson().toJson(EntertainmentItemDatastore.getInstance().queryAllItemsWithTitleOrder(
+                FetchOptions.Builder.withLimit(PAGE_SIZE), SortDirection.ASCENDING)));
   }
 
   private static String getSearchValue(int characterLength) {
