@@ -7,11 +7,11 @@ function getDashboardItems() {
       '/dashboard?searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
-      .then((entertainmentItemsList) => {
+      .then((entertainmentItemList) => {
         const entertainmentItemsContainer = $('#entertainmentItemsContainer');
         entertainmentItemsContainer.empty();
 
-        populateItemGrid(entertainmentItemsContainer, entertainmentItemsList);
+        populateItemGrid(entertainmentItemsContainer, entertainmentItemList.itemList);
       })
       .catch((error) => {
         console.log(

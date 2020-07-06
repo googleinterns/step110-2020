@@ -1,8 +1,11 @@
 package com.google.ehub.servlets;
 
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
+import com.google.ehub.data.EntertainmentItemList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
@@ -18,9 +21,11 @@ import org.apache.commons.lang3.EnumUtils;
  */
 @WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
+  private static final String CURSOR_PARAMETER_KEY = "cursor";
   private static final String SEARCH_VALUE_PARAMETER_KEY = "searchValue";
   private static final String SORTING_DIRECTION_PARAMETER_KEY = "sortingDirection";
 
+  private static final int PAGE_SIZE = 18;
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
 
   @Override
@@ -33,20 +38,31 @@ public class DashboardServlet extends HttpServlet {
       return;
     }
 
-    SortDirection sortDir = SortDirection.valueOf(sortingDirection);
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE);
+    String cursorValue = request.getParameter(CURSOR_PARAMETER_KEY);
 
-    List<EntertainmentItem> entertainmentItemList;
+    if (cursorValue != null) {
+      try {
+        fetchOptions.startCursor(Cursor.fromWebSafeString(cursorValue));
+      } catch (IllegalArgumentException e) {
+        System.err.println("DashboardServlet: Cursor value is invalid!");
+        return;
+      }
+    }
+
+    SortDirection sortDir = SortDirection.valueOf(sortingDirection);
+    EntertainmentItemList itemList;
 
     if (searchValue.isEmpty()) {
-      entertainmentItemList =
-          EntertainmentItemDatastore.getInstance().queryAllItemsWithTitleOrder(sortDir);
+      itemList = EntertainmentItemDatastore.getInstance().queryAllItemsWithTitleOrder(
+          fetchOptions, sortDir);
     } else {
-      entertainmentItemList =
-          EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(searchValue, sortDir);
+      itemList = EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(
+          fetchOptions, searchValue, sortDir);
     }
 
     response.setContentType("application/json");
-    response.getWriter().println(new Gson().toJson(entertainmentItemList));
+    response.getWriter().println(new Gson().toJson(itemList));
   }
 
   /**
