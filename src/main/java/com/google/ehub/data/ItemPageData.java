@@ -15,4 +15,12 @@ public class ItemPageData {
     this.item = item;
     this.comments = comments;
   }
+
+  public EntertainmentItem getItem() {
+    return item;
+  }
+
+  public List<CommentData> getComments() {
+    return comments;
+  }
 }

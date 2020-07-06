@@ -1,7 +1,7 @@
 /**
  * Retrieves ItemPageData and forms page using other functions.
  */
-async function loadItemPage() {
+function loadItemPage() {
   const itemId = getItemId();
   console.log(itemId);
   if (itemId != null) {
@@ -19,7 +19,7 @@ async function loadItemPage() {
 /**
  * Makes Entertainment Item into card
  */
-function createSelectedItemCard(entertainmentItem) {
+async function createSelectedItemCard(entertainmentItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
     $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
@@ -46,13 +46,12 @@ function getItemId() {
 /**
  * Sends comment data and ItemId to Servlet
  */
-function sendFormData() {
+async function sendFormData() {
   const itemId = getItemId();
   const comment = document.getElementById('comment');
   fetch(
     `/itempagedata?=${itemId}`,
-    { method: 'post', body: JSON.stringify(comment) }).catch((_error)
-      => { console.log('Failed to fetch item data'); });
+    { method: 'post', body: JSON.stringify(comment) })
 }
 
 /**
@@ -60,10 +59,10 @@ function sendFormData() {
  */
 function getItemPageComments(comments) {
   const commentContainer = document.getElementById('comment-container');
-  comments.forEach((commentObject) => {
-    const date = new Date(commentObject.timestampMillis);
+  comments.forEach((commentDataManager) => {
+    const date = new Date(commentDataManager.timestampMillis);
     commentContainer.appendChild(createListElement(
-      commentObject.message + ' - ' +
+      commentDataManager.message + ' - ' +
       '(' + date.toUTCString() + ')'));
   });
 }

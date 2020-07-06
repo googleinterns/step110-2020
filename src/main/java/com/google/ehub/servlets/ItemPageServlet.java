@@ -80,5 +80,7 @@ public class ItemPageServlet extends HttpServlet {
     long timestampMillis = System.currentTimeMillis();
     CommentDataManager comments = new CommentDataManager();
     comments.addItemComment(itemId, comment, timestampMillis);
+
+    response.sendRedirect("/item-page.html?=" + itemId);
   }
 }
