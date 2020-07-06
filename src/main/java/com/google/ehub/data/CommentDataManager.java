@@ -15,10 +15,10 @@ import java.util.List;
  * Class that manages CommentData that is kept in the Datastore
  */
 public class CommentDataManager {
-  private static final String COMMENT_KIND_KEY = "comment";
-  private static final String ITEM_ID_PROPERTY_KEY = "itemId";
-  private static final String COMMENT_PROPERTY_KEY = "comment";
-  private static final String TIMESTAMP_PROPERTY_KEY = "timestampMillis";
+  public static final String COMMENT_KIND_KEY = "comment";
+  public static final String ITEM_ID_PROPERTY_KEY = "itemId";
+  public static final String COMMENT_PROPERTY_KEY = "comment";
+  public static final String TIMESTAMP_PROPERTY_KEY = "timestampMillis";
 
   /**
    * Method that adds comment information into Datastore by ItemId

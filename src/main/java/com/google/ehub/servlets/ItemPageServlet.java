@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that compiles the data for the item page*/
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
-  private static final String COMMENT_PROPERTY_KEY = "comment";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -48,8 +47,8 @@ public class ItemPageServlet extends HttpServlet {
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
-    CommentDataManager commentObject = new CommentDataManager();
-    List<CommentData> comments = commentObject.retrieveComments(itemId);
+    CommentDataManager commentDataManager = new CommentDataManager();
+    List<CommentData> comments = comme.retrieveComments(itemId);
     System.out.println("doGet: " + comments);
 
     if (optionalItem.isPresent()) {
@@ -68,13 +67,13 @@ public class ItemPageServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId;
     try {
-      itemId = Long.parseLong(request.getParameter("itemId"));
+      itemId = Long.parseLong(request.getParameter(CommentDataManager.ITEM_ID_PROPERTY_KEY));
     } catch (NumberFormatException e) {
       System.err.println("Can't parse itemId to a long");
       return;
     }
-    String comment = request.getParameter(COMMENT_PROPERTY_KEY);
-    if(request.getParameter(COMMENT_PROPERTY_KEY) == null) {
+    String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
+    if(comment == null) {
       System.out.println("Comment was not entered");
       return;
     }
