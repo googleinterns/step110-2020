@@ -1,6 +1,6 @@
 package com.google.ehub.servlets;
 
-import com.google.ehub.data.EntertainmentItemBuilder;
+import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import java.io.IOException;
 import java.util.Optional;
@@ -46,7 +46,7 @@ public class ItemSubmissionServlet extends HttpServlet {
       return;
     }
 
-    EntertainmentItemDatastore.getInstance().addItemToDatastore(new EntertainmentItemBuilder()
+    EntertainmentItemDatastore.getInstance().addItemToDatastore(new EntertainmentItem.Builder()
                                                                     .setTitle(title)
                                                                     .setDescription(description)
                                                                     .setImageUrl(imageUrl)
@@ -77,14 +77,14 @@ public class ItemSubmissionServlet extends HttpServlet {
   private static boolean arePostRequestParametersValid(String title, String description,
       String imageUrl, String releaseDate, String runtime, String genre, String directors,
       String writers, String actors) {
-    return (title != null && !title.isEmpty() && title.length() <= MAX_TITLE_CHARS)
-        && (description != null && !description.isEmpty() && description.length() <= MAX_CHARS)
-        && (imageUrl != null && !imageUrl.isEmpty() && imageUrl.length() <= MAX_CHARS)
-        && (releaseDate != null && !releaseDate.isEmpty() && releaseDate.length() <= MAX_CHARS)
-        && (runtime != null && !runtime.isEmpty() && runtime.length() <= MAX_CHARS)
-        && (genre != null && !genre.isEmpty() && genre.length() <= MAX_CHARS)
-        && (directors != null && !directors.isEmpty() && directors.length() <= MAX_CHARS)
-        && (writers != null && !writers.isEmpty() && writers.length() <= MAX_CHARS)
-        && (actors != null && !actors.isEmpty() && actors.length() <= MAX_CHARS);
+    return isParameterValid(title, MAX_TITLE_CHARS) && isParameterValid(description, MAX_CHARS)
+        && isParameterValid(imageUrl, MAX_CHARS) && isParameterValid(releaseDate, MAX_CHARS)
+        && isParameterValid(runtime, MAX_CHARS) && isParameterValid(genre, MAX_CHARS)
+        && isParameterValid(directors, MAX_CHARS) && isParameterValid(writers, MAX_CHARS)
+        && isParameterValid(actors, MAX_CHARS);
+  }
+
+  private static boolean isParameterValid(String parameter, int maxLength) {
+    return parameter != null && !parameter.isEmpty() && parameter.length() <= maxLength;
   }
 }
