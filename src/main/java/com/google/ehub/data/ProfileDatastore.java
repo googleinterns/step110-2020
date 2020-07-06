@@ -83,9 +83,9 @@ public final class ProfileDatastore {
   /**
    * Changes the property of the User entity with the new edited values and updates the datastore.
    *
-   * @param name the new name of the User
-   * @param username the new username of the User
-   * @param bio the new bio of the User
+   * @param name the new name of the user
+   * @param username the new username of the user
+   * @param bio the new bio of the user
    */
   public void editProfile(String name, String username, String bio) {
     LoginServlet login = new LoginServlet();

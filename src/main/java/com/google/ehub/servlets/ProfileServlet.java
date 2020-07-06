@@ -74,7 +74,7 @@ public class ProfileServlet extends HttpServlet {
    * Creates a json from the UserProfile object.
    *
    * @param profile the UserProfile object
-   * @return json file
+   * @return a json file
    */
   private String convertToJson(UserProfile profile) {
     return new Gson().toJson(profile);
