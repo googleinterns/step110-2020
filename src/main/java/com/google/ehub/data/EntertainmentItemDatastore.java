@@ -160,7 +160,17 @@ public final class EntertainmentItemDatastore {
     String writers = (String) entertainmentItemEntity.getProperty(WRITERS_PROPERTY_KEY);
     String actors = (String) entertainmentItemEntity.getProperty(ACTORS_PROPERTY_KEY);
 
-    return new EntertainmentItem(Optional.of(uniqueId), title, description, imageUrl, releaseDate,
-        runtime, genre, directors, writers, actors);
+    return new EntertainmentItem.Builder()
+        .setUniqueId(Optional.of(uniqueId))
+        .setTitle(title)
+        .setDescription(description)
+        .setImageUrl(imageUrl)
+        .setReleaseDate(releaseDate)
+        .setRuntime(runtime)
+        .setGenre(genre)
+        .setDirectors(directors)
+        .setWriters(writers)
+        .setActors(actors)
+        .build();
   }
 }

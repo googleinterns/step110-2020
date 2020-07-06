@@ -62,7 +62,7 @@ public class EntertainmentItemDatastoreTest {
 
   @Test
   public void addItemToDatastore_EntityGetsAddedWithValidKindAndProperties() {
-    entertainmentItemDatastore.addItemToDatastore(new EntertainmentItemBuilder()
+    entertainmentItemDatastore.addItemToDatastore(new EntertainmentItem.Builder()
                                                       .setTitle(TITLES_IN_ASCENDING_ORDER[0])
                                                       .setDescription(DESCRIPTION)
                                                       .setImageUrl(IMAGE_URL)

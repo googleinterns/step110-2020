@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.ehub.data.EntertainmentItemBuilder;
+import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -128,7 +128,7 @@ public class DashboardServletTest {
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
         .println(new Gson().toJson(
-            Arrays.asList(new EntertainmentItemBuilder()
+            Arrays.asList(new EntertainmentItem.Builder()
                               .setUniqueId(Optional.of(itemEntity.getKey().getId()))
                               .setTitle(TITLE)
                               .setDescription(DESCRIPTION)
