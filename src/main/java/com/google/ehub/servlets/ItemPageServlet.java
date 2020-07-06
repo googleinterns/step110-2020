@@ -43,9 +43,7 @@ public class ItemPageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
-    if (itemId == null) {
-      System.out.println("itemId is null");
-    }
+    
 
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
@@ -54,37 +52,34 @@ public class ItemPageServlet extends HttpServlet {
     List<CommentData> comments = commentObject.retrieveComments(itemId);
     System.out.println("doGet: " + comments);
 
-    ItemPageData itemData;
-
     if (optionalItem.isPresent()) {
       EntertainmentItem selectedItem = optionalItem.get();
       System.out.println("ItemPageServlet Selected item:" + selectedItem);
 
-      itemData = new ItemPageData(selectedItem, comments);
+      ItemPageData itemData = new ItemPageData(selectedItem, comments);
       response.setContentType("application/json");
       response.getWriter().println(new Gson().toJson(itemData));
     } else {
-      System.out.println("temPageServlet: itemData is absent");
+      System.out.println("ItemPageServlet: itemData is absent");
     }
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long itemId = Long.parseLong(request.getParameter("itemId"));
-    if (itemId == null) {
-      System.out.println("ItemPageServlet: itemId is null");
+    long itemId;
+    try {
+      itemId = Long.parseLong(request.getParameter("itemId"));
+    } catch (NumberFormatException e) {
+      System.err.println("Can't parse itemId to a long");
+      return;
     }
-
     String comment = request.getParameter(COMMENT_PROPERTY_KEY);
-    if (comment == null) {
-      System.out.println("temPageServlet: comment string is null");
+    if(request.getParameter(COMMENT_PROPERTY_KEY) == null) {
+      System.out.println("Comment was not entered");
+      return;
     }
     long timestampMillis = System.currentTimeMillis();
-    if (timestampMillis == null) {
-      System.out.println("temPageServlet: timestamp is null");
-    }
     CommentDataManager comments = new CommentDataManager();
     comments.addItemComment(itemId, comment, timestampMillis);
   }
-}
 }

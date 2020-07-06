@@ -40,9 +40,7 @@ function createSelectedItemCard(entertainmentItem) {
 function getItemId() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  if (urlParams.get('itemId')) {
-    return urlParams.get('itemId');
-  }
+  return urlParams.get('itemId');
 }
 
 /**
@@ -53,7 +51,7 @@ function sendFormData() {
   const comment = document.getElementById('comment');
   fetch(
     `/itempagedata?=${itemId}`,
-    { method: 'post', body: JSON.stringify(comment) }).catch((error)
+    { method: 'post', body: JSON.stringify(comment) }).catch((_error)
       => { console.log('Failed to fetch item data'); });
 }
 
