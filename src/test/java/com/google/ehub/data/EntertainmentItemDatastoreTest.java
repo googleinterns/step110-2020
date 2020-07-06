@@ -29,6 +29,7 @@ public class EntertainmentItemDatastoreTest {
   private static final String[] TITLES_IN_ASCENDING_ORDER = {
       "Avengers", "Nemo", "Shrek", "Star Wars", "Transformers"};
 
+  private static final Optional<Long> ITEM_ID = Optional.of(0L);
   private static final String DESCRIPTION = "Blah....";
   private static final String IMAGE_URL = "Image.png";
 
@@ -51,7 +52,7 @@ public class EntertainmentItemDatastoreTest {
   @Test
   public void addItemToDatastore_EntityGetsAddedWithValidKindAndProperties() {
     entertainmentItemDatastore.addItemToDatastore(
-        TITLES_IN_ASCENDING_ORDER[0], DESCRIPTION, IMAGE_URL);
+        new EntertainmentItem(ITEM_ID, TITLES_IN_ASCENDING_ORDER[0], DESCRIPTION, IMAGE_URL));
 
     Query query = new Query(ENTERTAINMENT_ITEM_KIND);
     PreparedQuery queryResults = datastoreService.prepare(query);

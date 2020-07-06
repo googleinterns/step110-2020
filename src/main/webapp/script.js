@@ -77,9 +77,16 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
     for (let cell = 0; cell < MAX_CELLS_PER_ROW &&
          currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
+      const item = entertainmentItemsList[currItemIndex];
+
+      // If uniqueId Optional is empty then the item should not be created.
+      if ($.isEmptyObject(item.uniqueId) ||
+          !item.uniqueId.hasOwnProperty('value')) {
+        continue;
+      }
+
       const colElem = $('<div class="col-md-4"</div>');
-      colElem.append(
-          createEntertainmentItemCard(entertainmentItemsList[currItemIndex]));
+      colElem.append(createEntertainmentItemCard(item));
 
       rowElem.append(colElem);
     }
@@ -90,7 +97,9 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
 
 /**
  * Creates a card element that displays poster image, title, and description
- * about a specific entertainment item.
+ * about a specific entertainment item. The item should have a valid uniqueId;
+ * otherwise, the Url associated with the card will have an invalid query string
+ * parameter.
  *
  * @param { JSON } entertainmentItem - the entertainment item whose
  *     data will be displayed in the card element
@@ -102,7 +111,7 @@ function createEntertainmentItemCard(entertainmentItem) {
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(
       $('<a class="stretched-link" href="item-page.html?itemId=' +
-        entertainmentItem.uniqueId + '"></a>'))
+        entertainmentItem.uniqueId.value + '"></a>'))
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(

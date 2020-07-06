@@ -57,7 +57,7 @@ public class DashboardServlet extends HttpServlet {
    * @return true if the parameters given in the Get request are valid, false otherwise
    */
   private static boolean areGetRequestParametersValid(String searchValue, String sortingDirection) {
-    return (searchValue != null && searchValue.length() <= MAX_SEARCH_VALUE_CHARS) && sortingDirection != null
-        && EnumUtils.isValidEnum(SortDirection.class, sortingDirection);
+    return (searchValue != null && searchValue.length() <= MAX_SEARCH_VALUE_CHARS)
+        && sortingDirection != null && EnumUtils.isValidEnum(SortDirection.class, sortingDirection);
   }
 }

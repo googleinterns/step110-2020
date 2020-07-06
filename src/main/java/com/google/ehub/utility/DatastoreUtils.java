@@ -1,14 +1,15 @@
 package com.google.ehub.utility;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 /**
- * Utility class used to query items in Datastore.
+ * Utility class with useful methods used in Datastore.
  */
-public final class QueryUtility {
+public final class DatastoreUtils {
   /**
    * Creates the filter used for prefix searches in Datastore.
    *
@@ -57,5 +58,5 @@ public final class QueryUtility {
     }
   }
 
-  private QueryUtility() {}
+  private DatastoreUtils() {}
 }
