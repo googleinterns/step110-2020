@@ -1,4 +1,4 @@
-package com.google.sps.servlets;
+package com.google.ehub.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -15,11 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
-* Handles the GET request from the user login page provided by the Users API.
-*/
+ * Handles the GET request from the user login page provided by the Users API.
+ */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -35,11 +34,11 @@ public class LoginServlet extends HttpServlet {
     } else {
       String urlToRedirectToAfterUserLogsIn = "/CreateProfilePage.html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-      //TODO(oyins): redirect to Profile Page after logging back in 
+      // TODO(oyins): redirect to Profile Page after logging back in
       response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
     }
   }
-  
+
   /**
    * Returns the email of the currently logged in user
    */

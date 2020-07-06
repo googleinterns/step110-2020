@@ -2,12 +2,9 @@
 <html>
   <body>
     <h1>Edit Your Profile Page</h1>
-    <!--TODO(oyins): Make sure form submission edits Datastore, next PR-->
-    <form action="/profile-data" method="POST">
+    <form action="/profile-data?edit=true" method="POST">
       <label for="name">Name:</label><br />
       <input type="text" name="name" /><br />
-      <label for="email">Email:</label><br />
-      <input type="email" name="email" /><br />
       <label for="username">Username:</label><br />
       <input type="text" name="username" /><br />
       <label for="bio">Bio:</label><br />

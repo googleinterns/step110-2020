@@ -6,10 +6,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.ehub.servlets.LoginServlet;
 import java.io.IOException;
 
 /** Manages the User Profiles stored in Datastore. **/
@@ -22,7 +23,7 @@ public final class ProfileDatastore {
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
- /**
+  /**
    * Adds a the User Profile variables to Datastore.
    *
    * @param name the name of the User being added to Datastore
@@ -45,9 +46,12 @@ public final class ProfileDatastore {
    * Create a UserProfile object from a given entity.
    *
    * @param userEntity the User Entity in the Datastore
-   * @return a UserProfile object with correct credentials 
+   * @return a UserProfile object with correct credentials
    */
   public UserProfile createUserProfileFromEntity(Entity userEntity) {
+    if (userEntity == null) {
+      return null;
+    }
     String name = (String) userEntity.getProperty(NAME_PROPERTY_KEY);
     String username = (String) userEntity.getProperty(USERNAME_PROPERTY_KEY);
     String bio = (String) userEntity.getProperty(BIO_PROPERTY_KEY);
@@ -57,17 +61,17 @@ public final class ProfileDatastore {
   }
 
   /**
-    * Finds a single entity using the email passed in and returns a UserProfile object from the found entity.  
-    * 
-    * @param email the email of the User being added to Datastore
-    * @return a UserProfile object using the entity found
-    */
+   * Finds a single entity using the email passed in and returns a UserProfile object from the found
+   * entity.
+   *
+   * @param email the email of the User being added to Datastore
+   * @return a UserProfile object using the entity found
+   */
   public UserProfile getUserProfile(String email) {
-    if(email == null){
+    if (email == null) {
       return null;
     }
-    Filter propertyFilter =
-        new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
+    Filter propertyFilter = new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
     Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
 
     PreparedQuery queryResults = datastore.prepare(query);
@@ -76,4 +80,26 @@ public final class ProfileDatastore {
     return createUserProfileFromEntity(userEntity);
   }
 
+  /**
+   * Changes the property of the User entity with the new edited values and updates the datastore.
+   *
+   * @param name the new name of the User
+   * @param username the new username of the User
+   * @param bio the new bio of the User
+   */
+  public void editProfile(String name, String username, String bio) {
+    LoginServlet login = new LoginServlet();
+    String email = login.getEmail();
+
+    Filter propertyFilter = new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
+    Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
+
+    PreparedQuery queryResults = datastore.prepare(query);
+    Entity userEntity = queryResults.asSingleEntity();
+
+    userEntity.setProperty(NAME_PROPERTY_KEY, name);
+    userEntity.setProperty(USERNAME_PROPERTY_KEY, username);
+    userEntity.setProperty(BIO_PROPERTY_KEY, bio);
+    datastore.put(userEntity);
+  }
 }
