@@ -1,7 +1,7 @@
 /**
  * Retrieves ItemPageData and forms page using other functions.
  */
-function loadItemPage() {
+async function loadItemPage() {
   const itemId = getItemId();
   console.log(itemId);
   if (itemId != null) {
