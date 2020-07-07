@@ -45,10 +45,8 @@ function getOmdbItem() {
         } else {
           omdbItemEntry.append(createOmdbItemCard(omdbItem));
 
-          submitButton.removeClass('d-none');
-          submitButton.click(() => {
-            submitItem(omdbItem);
-          });
+          enableItemSubmissionIfNotDuplicate(
+              submitButton, omdbItemEntry, omdbItem);
         }
       })
       .catch((error) => {
@@ -150,6 +148,33 @@ function createOmdbItemCard(omdbItem) {
   card.append(cardBody);
 
   return card;
+}
+
+/**
+ * Makes the item submission button visible if the item is not a duplicate.
+ *
+ * @param { jQuery } submitButton - button used to submit omdb items
+ * @param { jQuery } omdbItemEntry - div that displays info about the item found
+ * @param { JSON } omdbItem - the item found by omdb API
+ */
+function enableItemSubmissionIfNotDuplicate(
+    submitButton, omdbItemEntry, omdbItem) {
+  fetch('/item-submission?imdbID=' + omdbItem.imdbId)
+      .then((response) => response.json())
+      .then((isDuplicateItem) => {
+        if (isDuplicateItem) {
+          omdbItemEntry.append(
+              $('<p>Item already exists on Entertainment Hub!</p>'));
+        } else {
+          submitButton.removeClass('d-none');
+          submitButton.click(() => {
+            submitItem(omdbItem);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log('failed to check if omdb Item is duplicate: ' + error);
+      });
 }
 
 /**
