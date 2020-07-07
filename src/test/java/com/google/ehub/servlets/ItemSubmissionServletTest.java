@@ -36,6 +36,7 @@ public class ItemSubmissionServletTest {
   private static final String DIRECTORS_PARAMETER_KEY = "Director";
   private static final String WRITERS_PARAMETER_KEY = "Writer";
   private static final String ACTORS_PARAMETER_KEY = "Actors";
+  private static final String OMDB_ID_PARAMETER_KEY = "imdbID";
 
   private static final String TITLE = "Star Wars";
   private static final String DESCRIPTION = "Blah....";
@@ -46,6 +47,7 @@ public class ItemSubmissionServletTest {
   private static final String DIRECTORS = "George Lucas";
   private static final String WRITERS = "George Lucas";
   private static final String ACTORS = "Mark Hamill, Harrison Ford";
+  private static final String OMDB_ID = "tt23113212";
 
   private static final int MAX_TITLE_CHARS = 150;
   private static final int MAX_CHARS = 500;
@@ -75,6 +77,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(null);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(null);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(null);
+    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(null);
 
     servlet.doPost(request, response);
 
@@ -95,6 +98,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
+    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -115,6 +119,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn("");
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn("");
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn("");
+    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn("");
 
     servlet.doPost(request, response);
 
@@ -136,6 +141,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
+    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -156,6 +162,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
+    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -176,6 +183,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
+    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
