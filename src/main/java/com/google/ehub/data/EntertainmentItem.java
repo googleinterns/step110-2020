@@ -36,7 +36,7 @@ public final class EntertainmentItem {
     this.writers = writers;
     this.actors = actors;
   }
-  
+
   public Optional<Long> getUniqueId() {
     return uniqueId;
   }
@@ -78,7 +78,7 @@ public final class EntertainmentItem {
   }
 
   public static final class Builder {
-    private Optional<Long> uniqueId = Optional.empty();
+    private Long uniqueId;
     private String title = "";
     private String description = "";
     private String imageUrl = "";
@@ -90,11 +90,11 @@ public final class EntertainmentItem {
     private String actors = "";
 
     public EntertainmentItem build() {
-      return new EntertainmentItem(uniqueId, title, description, imageUrl, releaseDate, runtime,
-          genre, directors, writers, actors);
+      return new EntertainmentItem(Optional.ofNullable(uniqueId), title, description, imageUrl,
+          releaseDate, runtime, genre, directors, writers, actors);
     }
 
-    public Builder setUniqueId(Optional<Long> uniqueId) {
+    public Builder setUniqueId(Long uniqueId) {
       this.uniqueId = uniqueId;
       return this;
     }

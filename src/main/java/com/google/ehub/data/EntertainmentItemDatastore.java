@@ -161,7 +161,7 @@ public final class EntertainmentItemDatastore {
     String actors = (String) entertainmentItemEntity.getProperty(ACTORS_PROPERTY_KEY);
 
     return new EntertainmentItem.Builder()
-        .setUniqueId(Optional.of(uniqueId))
+        .setUniqueId(uniqueId)
         .setTitle(title)
         .setDescription(description)
         .setImageUrl(imageUrl)

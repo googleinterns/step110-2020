@@ -127,19 +127,18 @@ public class DashboardServletTest {
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
-        .println(new Gson().toJson(
-            Arrays.asList(new EntertainmentItem.Builder()
-                              .setUniqueId(Optional.of(itemEntity.getKey().getId()))
-                              .setTitle(TITLE)
-                              .setDescription(DESCRIPTION)
-                              .setImageUrl(IMAGE_URL)
-                              .setReleaseDate(RELEASE_DATE)
-                              .setRuntime(RUNTIME)
-                              .setGenre(GENRE)
-                              .setDirectors(DIRECTORS)
-                              .setWriters(WRITERS)
-                              .setActors(ACTORS)
-                              .build())));
+        .println(new Gson().toJson(Arrays.asList(new EntertainmentItem.Builder()
+                                                     .setUniqueId(itemEntity.getKey().getId())
+                                                     .setTitle(TITLE)
+                                                     .setDescription(DESCRIPTION)
+                                                     .setImageUrl(IMAGE_URL)
+                                                     .setReleaseDate(RELEASE_DATE)
+                                                     .setRuntime(RUNTIME)
+                                                     .setGenre(GENRE)
+                                                     .setDirectors(DIRECTORS)
+                                                     .setWriters(WRITERS)
+                                                     .setActors(ACTORS)
+                                                     .build())));
   }
 
   @Test
