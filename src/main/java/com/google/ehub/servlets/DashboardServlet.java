@@ -46,7 +46,6 @@ public class DashboardServlet extends HttpServlet {
         fetchOptions.startCursor(Cursor.fromWebSafeString(cursorValue));
       } catch (IllegalArgumentException e) {
         System.err.println("DashboardServlet: Cursor value is invalid!");
-        return;
       }
     }
 
@@ -60,7 +59,7 @@ public class DashboardServlet extends HttpServlet {
       itemList = EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(
           fetchOptions, searchValue, sortDir);
     }
-
+    
     response.setContentType("application/json");
     response.getWriter().println(new Gson().toJson(itemList));
   }

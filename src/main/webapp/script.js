@@ -3,15 +3,27 @@
  * to populate the Dashboard.
  */
 function getDashboardItems() {
+  let cursorParam = '';
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('cursor')) {
+    cursorParam = 'cursor=' + urlParams.get('cursor');
+  }
+
   fetch(
-      '/dashboard?searchValue=' + $('#searchValue').val() +
+      '/dashboard?&searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
         const entertainmentItemsContainer = $('#entertainmentItemsContainer');
         entertainmentItemsContainer.empty();
 
-        populateItemGrid(entertainmentItemsContainer, entertainmentItemList.itemList);
+        populateItemGrid(
+            entertainmentItemsContainer, entertainmentItemList.itemList);
+
+        $('#nextLink').click(function() {
+
+        });
       })
       .catch((error) => {
         console.log(
