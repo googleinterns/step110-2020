@@ -85,7 +85,7 @@ public final class ProfileDatastore {
    *
    * @param name the new name of the user
    * @param username the new username of the user
-   * @param bio the new bio of the user
+   * @param bio the new biography of the user
    */
   public void editProfile(String name, String username, String bio) {
     LoginServlet login = new LoginServlet();
