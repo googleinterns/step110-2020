@@ -18,7 +18,7 @@
     </script>
     <title>Entertainment Hub - Dashboard</title>
   </head>
-  <body onload="getDashboardItems()">
+  <body onload="loadDashboard()">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
       <div class="container">
         <a class="navbar-brand" href="#">Entertainment Hub</a>
@@ -46,7 +46,6 @@
             class="form-control mr-2 w-auto"
             name="sortingDirection"
             id="sortingDirection"
-            onchange="getDashboardItems()"
             required
           >
             <option value="ASCENDING" selected
@@ -70,10 +69,14 @@
     <div class="container">
       <div id="itemSubmissionDiv"></div>
       <div id="entertainmentItemsContainer"></div>
-      <nav aria-label="Page navigation example">
+      <nav
+        class="d-none"
+        id="paginationNav"
+        aria-label="Entertainment Item Navigation"
+      >
         <ul class="pagination pagination-lg justify-content-center">
-          <li class="page-item" id="nextLink">
-            <a class="page-link" href="#">Next</a>
+          <li class="page-item">
+            <a class="page-link" id="nextLink">Next</a>
           </li>
         </ul>
       </nav>
