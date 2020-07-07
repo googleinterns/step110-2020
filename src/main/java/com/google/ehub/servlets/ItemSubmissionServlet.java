@@ -26,6 +26,12 @@ public class ItemSubmissionServlet extends HttpServlet {
   private static final String ACTORS_PARAMETER_KEY = "Actors";
 
   private static final int MAX_TITLE_CHARS = 150;
+
+  /*
+    Maximum char limit for description, imageUrl, releaseDate, runtime, genre, directors, writers,
+    and actors. The limit is specified as '500' because that is the maximum limit used in Datastore
+    to save regular String objects.
+  */
   private static final int MAX_CHARS = 500;
 
   @Override
