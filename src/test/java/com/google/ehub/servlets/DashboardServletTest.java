@@ -33,15 +33,30 @@ public class DashboardServletTest {
   private static final String SORTING_DIRECTION_PARAMETER_KEY = "sortingDirection";
   private static final String ASCENDING_PARAMETER_VALUE = "ASCENDING";
   private static final String JSON_CONTENT_TYPE = "application/json";
+
+  private static final String INVALID_SORTING = "Invalid sort";
+
   private static final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
   private static final String DISPLAY_TITLE_PROPERTY_KEY = "displayTitle";
   private static final String NORMALIZED_TITLE_PROPERTY_KEY = "normalizedTitle";
   private static final String DESCRIPTION_PROPERTY_KEY = "description";
   private static final String IMAGE_URL_PROPERTY_KEY = "imageUrl";
-  private static final String INVALID_SORTING = "Invalid sort";
+  private static final String RELEASE_DATE_PROPERTY_KEY = "releaseDate";
+  private static final String RUNTIME_PROPERTY_KEY = "runtime";
+  private static final String GENRE_PROPERTY_KEY = "genre";
+  private static final String DIRECTORS_PROPERTY_KEY = "directors";
+  private static final String WRITERS_PROPERTY_KEY = "writers";
+  private static final String ACTORS_PROPERTY_KEY = "actors";
+
   private static final String TITLE = "Star Wars";
   private static final String DESCRIPTION = "Blah....";
   private static final String IMAGE_URL = "Image.png";
+  private static final String RELEASE_DATE = "09/26/1972";
+  private static final String RUNTIME = "2 hours";
+  private static final String GENRE = "Sci-Fi";
+  private static final String DIRECTORS = "George Lucas";
+  private static final String WRITERS = "George Lucas";
+  private static final String ACTORS = "Mark Hamill, Harrison Ford";
 
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
 
@@ -93,6 +108,12 @@ public class DashboardServletTest {
     itemEntity.setProperty(NORMALIZED_TITLE_PROPERTY_KEY, TITLE.toLowerCase());
     itemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, DESCRIPTION);
     itemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, IMAGE_URL);
+    itemEntity.setProperty(RELEASE_DATE_PROPERTY_KEY, RELEASE_DATE);
+    itemEntity.setProperty(RUNTIME_PROPERTY_KEY, RUNTIME);
+    itemEntity.setProperty(GENRE_PROPERTY_KEY, GENRE);
+    itemEntity.setProperty(DIRECTORS_PROPERTY_KEY, DIRECTORS);
+    itemEntity.setProperty(WRITERS_PROPERTY_KEY, WRITERS);
+    itemEntity.setProperty(ACTORS_PROPERTY_KEY, ACTORS);
 
     DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
     datastoreService.put(itemEntity);
@@ -106,8 +127,18 @@ public class DashboardServletTest {
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
-        .println(new Gson().toJson(Arrays.asList(new EntertainmentItem(
-            Optional.of(itemEntity.getKey().getId()), TITLE, DESCRIPTION, IMAGE_URL))));
+        .println(new Gson().toJson(Arrays.asList(new EntertainmentItem.Builder()
+                                                     .setUniqueId(itemEntity.getKey().getId())
+                                                     .setTitle(TITLE)
+                                                     .setDescription(DESCRIPTION)
+                                                     .setImageUrl(IMAGE_URL)
+                                                     .setReleaseDate(RELEASE_DATE)
+                                                     .setRuntime(RUNTIME)
+                                                     .setGenre(GENRE)
+                                                     .setDirectors(DIRECTORS)
+                                                     .setWriters(WRITERS)
+                                                     .setActors(ACTORS)
+                                                     .build())));
   }
 
   @Test

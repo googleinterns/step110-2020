@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
  * Utility class used to find Blobstore upload Url from form element.
  */
 public final class BlobstoreUrlUtility {
+  private BlobstoreUrlUtility() {}
+
   /**
    * Finds the Url that points to the uploaded file in Blobstore.
    * This method is meant to be used for forms that accept input for only a single file.
@@ -65,6 +67,4 @@ public final class BlobstoreUrlUtility {
       return Optional.empty();
     }
   }
-
-  private BlobstoreUrlUtility() {}
 }

@@ -23,10 +23,16 @@ public final class EntertainmentItemDatastore {
   private static final String NORMALIZED_TITLE_PROPERTY_KEY = "normalizedTitle";
   private static final String DESCRIPTION_PROPERTY_KEY = "description";
   private static final String IMAGE_URL_PROPERTY_KEY = "imageUrl";
-
-  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+  private static final String RELEASE_DATE_PROPERTY_KEY = "releaseDate";
+  private static final String RUNTIME_PROPERTY_KEY = "runtime";
+  private static final String GENRE_PROPERTY_KEY = "genre";
+  private static final String DIRECTORS_PROPERTY_KEY = "directors";
+  private static final String WRITERS_PROPERTY_KEY = "writers";
+  private static final String ACTORS_PROPERTY_KEY = "actors";
 
   private static EntertainmentItemDatastore instance;
+
+  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
   private EntertainmentItemDatastore() {}
 
@@ -58,6 +64,12 @@ public final class EntertainmentItemDatastore {
         NORMALIZED_TITLE_PROPERTY_KEY, item.getTitle().toLowerCase());
     entertainmentItemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, item.getDescription());
     entertainmentItemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, item.getImageUrl());
+    entertainmentItemEntity.setProperty(RELEASE_DATE_PROPERTY_KEY, item.getReleaseDate());
+    entertainmentItemEntity.setProperty(RUNTIME_PROPERTY_KEY, item.getRuntime());
+    entertainmentItemEntity.setProperty(GENRE_PROPERTY_KEY, item.getGenre());
+    entertainmentItemEntity.setProperty(DIRECTORS_PROPERTY_KEY, item.getDirectors());
+    entertainmentItemEntity.setProperty(WRITERS_PROPERTY_KEY, item.getWriters());
+    entertainmentItemEntity.setProperty(ACTORS_PROPERTY_KEY, item.getActors());
 
     datastoreService.put(entertainmentItemEntity);
   }
@@ -141,7 +153,24 @@ public final class EntertainmentItemDatastore {
     String title = (String) entertainmentItemEntity.getProperty(DISPLAY_TITLE_PROPERTY_KEY);
     String description = (String) entertainmentItemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
     String imageUrl = (String) entertainmentItemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
+    String releaseDate = (String) entertainmentItemEntity.getProperty(RELEASE_DATE_PROPERTY_KEY);
+    String runtime = (String) entertainmentItemEntity.getProperty(RUNTIME_PROPERTY_KEY);
+    String genre = (String) entertainmentItemEntity.getProperty(GENRE_PROPERTY_KEY);
+    String directors = (String) entertainmentItemEntity.getProperty(DIRECTORS_PROPERTY_KEY);
+    String writers = (String) entertainmentItemEntity.getProperty(WRITERS_PROPERTY_KEY);
+    String actors = (String) entertainmentItemEntity.getProperty(ACTORS_PROPERTY_KEY);
 
-    return new EntertainmentItem(Optional.of(uniqueId), title, description, imageUrl);
+    return new EntertainmentItem.Builder()
+        .setUniqueId(uniqueId)
+        .setTitle(title)
+        .setDescription(description)
+        .setImageUrl(imageUrl)
+        .setReleaseDate(releaseDate)
+        .setRuntime(runtime)
+        .setGenre(genre)
+        .setDirectors(directors)
+        .setWriters(writers)
+        .setActors(actors)
+        .build();
   }
 }

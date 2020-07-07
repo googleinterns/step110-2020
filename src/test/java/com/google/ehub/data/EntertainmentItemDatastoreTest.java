@@ -25,13 +25,24 @@ public class EntertainmentItemDatastoreTest {
   private static final String NORMALIZED_TITLE_PROPERTY_KEY = "normalizedTitle";
   private static final String DESCRIPTION_PROPERTY_KEY = "description";
   private static final String IMAGE_URL_PROPERTY_KEY = "imageUrl";
+  private static final String RELEASE_DATE_PROPERTY_KEY = "releaseDate";
+  private static final String RUNTIME_PROPERTY_KEY = "runtime";
+  private static final String GENRE_PROPERTY_KEY = "genre";
+  private static final String DIRECTORS_PROPERTY_KEY = "directors";
+  private static final String WRITERS_PROPERTY_KEY = "writers";
+  private static final String ACTORS_PROPERTY_KEY = "actors";
 
   private static final String[] TITLES_IN_ASCENDING_ORDER = {
       "Avengers", "Nemo", "Shrek", "Star Wars", "Transformers"};
 
-  private static final Optional<Long> ITEM_ID = Optional.of(0L);
   private static final String DESCRIPTION = "Blah....";
   private static final String IMAGE_URL = "Image.png";
+  private static final String RELEASE_DATE = "09/26/1972";
+  private static final String RUNTIME = "2 hours";
+  private static final String GENRE = "Sci-Fi";
+  private static final String DIRECTORS = "George Lucas";
+  private static final String WRITERS = "George Lucas";
+  private static final String ACTORS = "Mark Hamill, Harrison Ford";
 
   private final EntertainmentItemDatastore entertainmentItemDatastore =
       EntertainmentItemDatastore.getInstance();
@@ -51,8 +62,17 @@ public class EntertainmentItemDatastoreTest {
 
   @Test
   public void addItemToDatastore_EntityGetsAddedWithValidKindAndProperties() {
-    entertainmentItemDatastore.addItemToDatastore(
-        new EntertainmentItem(ITEM_ID, TITLES_IN_ASCENDING_ORDER[0], DESCRIPTION, IMAGE_URL));
+    entertainmentItemDatastore.addItemToDatastore(new EntertainmentItem.Builder()
+                                                      .setTitle(TITLES_IN_ASCENDING_ORDER[0])
+                                                      .setDescription(DESCRIPTION)
+                                                      .setImageUrl(IMAGE_URL)
+                                                      .setReleaseDate(RELEASE_DATE)
+                                                      .setRuntime(RUNTIME)
+                                                      .setGenre(GENRE)
+                                                      .setDirectors(DIRECTORS)
+                                                      .setWriters(WRITERS)
+                                                      .setActors(ACTORS)
+                                                      .build());
 
     Query query = new Query(ENTERTAINMENT_ITEM_KIND);
     PreparedQuery queryResults = datastoreService.prepare(query);
@@ -65,6 +85,12 @@ public class EntertainmentItemDatastoreTest {
         entityList.get(0).getProperty(NORMALIZED_TITLE_PROPERTY_KEY));
     Assert.assertEquals(DESCRIPTION, entityList.get(0).getProperty(DESCRIPTION_PROPERTY_KEY));
     Assert.assertEquals(IMAGE_URL, entityList.get(0).getProperty(IMAGE_URL_PROPERTY_KEY));
+    Assert.assertEquals(RELEASE_DATE, entityList.get(0).getProperty(RELEASE_DATE_PROPERTY_KEY));
+    Assert.assertEquals(RUNTIME, entityList.get(0).getProperty(RUNTIME_PROPERTY_KEY));
+    Assert.assertEquals(GENRE, entityList.get(0).getProperty(GENRE_PROPERTY_KEY));
+    Assert.assertEquals(DIRECTORS, entityList.get(0).getProperty(DIRECTORS_PROPERTY_KEY));
+    Assert.assertEquals(WRITERS, entityList.get(0).getProperty(WRITERS_PROPERTY_KEY));
+    Assert.assertEquals(ACTORS, entityList.get(0).getProperty(ACTORS_PROPERTY_KEY));
   }
 
   @Test
@@ -78,11 +104,6 @@ public class EntertainmentItemDatastoreTest {
   @Test
   public void queryForExistentItem_OptionalHasItem() {
     Entity itemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
-    itemEntity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, TITLES_IN_ASCENDING_ORDER[0]);
-    itemEntity.setProperty(
-        NORMALIZED_TITLE_PROPERTY_KEY, TITLES_IN_ASCENDING_ORDER[0].toLowerCase());
-    itemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, DESCRIPTION);
-    itemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, IMAGE_URL);
 
     datastoreService.put(itemEntity);
 

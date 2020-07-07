@@ -10,6 +10,8 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
  * Utility class with useful methods used in Datastore.
  */
 public final class DatastoreUtils {
+  private DatastoreUtils() {}
+
   /**
    * Creates the filter used for prefix searches in Datastore.
    *
@@ -57,6 +59,4 @@ public final class DatastoreUtils {
           + str.substring(lastNonMaxCharIndex + 1);
     }
   }
-
-  private DatastoreUtils() {}
 }
