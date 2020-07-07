@@ -30,9 +30,9 @@ public final class EntertainmentItemDatastore {
   private static final String WRITERS_PROPERTY_KEY = "writers";
   private static final String ACTORS_PROPERTY_KEY = "actors";
 
-  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-
   private static EntertainmentItemDatastore instance;
+
+  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
   private EntertainmentItemDatastore() {}
 
