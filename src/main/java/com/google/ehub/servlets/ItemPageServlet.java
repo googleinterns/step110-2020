@@ -43,7 +43,6 @@ public class ItemPageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
     
-
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
@@ -66,13 +65,16 @@ public class ItemPageServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId;
+    
+    System.out.println("TEST:" + request.getParameter("itemId"));
     try {
-      itemId = Long.parseLong(request.getParameter(CommentDataManager.ITEM_ID_PROPERTY_KEY));
+      itemId = Long.parseLong(request.getParameter("itemId"));
     } catch (NumberFormatException e) {
       System.err.println("Can't parse itemId to a long");
       return;
     }
     String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
+    System.out.println("Comment:"+ comment);
     if(comment == null) {
       System.out.println("Comment was not entered");
       return;
@@ -81,6 +83,6 @@ public class ItemPageServlet extends HttpServlet {
     CommentDataManager comments = new CommentDataManager();
     comments.addItemComment(itemId, comment, timestampMillis);
 
-    response.sendRedirect("/item-page.html?=" + itemId);
+    response.sendRedirect("/item-page.html?itemId=" + itemId);
   }
 }

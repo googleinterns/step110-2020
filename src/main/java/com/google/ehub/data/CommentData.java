@@ -13,4 +13,9 @@ public class CommentData {
     this.comment = comment;
     this.timestampMillis = timestampMillis;
   }
+
+  @Override
+  public String toString(){
+    return(itemId + "," + comment + "," + timestampMillis);
+  }
 }

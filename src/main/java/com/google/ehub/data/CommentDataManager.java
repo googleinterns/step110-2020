@@ -53,6 +53,7 @@ public class CommentDataManager {
     PreparedQuery comments = datastore.prepare(itemCommentQuery);
     for (Entity entity : comments.asIterable()) {
       String comment = (String) entity.getProperty(COMMENT_PROPERTY_KEY);
+      System.out.println("CDM comment:" + comment);
       long timestampMillis = (Long) entity.getProperty(TIMESTAMP_PROPERTY_KEY);
       results.add(new CommentData(itemId, comment, timestampMillis));
     }
