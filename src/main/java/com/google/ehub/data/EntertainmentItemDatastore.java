@@ -31,6 +31,7 @@ public final class EntertainmentItemDatastore {
   private static final String DIRECTORS_PROPERTY_KEY = "directors";
   private static final String WRITERS_PROPERTY_KEY = "writers";
   private static final String ACTORS_PROPERTY_KEY = "actors";
+  private static final String OMDB_ID_PROPERTY_KEY = "omdbId";
 
   private static EntertainmentItemDatastore instance;
 
@@ -71,6 +72,7 @@ public final class EntertainmentItemDatastore {
     itemEntity.setProperty(DIRECTORS_PROPERTY_KEY, item.getDirectors());
     itemEntity.setProperty(WRITERS_PROPERTY_KEY, item.getWriters());
     itemEntity.setProperty(ACTORS_PROPERTY_KEY, item.getActors());
+    itemEntity.setProperty(OMDB_ID_PROPERTY_KEY, item.getOmdbId());
 
     datastoreService.put(itemEntity);
   }
@@ -83,19 +85,19 @@ public final class EntertainmentItemDatastore {
    * optional object will be empty if the EntertainmentItem Entity was not found
    */
   public Optional<EntertainmentItem> queryItem(long uniqueId) {
-    Query query =
-        new Query(ENTERTAINMENT_ITEM_KIND)
-            .setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL,
-                KeyFactory.createKey(ENTERTAINMENT_ITEM_KIND, uniqueId)));
-    PreparedQuery queryResults = datastoreService.prepare(query);
+    return queryItemByProperty(
+        Entity.KEY_RESERVED_PROPERTY, KeyFactory.createKey(ENTERTAINMENT_ITEM_KIND, uniqueId));
+  }
 
-    Entity itemEntity = queryResults.asSingleEntity();
-
-    if (itemEntity == null) {
-      return Optional.empty();
-    }
-
-    return Optional.of(createItemFromEntity(itemEntity));
+  /**
+   * Finds a single entertainment item based on ombd Id.
+   *
+   * @param omdbId the omdbId that the item is supposed to have
+   * @return the EntertainmentItem found in Datastore wrapped in an {@link Optional}, the
+   * optional object will be empty if the EntertainmentItem Entity was not found
+   */
+  public Optional<EntertainmentItem> queryItemByOmdbId(String omdbId) {
+    return queryItemByProperty(OMDB_ID_PROPERTY_KEY, omdbId);
   }
 
   /**
@@ -142,6 +144,22 @@ public final class EntertainmentItemDatastore {
                 NORMALIZED_TITLE_PROPERTY_KEY, titlePrefix.toLowerCase())));
   }
 
+  private Optional<EntertainmentItem> queryItemByProperty(
+      String propertyName, Object propertyValue) {
+    Query query =
+        new Query(ENTERTAINMENT_ITEM_KIND)
+            .setFilter(new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue));
+    PreparedQuery queryResults = datastoreService.prepare(query);
+
+    Entity itemEntity = queryResults.asSingleEntity();
+
+    if (itemEntity == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(createItemFromEntity(itemEntity));
+  }
+
   private EntertainmentItemList createItemListFromQuery(FetchOptions fetchOptions, Query query) {
     PreparedQuery queryResults = datastoreService.prepare(query);
 
@@ -166,6 +184,7 @@ public final class EntertainmentItemDatastore {
     String directors = (String) itemEntity.getProperty(DIRECTORS_PROPERTY_KEY);
     String writers = (String) itemEntity.getProperty(WRITERS_PROPERTY_KEY);
     String actors = (String) itemEntity.getProperty(ACTORS_PROPERTY_KEY);
+    String omdbId = (String) itemEntity.getProperty(OMDB_ID_PROPERTY_KEY);
 
     return new EntertainmentItem.Builder()
         .setUniqueId(uniqueId)
@@ -178,6 +197,7 @@ public final class EntertainmentItemDatastore {
         .setDirectors(directors)
         .setWriters(writers)
         .setActors(actors)
+        .setOmdbId(omdbId)
         .build();
   }
 }
