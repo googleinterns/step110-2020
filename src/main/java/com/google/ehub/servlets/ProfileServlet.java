@@ -63,9 +63,6 @@ public class ProfileServlet extends HttpServlet {
     LoginServlet login = new LoginServlet();
     String useremail = login.getEmail();
     UserProfile newUser = profileData.getUserProfile(useremail);
-
-    System.out.println("userEmail:" + useremail);
-    System.out.println("new User: " + newUser);
     response.setContentType("application/json");
     response.getWriter().println(convertToJson(newUser));
   }
