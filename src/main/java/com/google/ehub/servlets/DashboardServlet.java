@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.EnumUtils;
 
 /*
  * Handles GET requests to retrieve EntertainmentItem entities
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 public class DashboardServlet extends HttpServlet {
   private static final String SEARCH_VALUE_PARAMETER_KEY = "searchValue";
   private static final String SORTING_DIRECTION_PARAMETER_KEY = "sortingDirection";
+
+  private static final int MAX_SEARCH_VALUE_CHARS = 150;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -54,16 +57,7 @@ public class DashboardServlet extends HttpServlet {
    * @return true if the parameters given in the Get request are valid, false otherwise
    */
   private static boolean areGetRequestParametersValid(String searchValue, String sortingDirection) {
-    if (searchValue == null || sortingDirection == null) {
-      return false;
-    }
-
-    for (SortDirection sortDir : SortDirection.values()) {
-      if (sortDir.name().equals(sortingDirection)) {
-        return true;
-      }
-    }
-
-    return false;
+    return (searchValue != null && searchValue.length() <= MAX_SEARCH_VALUE_CHARS)
+        && sortingDirection != null && EnumUtils.isValidEnum(SortDirection.class, sortingDirection);
   }
 }

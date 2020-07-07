@@ -6,7 +6,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+<<<<<<< HEAD
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+=======
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+>>>>>>> 043a0c58a146abee7bcd6030d5a8cc573fcf1456
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -48,6 +52,9 @@ public final class ProfileDatastore {
    * @return a UserProfile object with correct credentials 
    */
   public UserProfile createUserProfileFromEntity(Entity userEntity) {
+    if (userEntity== null){
+      return null;
+    }
     String name = (String) userEntity.getProperty(NAME_PROPERTY_KEY);
     String username = (String) userEntity.getProperty(USERNAME_PROPERTY_KEY);
     String bio = (String) userEntity.getProperty(BIO_PROPERTY_KEY);
@@ -75,5 +82,4 @@ public final class ProfileDatastore {
 
     return createUserProfileFromEntity(userEntity);
   }
-
 }
