@@ -198,7 +198,12 @@ function loadDashboard() {
   });
 
   $(document).ready(function() {
-    $(`#sortingDirection`).val(localStorage.getItem('sortDir'));
+    const sortDir = localStorage.getItem('sortDir');
+
+    if (sortDir !== null) {
+      $(`#sortingDirection`).val(sortDir);
+    }
+
     getDashboardItems();
   });
 }
