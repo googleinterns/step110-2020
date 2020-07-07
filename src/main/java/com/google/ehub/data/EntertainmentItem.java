@@ -6,21 +6,6 @@ import java.util.Optional;
  * Holds information for Entertainment Items used in Datastore.
  */
 public final class EntertainmentItem {
-  private EntertainmentItem(Optional<Long> uniqueId, String title, String description,
-      String imageUrl, String releaseDate, String runtime, String genre, String directors,
-      String writers, String actors) {
-    this.uniqueId = uniqueId;
-    this.title = title;
-    this.description = description;
-    this.imageUrl = imageUrl;
-    this.releaseDate = releaseDate;
-    this.runtime = runtime;
-    this.genre = genre;
-    this.directors = directors;
-    this.writers = writers;
-    this.actors = actors;
-  }
-
   /*
    * uniqueId is optional because it is sometimes necessary to create this object with an unassigned
    * Id. This Id gets added after Datastore generates a unique Key.
@@ -37,6 +22,21 @@ public final class EntertainmentItem {
   private final String writers;
   private final String actors;
 
+  private EntertainmentItem(Optional<Long> uniqueId, String title, String description,
+      String imageUrl, String releaseDate, String runtime, String genre, String directors,
+      String writers, String actors) {
+    this.uniqueId = uniqueId;
+    this.title = title;
+    this.description = description;
+    this.imageUrl = imageUrl;
+    this.releaseDate = releaseDate;
+    this.runtime = runtime;
+    this.genre = genre;
+    this.directors = directors;
+    this.writers = writers;
+    this.actors = actors;
+  }
+  
   public Optional<Long> getUniqueId() {
     return uniqueId;
   }
