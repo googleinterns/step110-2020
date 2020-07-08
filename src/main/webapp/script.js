@@ -12,10 +12,10 @@ function getDashboardItems() {
         const entertainmentItemsContainer = $('#entertainmentItemsContainer');
         entertainmentItemsContainer.empty();
 
-        const itemList = entertainmentItemList.itemList;
+        const items = entertainmentItemList.items;
 
-        populateItemGrid(entertainmentItemsContainer, itemList);
-        updatePagination(itemList.length, entertainmentItemList.pageCursor);
+        populateItemGrid(entertainmentItemsContainer, items);
+        updatePagination(items.length, entertainmentItemList.pageCursor);
       })
       .catch((error) => {
         console.log(
