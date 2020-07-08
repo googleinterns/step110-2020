@@ -36,17 +36,17 @@ function getOmdbItem() {
         omdbItemEntry.empty();
 
         const submitButton = $('#submitButton');
-        submitButton.off('click');
 
         if (omdbItem.Response === 'False') {
           omdbItemEntry.append($('<p>Item not found!</p>'));
 
           submitButton.addClass('d-none');
         } else {
-          omdbItemEntry.append(createOmdbItemCard(omdbItem));
+          const itemCard = createOmdbItemCard(omdbItem);
 
-          enableItemSubmissionIfNotDuplicate(
-              submitButton, omdbItemEntry, omdbItem);
+          omdbItemEntry.append(itemCard);
+
+          enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
         }
       })
       .catch((error) => {
@@ -154,22 +154,21 @@ function createOmdbItemCard(omdbItem) {
  * Makes the item submission button visible if the item is not a duplicate.
  *
  * @param { jQuery } submitButton - button used to submit omdb items
- * @param { jQuery } omdbItemEntry - div that displays info about the item found
+ * @param { jQuery } itemCard - card div that displays info about the item found
  * @param { JSON } omdbItem - the item found by omdb API
  */
-function enableItemSubmissionIfNotDuplicate(
-    submitButton, omdbItemEntry, omdbItem) {
-  fetch('/item-submission?imdbID=' + omdbItem.imdbId)
+function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
+  fetch('/item-submission?imdbID=' + omdbItem.imdbID)
       .then((response) => response.json())
-      .then((isDuplicateItem) => {
-        if (isDuplicateItem) {
-          omdbItemEntry.append(
-              $('<p>Item already exists on Entertainment Hub!</p>'));
-        } else {
+      .then((isItemUnique) => {
+        if (isItemUnique) {
           submitButton.removeClass('d-none');
-          submitButton.click(() => {
+          submitButton.off().one('click', () => {
             submitItem(omdbItem);
           });
+        } else {
+          itemCard.append($(
+              '<p class="card-text">Item already exists on Entertainment Hub!</p>'));
         }
       })
       .catch((error) => {
