@@ -54,6 +54,10 @@ public class ItemSubmissionServlet extends HttpServlet {
       System.err.println("ItemSubmissionServlet: Post Request parameters not specified correctly!");
       return;
     }
+    if (!isItemUnique(omdbId)) {
+      System.err.println("ItemSubmissionServlet: Item submitted already exists!");
+      return;
+    }
 
     EntertainmentItemDatastore.getInstance().addItemToDatastore(new EntertainmentItem.Builder()
                                                                     .setTitle(title)
@@ -69,6 +73,24 @@ public class ItemSubmissionServlet extends HttpServlet {
                                                                     .build());
 
     response.sendRedirect("/index.html");
+  }
+
+  /**
+   * The response of the GET request contains a boolean value that tells whether the item is unique
+   * or not.
+   */
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String omdbId = request.getParameter(OMDB_ID_PARAMETER_KEY);
+
+    if (!isParameterValid(omdbId, MAX_CHARS)) {
+      System.err.println(
+          "ItemSubmissionServlet: omdbId parameter given in Get Request is invalid!");
+      return;
+    }
+
+    response.setContentType("application/json");
+    response.getWriter().println(new Gson().toJson(isItemUnique(omdbId)));
   }
 
   /**
@@ -99,22 +121,7 @@ public class ItemSubmissionServlet extends HttpServlet {
     return parameter != null && !parameter.isEmpty() && parameter.length() <= maxLength;
   }
 
-  /**
-   * The response of the GET request contains a boolean value that tells whether the item with the
-   * given omdbId already exists or not.
-   */
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String omdbId = request.getParameter(OMDB_ID_PARAMETER_KEY);
-
-    if (!isParameterValid(omdbId, MAX_CHARS)) {
-      System.err.println(
-          "ItemSubmissionServlet: omdbId parameter given in Get Request is invalid!");
-      return;
-    }
-
-    response.setContentType("application/json");
-    response.getWriter().println(new Gson().toJson(
-        EntertainmentItemDatastore.getInstance().queryItemByOmdbId(omdbId).isPresent()));
+  private static boolean isItemUnique(String omdbId) {
+    return !EntertainmentItemDatastore.getInstance().queryItemByOmdbId(omdbId).isPresent();
   }
 }
