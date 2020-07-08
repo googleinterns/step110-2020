@@ -80,7 +80,7 @@ public class ItemSubmissionServletTest {
 
     Assert.assertEquals(0,
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
-            .getItemList()
+            .getItems()
             .size());
   }
 
@@ -100,7 +100,7 @@ public class ItemSubmissionServletTest {
 
     Assert.assertEquals(1,
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
-            .getItemList()
+            .getItems()
             .size());
   }
 
@@ -120,7 +120,7 @@ public class ItemSubmissionServletTest {
 
     Assert.assertEquals(0,
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
-            .getItemList()
+            .getItems()
             .size());
   }
 
@@ -141,7 +141,7 @@ public class ItemSubmissionServletTest {
 
     Assert.assertEquals(0,
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
-            .getItemList()
+            .getItems()
             .size());
   }
 
@@ -161,7 +161,7 @@ public class ItemSubmissionServletTest {
 
     Assert.assertEquals(1,
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
-            .getItemList()
+            .getItems()
             .size());
   }
 
@@ -181,7 +181,7 @@ public class ItemSubmissionServletTest {
 
     Assert.assertEquals(0,
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
-            .getItemList()
+            .getItems()
             .size());
   }
 

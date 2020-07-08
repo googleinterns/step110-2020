@@ -118,7 +118,7 @@ public class EntertainmentItemDatastoreTest {
     EntertainmentItemList itemList =
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults());
 
-    Assert.assertTrue(itemList.getItemList().isEmpty());
+    Assert.assertTrue(itemList.getItems().isEmpty());
   }
 
   @Test
@@ -132,7 +132,7 @@ public class EntertainmentItemDatastoreTest {
     EntertainmentItemList itemList =
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults());
 
-    Assert.assertEquals(itemsAdded, itemList.getItemList().size());
+    Assert.assertEquals(itemsAdded, itemList.getItems().size());
   }
 
   @Test
@@ -147,10 +147,10 @@ public class EntertainmentItemDatastoreTest {
 
     EntertainmentItemList itemList = entertainmentItemDatastore.queryAllItemsWithTitleOrder(
         FetchOptions.Builder.withDefaults(), SortDirection.ASCENDING);
-    String[] actual = new String[itemList.getItemList().size()];
+    String[] actual = new String[itemList.getItems().size()];
 
     for (int i = 0; i < actual.length; ++i) {
-      actual[i] = itemList.getItemList().get(i).getTitle();
+      actual[i] = itemList.getItems().get(i).getTitle();
     }
 
     Assert.assertArrayEquals(TITLES_IN_ASCENDING_ORDER, actual);
@@ -168,10 +168,10 @@ public class EntertainmentItemDatastoreTest {
 
     EntertainmentItemList itemList = entertainmentItemDatastore.queryItemsByTitlePrefix(
         FetchOptions.Builder.withDefaults(), "S", SortDirection.DESCENDING);
-    String[] actual = new String[itemList.getItemList().size()];
+    String[] actual = new String[itemList.getItems().size()];
 
     for (int i = 0; i < actual.length; ++i) {
-      actual[i] = itemList.getItemList().get(i).getTitle();
+      actual[i] = itemList.getItems().get(i).getTitle();
     }
 
     Assert.assertArrayEquals(
