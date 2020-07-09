@@ -1,15 +1,31 @@
 <!DOCTYPE html>
+
 <html>
-  <body>
+  <head>
+    <script src="user_script.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body onload="loadPopulatedProfile()">
     <h1>Edit Your Profile Page</h1>
     <form action="/profile-data?edit=true" method="POST">
-      <label for="name">Name:</label><br />
-      <input type="text" name="name" /><br />
-      <label for="username">Username:</label><br />
-      <input type="text" name="username" /><br />
-      <label for="bio">Bio:</label><br />
-      <input type="text" name="bio" /><br />
-      <input type="submit" value="Update Profile" />
+
+      <form action="/profile-data" method="POST">
+      <div class="form-group col-md-2">
+        <label for="name">Name:</label><br />
+        <input type="text" class="form-control" id="name" name="name" maxlength="160" value=""/><br />
+      </div>
+      <div class="form-group col-md-2">
+        <label for="username">Username:</label><br />
+        <input type="text" class="form-control" id="username" name="username" maxlength="160" value=""/><br />
+      </div>
+      <div class="form-group col-md-2">
+        <label for="bio">Bio:</label><br />
+        <input type="text" class="form-control" id="bio" name="bio" maxlength="160" value=""/><br />
+      </div>
+      <input type="submit" class="btn btn-success btn-lg" value="Update Profile"/>
     </form>
   </body>
 </html>
