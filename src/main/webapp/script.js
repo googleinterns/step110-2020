@@ -4,14 +4,18 @@
  */
 function getDashboardItems() {
   fetch(
-      '/dashboard?searchValue=' + $('#searchValue').val() +
+      '/dashboard?cursor=' + getUrlParam('cursor') +
+      '&searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
-      .then((entertainmentItemsList) => {
+      .then((entertainmentItemList) => {
         const entertainmentItemsContainer = $('#entertainmentItemsContainer');
         entertainmentItemsContainer.empty();
 
-        populateItemGrid(entertainmentItemsContainer, entertainmentItemsList);
+        const items = entertainmentItemList.items;
+
+        populateItemGrid(entertainmentItemsContainer, items);
+        updatePagination(items.length, entertainmentItemList.pageCursor);
       })
       .catch((error) => {
         console.log(
@@ -32,19 +36,17 @@ function getOmdbItem() {
         omdbItemEntry.empty();
 
         const submitButton = $('#submitButton');
-        submitButton.off('click');
 
         if (omdbItem.Response === 'False') {
           omdbItemEntry.append($('<p>Item not found!</p>'));
 
           submitButton.addClass('d-none');
         } else {
-          omdbItemEntry.append(createOmdbItemCard(omdbItem));
+          const itemCard = createOmdbItemCard(omdbItem);
 
-          submitButton.removeClass('d-none');
-          submitButton.click(() => {
-            submitItem(omdbItem);
-          });
+          omdbItemEntry.append(itemCard);
+
+          enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
         }
       })
       .catch((error) => {
@@ -149,6 +151,33 @@ function createOmdbItemCard(omdbItem) {
 }
 
 /**
+ * Makes the item submission button visible if the item is not a duplicate.
+ *
+ * @param { jQuery } submitButton - button used to submit omdb items
+ * @param { jQuery } itemCard - card div that displays info about the item found
+ * @param { JSON } omdbItem - the item found by omdb API
+ */
+function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
+  fetch('/item-submission?imdbID=' + omdbItem.imdbID)
+      .then((response) => response.json())
+      .then((isItemUnique) => {
+        if (isItemUnique) {
+          submitButton.removeClass('d-none');
+          submitButton.off().one('click', () => {
+            submitItem(omdbItem);
+          });
+        } else {
+          // TODO: Add link to item that already exists.
+          itemCard.append($(
+              '<p class="card-text">Item already exists on Entertainment Hub!</p>'));
+        }
+      })
+      .catch((error) => {
+        console.log('failed to check if omdb Item is duplicate: ' + error);
+      });
+}
+
+/**
  * Sends an omdbItem to the ItemSubmissionServlet using a Post request.
  *
  * @param { JSON } omdbItem - item that will be sent to the
@@ -181,4 +210,60 @@ function loadSelector(selector, filename) {
   $(document).ready(function() {
     $(selector).load(filename);
   });
+}
+
+/**
+ * Loads the stored values for the sorting selector and populates dashboard with
+ * the Entertainment Items.
+ */
+function loadDashboard() {
+  $('#sortingDirection').change(function() {
+    localStorage.setItem('sortDir', $(this).val());
+    getDashboardItems();
+  });
+
+  $(document).ready(function() {
+    const sortDir = localStorage.getItem('sortDir');
+
+    if (sortDir !== null) {
+      $(`#sortingDirection`).val(sortDir);
+    }
+
+    getDashboardItems();
+  });
+}
+
+/**
+ * Updates the display of buttons used for pagination if the
+ * current page is full.
+ *
+ * @param { number } itemsInPage - number of items loaded in the page
+ * @param { string } pageCursor - opaque key representing the cursor for the
+ *     next page
+ */
+function updatePagination(itemsInPage, pageCursor) {
+  const MAX_ITEMS_PER_PAGE = 18;
+  // Display pagination button only when needed(page is full).
+  if (itemsInPage === MAX_ITEMS_PER_PAGE) {
+    $('#paginationNav').removeClass('d-none');
+    $('#nextLink').attr('href', '/index.html?cursor=' + pageCursor);
+  } else {
+    $('#paginationNav').addClass('d-none');
+  }
+}
+
+/**
+ * Finds a query string parameter in the current Url.
+ *
+ * @param { string } param - the parameter to look for in the window Url
+ * @returns { string } if the parameter exists it returns the value found,
+ *     otherwise an empty string
+ */
+function getUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has(param)) {
+    return urlParams.get(param);
+  }
+
+  return '';
 }

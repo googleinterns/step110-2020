@@ -7,10 +7,13 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
+import com.google.ehub.data.EntertainmentItemList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -47,6 +50,7 @@ public class DashboardServletTest {
   private static final String DIRECTORS_PROPERTY_KEY = "directors";
   private static final String WRITERS_PROPERTY_KEY = "writers";
   private static final String ACTORS_PROPERTY_KEY = "actors";
+  private static final String OMDB_ID_PROPERTY_KEY = "omdbId";
 
   private static final String TITLE = "Star Wars";
   private static final String DESCRIPTION = "Blah....";
@@ -57,7 +61,9 @@ public class DashboardServletTest {
   private static final String DIRECTORS = "George Lucas";
   private static final String WRITERS = "George Lucas";
   private static final String ACTORS = "Mark Hamill, Harrison Ford";
+  private static final String OMDB_ID = "tt23113212";
 
+  private static final int PAGE_SIZE = 18;
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
 
   private final DashboardServlet servlet = new DashboardServlet();
@@ -114,6 +120,7 @@ public class DashboardServletTest {
     itemEntity.setProperty(DIRECTORS_PROPERTY_KEY, DIRECTORS);
     itemEntity.setProperty(WRITERS_PROPERTY_KEY, WRITERS);
     itemEntity.setProperty(ACTORS_PROPERTY_KEY, ACTORS);
+    itemEntity.setProperty(OMDB_ID_PROPERTY_KEY, OMDB_ID);
 
     DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
     datastoreService.put(itemEntity);
@@ -127,18 +134,8 @@ public class DashboardServletTest {
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
-        .println(new Gson().toJson(Arrays.asList(new EntertainmentItem.Builder()
-                                                     .setUniqueId(itemEntity.getKey().getId())
-                                                     .setTitle(TITLE)
-                                                     .setDescription(DESCRIPTION)
-                                                     .setImageUrl(IMAGE_URL)
-                                                     .setReleaseDate(RELEASE_DATE)
-                                                     .setRuntime(RUNTIME)
-                                                     .setGenre(GENRE)
-                                                     .setDirectors(DIRECTORS)
-                                                     .setWriters(WRITERS)
-                                                     .setActors(ACTORS)
-                                                     .build())));
+        .println(new Gson().toJson(EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(
+            FetchOptions.Builder.withLimit(PAGE_SIZE), TITLE, SortDirection.ASCENDING)));
   }
 
   @Test
@@ -175,7 +172,10 @@ public class DashboardServletTest {
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
-    verify(printWriter).println("[]");
+    verify(printWriter)
+        .println(
+            new Gson().toJson(EntertainmentItemDatastore.getInstance().queryAllItemsWithTitleOrder(
+                FetchOptions.Builder.withLimit(PAGE_SIZE), SortDirection.ASCENDING)));
   }
 
   private static String getSearchValue(int characterLength) {

@@ -31,6 +31,7 @@ public class EntertainmentItemDatastoreTest {
   private static final String DIRECTORS_PROPERTY_KEY = "directors";
   private static final String WRITERS_PROPERTY_KEY = "writers";
   private static final String ACTORS_PROPERTY_KEY = "actors";
+  private static final String OMDB_ID_PARAMETER_KEY = "omdbId";
 
   private static final String[] TITLES_IN_ASCENDING_ORDER = {
       "Avengers", "Nemo", "Shrek", "Star Wars", "Transformers"};
@@ -43,6 +44,7 @@ public class EntertainmentItemDatastoreTest {
   private static final String DIRECTORS = "George Lucas";
   private static final String WRITERS = "George Lucas";
   private static final String ACTORS = "Mark Hamill, Harrison Ford";
+  private static final String OMDB_ID = "tt23113212";
 
   private final EntertainmentItemDatastore entertainmentItemDatastore =
       EntertainmentItemDatastore.getInstance();
@@ -72,6 +74,7 @@ public class EntertainmentItemDatastoreTest {
                                                       .setDirectors(DIRECTORS)
                                                       .setWriters(WRITERS)
                                                       .setActors(ACTORS)
+                                                      .setOmdbId(OMDB_ID)
                                                       .build());
 
     Query query = new Query(ENTERTAINMENT_ITEM_KIND);
@@ -91,6 +94,7 @@ public class EntertainmentItemDatastoreTest {
     Assert.assertEquals(DIRECTORS, entityList.get(0).getProperty(DIRECTORS_PROPERTY_KEY));
     Assert.assertEquals(WRITERS, entityList.get(0).getProperty(WRITERS_PROPERTY_KEY));
     Assert.assertEquals(ACTORS, entityList.get(0).getProperty(ACTORS_PROPERTY_KEY));
+    Assert.assertEquals(OMDB_ID, entityList.get(0).getProperty(OMDB_ID_PARAMETER_KEY));
   }
 
   @Test
@@ -115,9 +119,10 @@ public class EntertainmentItemDatastoreTest {
 
   @Test
   public void queryForNonExistentItems_ItemListIsEmpty() {
-    List<EntertainmentItem> itemList = entertainmentItemDatastore.queryAllItems();
+    EntertainmentItemList itemList =
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults());
 
-    Assert.assertTrue(itemList.isEmpty());
+    Assert.assertTrue(itemList.getItems().isEmpty());
   }
 
   @Test
@@ -128,9 +133,10 @@ public class EntertainmentItemDatastoreTest {
       datastoreService.put(new Entity(ENTERTAINMENT_ITEM_KIND));
     }
 
-    List<EntertainmentItem> itemList = entertainmentItemDatastore.queryAllItems();
+    EntertainmentItemList itemList =
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults());
 
-    Assert.assertEquals(itemsAdded, itemList.size());
+    Assert.assertEquals(itemsAdded, itemList.getItems().size());
   }
 
   @Test
@@ -143,12 +149,12 @@ public class EntertainmentItemDatastoreTest {
       datastoreService.put(entity);
     }
 
-    List<EntertainmentItem> itemList =
-        entertainmentItemDatastore.queryAllItemsWithTitleOrder(SortDirection.ASCENDING);
-    String[] actual = new String[itemList.size()];
+    EntertainmentItemList itemList = entertainmentItemDatastore.queryAllItemsWithTitleOrder(
+        FetchOptions.Builder.withDefaults(), SortDirection.ASCENDING);
+    String[] actual = new String[itemList.getItems().size()];
 
-    for (int i = 0; i < itemList.size(); ++i) {
-      actual[i] = itemList.get(i).getTitle();
+    for (int i = 0; i < actual.length; ++i) {
+      actual[i] = itemList.getItems().get(i).getTitle();
     }
 
     Assert.assertArrayEquals(TITLES_IN_ASCENDING_ORDER, actual);
@@ -164,12 +170,12 @@ public class EntertainmentItemDatastoreTest {
       datastoreService.put(entity);
     }
 
-    List<EntertainmentItem> itemList =
-        entertainmentItemDatastore.queryItemsByTitlePrefix("S", SortDirection.DESCENDING);
-    String[] actual = new String[itemList.size()];
+    EntertainmentItemList itemList = entertainmentItemDatastore.queryItemsByTitlePrefix(
+        FetchOptions.Builder.withDefaults(), "S", SortDirection.DESCENDING);
+    String[] actual = new String[itemList.getItems().size()];
 
-    for (int i = 0; i < itemList.size(); ++i) {
-      actual[i] = itemList.get(i).getTitle();
+    for (int i = 0; i < actual.length; ++i) {
+      actual[i] = itemList.getItems().get(i).getTitle();
     }
 
     Assert.assertArrayEquals(
