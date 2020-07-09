@@ -68,7 +68,7 @@ function getItemPageComments(comments) {
 }
 
 /**
- * Creates list element which houses comments
+ * Creates list element which houses comments.
  */
 function createListElement(comment) {
   var liElement = document.createElement('li');
