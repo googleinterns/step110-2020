@@ -7,13 +7,14 @@ async function loadItemPage() {
   if (itemId !== '') {
     fetch(`/itempagedata?itemId=${itemId}`)
       .then((response) => response.json())
-      .then((ItemPageData) => {
-        createSelectedItemCard(ItemPageData.item);
-        getItemPageComments(ItemPageData.comments);
+      .then((itemPageData) => {
+        createSelectedItemCard(itemPageData.item);
+        getItemPageComments(itemPageData.comments);
       });
   } else {
     console.log('ItemId is empty!');
   }
+  getLoginInfo();
 }
 
 /**
@@ -25,9 +26,11 @@ async function createSelectedItemCard(entertainmentItem) {
     $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-    $('<h5 class="card-title">' + entertainmentItem.title + '</h5>'));
+    $('<h5 class="card-title">' + entertainmentItem.title + "(" + entertainmentItem.releaseDate + ")" + '</h5>'));
   cardBody.append(
-    $('<p class="card-text">' + entertainmentItem.description + '</p>'));
+    $('<h5 class="card-title">' + entertainmentItem.genre + '</h5>'));
+  cardBody.append(
+    $('<p class="card-text"><b>Description: </b>' + entertainmentItem.description + '</p>'));
 
   card.append(cardBody);
   const itemContainer = $('#item-container');
@@ -38,23 +41,26 @@ async function createSelectedItemCard(entertainmentItem) {
  * Sends comment data and ItemId to Servlet
  */
 async function sendFormData() {
-  const itemId = getUrlParam('itemId');
-  const comment = document.getElementById('comment');
-  fetch(
-    `/itempagedata?=${itemId}`,
-    { method: 'post', body: JSON.stringify(comment) })
+  const comment = $('#comment').val();
+  const itemId = getItemId();
+  $.post('/itempagedata', { comment: comment, itemId: itemId }).done(function() {
+    window.location.reload();
+  }).fail(function() {
+    console.log('Failed to send form data');
+  });
+
 }
 
 /**
  * Function which builds the comment element from the ItemPageData object
  */
 function getItemPageComments(comments) {
-  const commentContainer = document.getElementById('comment-container');
+  const commentContainer = $('#comment-container')
   comments.forEach((commentDataManager) => {
     const date = new Date(commentDataManager.timestampMillis);
-    commentContainer.appendChild(createListElement(
-      commentDataManager.message + ' - ' +
-      '(' + date.toUTCString() + ')'));
+    commentContainer.append(createListElement(
+      commentDataManager.comment + ' - ' +
+      '(' + date.toLocaleString() + ')'));
   });
 }
 
@@ -62,8 +68,16 @@ function getItemPageComments(comments) {
  * Creates list element which houses comments
  */
 function createListElement(comment) {
-  const liElement = document.createElement('li');
-  liElement.innerText = comment;
+  var liElement = document.createElement('li');
+  liElement.className = "list-group-item";
+  liElement.append(comment);
   return liElement;
 }
 
+async function getLoginInfo() {
+  fetch(`/login`)
+    .then((response) => response.json())
+    .then((login) => {
+      console.log(login);
+    });
+}

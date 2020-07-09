@@ -20,11 +20,15 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.data.CommentData;
 import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.ehub.data.ItemPageData;
+import com.google.ehub.data.ProfileDatastore;
+import com.google.ehub.data.UserProfile;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,19 +47,26 @@ public class ItemPageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
     
+    UserService userService = UserServiceFactory.getUserService();
+    boolean loginStatus = userService.isUserLoggedIn();
+    // try {
+    //   String email = userService.getCurrentUser().getEmail();
+    // } catch (Exception e) {
+    //   System.err.println("Can't parse itemId to a long");
+    //   return;
+    // }
+     
+
 
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
     CommentDataManager commentDataManager = new CommentDataManager();
     List<CommentData> comments = commentDataManager.retrieveComments(itemId);
-    System.out.println("doGet: " + comments);
-
+   
     if (optionalItem.isPresent()) {
       EntertainmentItem selectedItem = optionalItem.get();
-      System.out.println("ItemPageServlet Selected item:" + selectedItem);
-
-      ItemPageData itemData = new ItemPageData(selectedItem, comments);
+      ItemPageData itemData = new ItemPageData(selectedItem, comments, loginStatus);
       response.setContentType("application/json");
       response.getWriter().println(new Gson().toJson(itemData));
     } else {
@@ -80,7 +91,5 @@ public class ItemPageServlet extends HttpServlet {
     long timestampMillis = System.currentTimeMillis();
     CommentDataManager comments = new CommentDataManager();
     comments.addItemComment(itemId, comment, timestampMillis);
-
-    response.sendRedirect("/item-page.html?=" + itemId);
   }
 }
