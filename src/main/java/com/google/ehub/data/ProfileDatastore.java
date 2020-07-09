@@ -15,11 +15,11 @@ import java.io.IOException;
 
 /** Manages the User Profiles stored in Datastore. **/
 public final class ProfileDatastore {
-  public static final String PROFILE_ITEM_KIND = "profile";
-  public static final String NAME_PROPERTY_KEY = "name";
-  public static final String EMAIL_PROPERTY_KEY = "email";
-  public static final String USERNAME_PROPERTY_KEY = "username";
-  public static final String BIO_PROPERTY_KEY = "bio";
+  private static final String PROFILE_ITEM_KIND = "profile";
+  private static final String NAME_PROPERTY_KEY = "name";
+  private static final String EMAIL_PROPERTY_KEY = "email";
+  private static final String USERNAME_PROPERTY_KEY = "username";
+  private static final String BIO_PROPERTY_KEY = "bio";
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
