@@ -4,17 +4,22 @@
     <meta charset="UTF-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="user_script.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
   </head>
   <body onload="loadProfile()">
     <h1>My Profile Page</h1>
-    <h2>Name</h2>
-    <p id="name"></p>
-    <h2>Username</h2>
-    <p id="username"></p>
-    <h2>Bio</h2>
-    <p id="bio"></p>
-
-    <button id="edit" onclick="location.href = '/EditProfilePage.html';">
+    <div class="card" style="width: 22rem;">
+      <img src="images/myAvatar.png" class="card-img-top" alt="profile avatar">
+      <div class="card-body">
+        <h5 class="card-title" id="name"> </h5>
+        <h6 class="card-subtitle mb-2 " id="username"> </h6>
+        <p class="card-text" id="bio"> </p>
+      </div>
+    </div>
+    <button id="edit" class="btn btn-info" onclick="location.href = '/EditProfilePage.html';">
       Edit Profile
     </button>
   </body>
