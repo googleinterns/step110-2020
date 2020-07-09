@@ -51,11 +51,13 @@ public class ItemSubmissionServlet extends HttpServlet {
 
     if (!arePostRequestParametersValid(title, description, imageUrl, releaseDate, runtime, genre,
             directors, writers, actors, omdbId)) {
-      System.err.println("ItemSubmissionServlet: Post Request parameters not specified correctly!");
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+          "ItemSubmissionServlet: Post Request parameters not specified correctly!");
       return;
     }
-    if (!isItemUnique(omdbId)) {
-      System.err.println("ItemSubmissionServlet: Item submitted already exists!");
+    if (doesItemExist(omdbId)) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+          "ItemSubmissionServlet: Item submitted already exists!");
       return;
     }
 
@@ -90,7 +92,7 @@ public class ItemSubmissionServlet extends HttpServlet {
     }
 
     response.setContentType("application/json");
-    response.getWriter().println(new Gson().toJson(isItemUnique(omdbId)));
+    response.getWriter().println(new Gson().toJson(!doesItemExist(omdbId)));
   }
 
   /**
@@ -121,7 +123,7 @@ public class ItemSubmissionServlet extends HttpServlet {
     return parameter != null && !parameter.isEmpty() && parameter.length() <= maxLength;
   }
 
-  private static boolean isItemUnique(String omdbId) {
-    return !EntertainmentItemDatastore.getInstance().queryItemByOmdbId(omdbId).isPresent();
+  private static boolean doesItemExist(String omdbId) {
+    return EntertainmentItemDatastore.getInstance().queryItemByOmdbId(omdbId).isPresent();
   }
 }
