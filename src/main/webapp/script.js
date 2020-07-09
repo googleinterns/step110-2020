@@ -3,7 +3,10 @@
  * to populate the Dashboard.
  */
 function getDashboardItems() {
-  fetch(
+  //TODO: Separate load function
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html', function() {
+        fetch(
       '/dashboard?cursor=' + getUrlParam('cursor') +
       '&searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
@@ -22,6 +25,10 @@ function getDashboardItems() {
             'Failed to fetch entertainment items from DashboardServlet: ' +
             error);
       });
+    });
+
+    $('#itemSubmissionDiv').load('item-submission-dialog.html');
+  });
 }
 
 /**
@@ -168,23 +175,6 @@ function submitItem(omdbItem) {
       .fail(function() {
         console.log('Failed to submit entertainment item!');
       });
-}
-
-/**
- * Loads a selector from another HTML file so that it can be used in the current
- * DOM.
- *
- * @param { string } selector - selector that will be used across the document
- *     to refer to the HTML element
- * @param { string } filename - filename of HTML file that is used to load the
- *     element
- *
- * @example loadSelector("#navbar", "navbar.html")
- */
-function loadSelector(selector, filename) {
-  $(document).ready(function() {
-    $(selector).load(filename);
-  });
 }
 
 /**
