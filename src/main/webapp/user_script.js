@@ -22,6 +22,10 @@ function loadProfile() {
     });
 }
 
+/**
+ * Fetches the json from ProfileServlet and prepoopulates the values on the Edit Profile
+ * Page.
+ */
 function loadPopulatedProfile() {
   fetch('/profile-data')
     .then((response) => response.json())
