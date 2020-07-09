@@ -10,12 +10,10 @@ import java.util.List;
 public class ItemPageData {
   private final EntertainmentItem item;
   private final List<CommentData> comments;
-  private final Boolean loginStatus;
 
-  public ItemPageData(EntertainmentItem item, List<CommentData> comments, Boolean loginStatus) {
+  public ItemPageData(EntertainmentItem item, List<CommentData> comments) {
     this.item = item;
     this.comments = comments;
-    this.loginStatus = loginStatus;
   }
 
   public EntertainmentItem getItem() {
@@ -24,9 +22,5 @@ public class ItemPageData {
 
   public List<CommentData> getComments() {
     return comments;
-  }
-
-  public Boolean getLoginStatus() {
-    return loginStatus;
   }
 }

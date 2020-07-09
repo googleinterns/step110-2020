@@ -26,11 +26,14 @@ async function createSelectedItemCard(entertainmentItem) {
     $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-    $('<h5 class="card-title">' + entertainmentItem.title + "(" + entertainmentItem.releaseDate + ")" + '</h5>'));
+    $('<h5 class="card-title">' + entertainmentItem.title + '(' +
+      entertainmentItem.releaseDate + ')' +
+      '</h5>'));
   cardBody.append(
     $('<h5 class="card-title">' + entertainmentItem.genre + '</h5>'));
   cardBody.append(
-    $('<p class="card-text"><b>Description: </b>' + entertainmentItem.description + '</p>'));
+    $('<p class="card-text"><b>Description: </b>' +
+      entertainmentItem.description + '</p>'));
 
   card.append(cardBody);
   const itemContainer = $('#item-container');
@@ -52,11 +55,13 @@ function getItemId() {
 async function sendFormData() {
   const comment = $('#comment').val();
   const itemId = getItemId();
-  $.post('/itempagedata', { comment: comment, itemId: itemId }).done(function() {
-    window.location.reload();
-  }).fail(function() {
-    console.log('Failed to send form data');
-  });
+  $.post('/itempagedata', { comment: comment, itemId: itemId })
+    .done(function() {
+      window.location.reload();
+    })
+    .fail(function() {
+      console.log('Failed to send form data');
+    });
 }
 
 /**
@@ -77,15 +82,7 @@ function getItemPageComments(comments) {
  */
 function createListElement(comment) {
   var liElement = document.createElement('li');
-  liElement.className = "list-group-item";
+  liElement.className = 'list-group-item';
   liElement.append(comment);
   return liElement;
-}
-
-async function getLoginInfo() {
-  fetch(`/login`)
-    .then((response) => response.json())
-    .then((login) => {
-      console.log(login);
-    });
 }

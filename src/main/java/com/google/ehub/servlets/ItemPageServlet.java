@@ -20,15 +20,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.data.CommentData;
 import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.ehub.data.ItemPageData;
-import com.google.ehub.data.ProfileDatastore;
-import com.google.ehub.data.UserProfile;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,31 +38,19 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that compiles the data for the item page*/
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
-    
-    UserService userService = UserServiceFactory.getUserService();
-    boolean loginStatus = userService.isUserLoggedIn();
-    // try {
-    //   String email = userService.getCurrentUser().getEmail();
-    // } catch (Exception e) {
-    //   System.err.println("Can't parse itemId to a long");
-    //   return;
-    // }
-     
-
 
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
     CommentDataManager commentDataManager = new CommentDataManager();
     List<CommentData> comments = commentDataManager.retrieveComments(itemId);
-   
+
     if (optionalItem.isPresent()) {
       EntertainmentItem selectedItem = optionalItem.get();
-      ItemPageData itemData = new ItemPageData(selectedItem, comments, loginStatus);
+      ItemPageData itemData = new ItemPageData(selectedItem, comments);
       response.setContentType("application/json");
       response.getWriter().println(new Gson().toJson(itemData));
     } else {
@@ -84,7 +68,7 @@ public class ItemPageServlet extends HttpServlet {
       return;
     }
     String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
-    if(comment == null) {
+    if (comment == null) {
       System.out.println("Comment was not entered");
       return;
     }
