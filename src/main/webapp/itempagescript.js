@@ -2,8 +2,7 @@
  * Retrieves ItemPageData and forms page using other functions.
  */
 async function loadItemPage() {
-  const itemId = getUrlParam('itemId');
-
+  const itemId = getItemId();
   if (itemId !== '') {
     fetch(`/itempagedata?itemId=${itemId}`)
       .then((response) => response.json())
