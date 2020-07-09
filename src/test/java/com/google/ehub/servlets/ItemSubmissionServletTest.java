@@ -2,6 +2,7 @@ package com.google.ehub.servlets;
 
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.ehub.data.EntertainmentItemDatastore;
@@ -77,7 +78,10 @@ public class ItemSubmissionServletTest {
 
     servlet.doPost(request, response);
 
-    Assert.assertEquals(0, entertainmentItemDatastore.queryAllItems().size());
+    Assert.assertEquals(0,
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
+            .getItems()
+            .size());
   }
 
   @Test
@@ -94,7 +98,10 @@ public class ItemSubmissionServletTest {
 
     servlet.doPost(request, response);
 
-    Assert.assertEquals(1, entertainmentItemDatastore.queryAllItems().size());
+    Assert.assertEquals(1,
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
+            .getItems()
+            .size());
   }
 
   @Test
@@ -111,7 +118,10 @@ public class ItemSubmissionServletTest {
 
     servlet.doPost(request, response);
 
-    Assert.assertEquals(0, entertainmentItemDatastore.queryAllItems().size());
+    Assert.assertEquals(0,
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
+            .getItems()
+            .size());
   }
 
   @Test
@@ -129,7 +139,10 @@ public class ItemSubmissionServletTest {
 
     servlet.doPost(request, response);
 
-    Assert.assertEquals(0, entertainmentItemDatastore.queryAllItems().size());
+    Assert.assertEquals(0,
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
+            .getItems()
+            .size());
   }
 
   @Test
@@ -146,7 +159,10 @@ public class ItemSubmissionServletTest {
 
     servlet.doPost(request, response);
 
-    Assert.assertEquals(1, entertainmentItemDatastore.queryAllItems().size());
+    Assert.assertEquals(1,
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
+            .getItems()
+            .size());
   }
 
   @Test
@@ -163,7 +179,10 @@ public class ItemSubmissionServletTest {
 
     servlet.doPost(request, response);
 
-    Assert.assertEquals(0, entertainmentItemDatastore.queryAllItems().size());
+    Assert.assertEquals(0,
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
+            .getItems()
+            .size());
   }
 
   private static String getStringOfLength(int characterLength) {

@@ -2,9 +2,9 @@
  * Retrieves ItemPageData and forms page using other functions.
  */
 async function loadItemPage() {
-  const itemId = getItemId();
-  console.log(itemId);
-  if (itemId != null) {
+  const itemId = getUrlParam('itemId');
+
+  if (itemId !== '') {
     fetch(`/itempagedata?itemId=${itemId}`)
       .then((response) => response.json())
       .then((ItemPageData) => {
@@ -12,7 +12,7 @@ async function loadItemPage() {
         getItemPageComments(ItemPageData.comments);
       });
   } else {
-    console.log('ItemId is null');
+    console.log('ItemId is empty!');
   }
 }
 
@@ -35,19 +35,10 @@ async function createSelectedItemCard(entertainmentItem) {
 }
 
 /**
- * Gets itemId from current URL
- */
-function getItemId() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  return urlParams.get('itemId');
-}
-
-/**
  * Sends comment data and ItemId to Servlet
  */
 async function sendFormData() {
-  const itemId = getItemId();
+  const itemId = getUrlParam('itemId');
   const comment = document.getElementById('comment');
   fetch(
     `/itempagedata?=${itemId}`,

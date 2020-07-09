@@ -4,14 +4,18 @@
  */
 function getDashboardItems() {
   fetch(
-      '/dashboard?searchValue=' + $('#searchValue').val() +
+      '/dashboard?cursor=' + getUrlParam('cursor') +
+      '&searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
-      .then((entertainmentItemsList) => {
+      .then((entertainmentItemList) => {
         const entertainmentItemsContainer = $('#entertainmentItemsContainer');
         entertainmentItemsContainer.empty();
 
-        populateItemGrid(entertainmentItemsContainer, entertainmentItemsList);
+        const items = entertainmentItemList.items;
+
+        populateItemGrid(entertainmentItemsContainer, items);
+        updatePagination(items.length, entertainmentItemList.pageCursor);
       })
       .catch((error) => {
         console.log(
@@ -181,4 +185,60 @@ function loadSelector(selector, filename) {
   $(document).ready(function() {
     $(selector).load(filename);
   });
+}
+
+/**
+ * Loads the stored values for the sorting selector and populates dashboard with
+ * the Entertainment Items.
+ */
+function loadDashboard() {
+  $('#sortingDirection').change(function() {
+    localStorage.setItem('sortDir', $(this).val());
+    getDashboardItems();
+  });
+
+  $(document).ready(function() {
+    const sortDir = localStorage.getItem('sortDir');
+
+    if (sortDir !== null) {
+      $(`#sortingDirection`).val(sortDir);
+    }
+
+    getDashboardItems();
+  });
+}
+
+/**
+ * Updates the display of buttons used for pagination if the
+ * current page is full.
+ *
+ * @param { number } itemsInPage - number of items loaded in the page
+ * @param { string } pageCursor - opaque key representing the cursor for the
+ *     next page
+ */
+function updatePagination(itemsInPage, pageCursor) {
+  const MAX_ITEMS_PER_PAGE = 18;
+  // Display pagination button only when needed(page is full).
+  if (itemsInPage === MAX_ITEMS_PER_PAGE) {
+    $('#paginationNav').removeClass('d-none');
+    $('#nextLink').attr('href', '/index.html?cursor=' + pageCursor);
+  } else {
+    $('#paginationNav').addClass('d-none');
+  }
+}
+
+/**
+ * Finds a query string parameter in the current Url.
+ *
+ * @param { string } param - the parameter to look for in the window Url
+ * @returns { string } if the parameter exists it returns the value found,
+ *     otherwise an empty string
+ */
+function getUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has(param)) {
+    return urlParams.get(param);
+  }
+
+  return '';
 }
