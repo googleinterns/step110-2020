@@ -13,7 +13,6 @@ async function loadItemPage() {
   } else {
     console.log('ItemId is empty!');
   }
-  getLoginInfo();
 }
 
 /**
