@@ -167,6 +167,7 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
             submitItem(omdbItem);
           });
         } else {
+          // TODO: Add link to item that already exists.
           itemCard.append($(
               '<p class="card-text">Item already exists on Entertainment Hub!</p>'));
         }
