@@ -2,6 +2,7 @@ package com.google.ehub.servlets;
 
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.annotation.WebServlet;
@@ -24,6 +25,7 @@ public class ItemSubmissionServlet extends HttpServlet {
   private static final String DIRECTORS_PARAMETER_KEY = "Director";
   private static final String WRITERS_PARAMETER_KEY = "Writer";
   private static final String ACTORS_PARAMETER_KEY = "Actors";
+  private static final String IMDB_ID_PARAMETER_KEY = "imdbID";
 
   private static final int MAX_TITLE_CHARS = 150;
 
@@ -45,10 +47,17 @@ public class ItemSubmissionServlet extends HttpServlet {
     String directors = request.getParameter(DIRECTORS_PARAMETER_KEY);
     String writers = request.getParameter(WRITERS_PARAMETER_KEY);
     String actors = request.getParameter(ACTORS_PARAMETER_KEY);
+    String omdbId = request.getParameter(IMDB_ID_PARAMETER_KEY);
 
     if (!arePostRequestParametersValid(title, description, imageUrl, releaseDate, runtime, genre,
-            directors, writers, actors)) {
-      System.err.println("ItemSubmissionServlet: Post Request parameters not specified correctly!");
+            directors, writers, actors, omdbId)) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+          "ItemSubmissionServlet: Post Request parameters not specified correctly!");
+      return;
+    }
+    if (doesItemExist(omdbId)) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+          "ItemSubmissionServlet: Item submitted already exists!");
       return;
     }
 
@@ -62,9 +71,28 @@ public class ItemSubmissionServlet extends HttpServlet {
                                                                     .setDirectors(directors)
                                                                     .setWriters(writers)
                                                                     .setActors(actors)
+                                                                    .setOmdbId(omdbId)
                                                                     .build());
 
     response.sendRedirect("/index.html");
+  }
+
+  /**
+   * The response of the GET request contains a boolean value that tells whether the item is unique
+   * or not.
+   */
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String omdbId = request.getParameter(IMDB_ID_PARAMETER_KEY);
+
+    if (!isParameterValid(omdbId, MAX_CHARS)) {
+      System.err.println(
+          "ItemSubmissionServlet: omdbId parameter given in Get Request is invalid!");
+      return;
+    }
+
+    response.setContentType("application/json");
+    response.getWriter().println(new Gson().toJson(!doesItemExist(omdbId)));
   }
 
   /**
@@ -78,19 +106,24 @@ public class ItemSubmissionServlet extends HttpServlet {
    * @param directors the directors given in the Post request parameter
    * @param writers the writers given in the Post request parameter
    * @param actors the actors given in the Post request parameter
+   * @param omdbId the unique Id used by omdb given in the Post request parameter
    * @return true if the parameters given in the Post request are valid, false otherwise
    */
   private static boolean arePostRequestParametersValid(String title, String description,
       String imageUrl, String releaseDate, String runtime, String genre, String directors,
-      String writers, String actors) {
+      String writers, String actors, String omdbId) {
     return isParameterValid(title, MAX_TITLE_CHARS) && isParameterValid(description, MAX_CHARS)
         && isParameterValid(imageUrl, MAX_CHARS) && isParameterValid(releaseDate, MAX_CHARS)
         && isParameterValid(runtime, MAX_CHARS) && isParameterValid(genre, MAX_CHARS)
         && isParameterValid(directors, MAX_CHARS) && isParameterValid(writers, MAX_CHARS)
-        && isParameterValid(actors, MAX_CHARS);
+        && isParameterValid(actors, MAX_CHARS) && isParameterValid(omdbId, MAX_CHARS);
   }
 
   private static boolean isParameterValid(String parameter, int maxLength) {
     return parameter != null && !parameter.isEmpty() && parameter.length() <= maxLength;
+  }
+
+  private static boolean doesItemExist(String omdbId) {
+    return EntertainmentItemDatastore.getInstance().queryItemByOmdbId(omdbId).isPresent();
   }
 }

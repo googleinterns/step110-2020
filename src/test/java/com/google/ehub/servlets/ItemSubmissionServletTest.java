@@ -1,12 +1,17 @@
 package com.google.ehub.servlets;
 
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +41,7 @@ public class ItemSubmissionServletTest {
   private static final String DIRECTORS_PARAMETER_KEY = "Director";
   private static final String WRITERS_PARAMETER_KEY = "Writer";
   private static final String ACTORS_PARAMETER_KEY = "Actors";
+  private static final String IMDB_ID_PARAMETER_KEY = "imdbID";
 
   private static final String TITLE = "Star Wars";
   private static final String DESCRIPTION = "Blah....";
@@ -46,12 +52,16 @@ public class ItemSubmissionServletTest {
   private static final String DIRECTORS = "George Lucas";
   private static final String WRITERS = "George Lucas";
   private static final String ACTORS = "Mark Hamill, Harrison Ford";
+  private static final String OMDB_ID = "tt23113212";
+
+  private static final String JSON_CONTENT_TYPE = "application/json";
 
   private static final int MAX_TITLE_CHARS = 150;
   private static final int MAX_CHARS = 500;
 
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
+  @Mock PrintWriter printWriter;
 
   @Before
   public void init() {
@@ -75,6 +85,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(null);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(null);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(null);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(null);
 
     servlet.doPost(request, response);
 
@@ -95,6 +106,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -115,6 +127,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn("");
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn("");
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn("");
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn("");
 
     servlet.doPost(request, response);
 
@@ -136,6 +149,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -156,6 +170,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -176,6 +191,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -183,6 +199,93 @@ public class ItemSubmissionServletTest {
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
             .getItems()
             .size());
+  }
+
+  @Test
+  public void postRequestWithDuplicateItem_NoItemIsAdded() throws IOException {
+    entertainmentItemDatastore.addItemToDatastore(new EntertainmentItem.Builder()
+                                                      .setTitle(TITLE)
+                                                      .setDescription(DESCRIPTION)
+                                                      .setImageUrl(IMAGE_URL)
+                                                      .setReleaseDate(RELEASE_DATE)
+                                                      .setRuntime(RUNTIME)
+                                                      .setGenre(GENRE)
+                                                      .setDirectors(DIRECTORS)
+                                                      .setWriters(WRITERS)
+                                                      .setActors(ACTORS)
+                                                      .setOmdbId(OMDB_ID)
+                                                      .build());
+
+    when(request.getParameter(TITLE_PARAMETER_KEY)).thenReturn(TITLE);
+    when(request.getParameter(DESCRIPTION_PARAMETER_KEY)).thenReturn(DESCRIPTION);
+    when(request.getParameter(IMAGE_URL_PARAMETER_KEY)).thenReturn(IMAGE_URL);
+    when(request.getParameter(RELEASE_DATE_PARAMETER_KEY)).thenReturn(RELEASE_DATE);
+    when(request.getParameter(RUNTIME_PARAMETER_KEY)).thenReturn(RUNTIME);
+    when(request.getParameter(GENRE_PARAMETER_KEY)).thenReturn(GENRE);
+    when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
+    when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
+    when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+
+    servlet.doPost(request, response);
+
+    Assert.assertEquals(1,
+        entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults())
+            .getItems()
+            .size());
+  }
+
+  @Test
+  public void getRequestWithNullParam_NoResponseIsSent() throws IOException {
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(null);
+
+    servlet.doGet(request, response);
+
+    verify(response, never()).setContentType(JSON_CONTENT_TYPE);
+  }
+
+  @Test
+  public void getRequestWithEmptyParam_NoResponseIsSent() throws IOException {
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn("");
+
+    servlet.doGet(request, response);
+
+    verify(response, never()).setContentType(JSON_CONTENT_TYPE);
+  }
+
+  @Test
+  public void getRequestWithUniqueItem_ResponseReturnsItemIsUnique() throws IOException {
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(response.getWriter()).thenReturn(printWriter);
+
+    servlet.doGet(request, response);
+
+    verify(response).setContentType(JSON_CONTENT_TYPE);
+    verify(printWriter).println(new Gson().toJson(/* isItemUnique */ true));
+  }
+
+  @Test
+  public void getRequestWithDuplicateItem_ResponseReturnsItemIsNotUnique() throws IOException {
+    entertainmentItemDatastore.addItemToDatastore(new EntertainmentItem.Builder()
+                                                      .setTitle(TITLE)
+                                                      .setDescription(DESCRIPTION)
+                                                      .setImageUrl(IMAGE_URL)
+                                                      .setReleaseDate(RELEASE_DATE)
+                                                      .setRuntime(RUNTIME)
+                                                      .setGenre(GENRE)
+                                                      .setDirectors(DIRECTORS)
+                                                      .setWriters(WRITERS)
+                                                      .setActors(ACTORS)
+                                                      .setOmdbId(OMDB_ID)
+                                                      .build());
+
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(response.getWriter()).thenReturn(printWriter);
+
+    servlet.doGet(request, response);
+
+    verify(response).setContentType(JSON_CONTENT_TYPE);
+    verify(printWriter).println(new Gson().toJson(/* isItemUnique */ false));
   }
 
   private static String getStringOfLength(int characterLength) {

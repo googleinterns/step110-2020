@@ -50,6 +50,7 @@ public class DashboardServletTest {
   private static final String DIRECTORS_PROPERTY_KEY = "directors";
   private static final String WRITERS_PROPERTY_KEY = "writers";
   private static final String ACTORS_PROPERTY_KEY = "actors";
+  private static final String OMDB_ID_PROPERTY_KEY = "omdbId";
 
   private static final String TITLE = "Star Wars";
   private static final String DESCRIPTION = "Blah....";
@@ -60,6 +61,7 @@ public class DashboardServletTest {
   private static final String DIRECTORS = "George Lucas";
   private static final String WRITERS = "George Lucas";
   private static final String ACTORS = "Mark Hamill, Harrison Ford";
+  private static final String OMDB_ID = "tt23113212";
 
   private static final int PAGE_SIZE = 18;
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
@@ -118,6 +120,7 @@ public class DashboardServletTest {
     itemEntity.setProperty(DIRECTORS_PROPERTY_KEY, DIRECTORS);
     itemEntity.setProperty(WRITERS_PROPERTY_KEY, WRITERS);
     itemEntity.setProperty(ACTORS_PROPERTY_KEY, ACTORS);
+    itemEntity.setProperty(OMDB_ID_PROPERTY_KEY, OMDB_ID);
 
     DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
     datastoreService.put(itemEntity);

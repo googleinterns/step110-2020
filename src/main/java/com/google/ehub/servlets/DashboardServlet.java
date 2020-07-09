@@ -59,7 +59,7 @@ public class DashboardServlet extends HttpServlet {
       itemList = EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(
           fetchOptions, searchValue, sortDir);
     }
-    
+
     response.setContentType("application/json");
     response.getWriter().println(new Gson().toJson(itemList));
   }
