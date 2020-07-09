@@ -3,7 +3,6 @@
  */
 async function loadItemPage() {
   const itemId = getItemId();
-  console.log(itemId);
   if (itemId != null) {
     fetch(`/itempagedata?itemId=${itemId}`)
       .then((response) => response.json())
