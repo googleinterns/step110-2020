@@ -10,17 +10,19 @@
     />
   </head>
   <body onload="loadProfile()">
-    <h1>My Profile Page</h1>
-    <div class="card" style="width: 22rem;">
-      <img src="images/myAvatar.png" class="card-img-top" alt="profile avatar">
-      <div class="card-body">
-        <h5 class="card-title" id="name"> </h5>
-        <h6 class="card-subtitle mb-2 " id="username"> </h6>
-        <p class="card-text" id="bio"> </p>
+    <div class="container">
+      <h1>My Profile Page</h1>
+      <div class="card" style="width: 22rem;">
+        <img src="images/myAvatar.png" class="card-img-top" alt="profile avatar">
+        <div class="card-body">
+          <h5 class="card-title" id="name"> </h5>
+          <h6 class="card-subtitle mb-2 " id="username"> </h6>
+          <p class="card-text" id="bio"> </p>
+        </div>
       </div>
+      <button id="edit" class="btn btn-info" onclick="location.href = '/EditProfilePage.html';">
+        Edit Profile
+      </button>
     </div>
-    <button id="edit" class="btn btn-info" onclick="location.href = '/EditProfilePage.html';">
-      Edit Profile
-    </button>
   </body>
 </html>
