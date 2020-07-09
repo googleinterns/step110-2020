@@ -41,7 +41,7 @@ public class ItemSubmissionServletTest {
   private static final String DIRECTORS_PARAMETER_KEY = "Director";
   private static final String WRITERS_PARAMETER_KEY = "Writer";
   private static final String ACTORS_PARAMETER_KEY = "Actors";
-  private static final String OMDB_ID_PARAMETER_KEY = "imdbID";
+  private static final String IMDB_ID_PARAMETER_KEY = "imdbID";
 
   private static final String TITLE = "Star Wars";
   private static final String DESCRIPTION = "Blah....";
@@ -85,7 +85,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(null);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(null);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(null);
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(null);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(null);
 
     servlet.doPost(request, response);
 
@@ -106,7 +106,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -127,7 +127,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn("");
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn("");
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn("");
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn("");
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn("");
 
     servlet.doPost(request, response);
 
@@ -149,7 +149,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -170,7 +170,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(getStringOfLength(MAX_CHARS));
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -191,7 +191,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -225,7 +225,7 @@ public class ItemSubmissionServletTest {
     when(request.getParameter(DIRECTORS_PARAMETER_KEY)).thenReturn(DIRECTORS);
     when(request.getParameter(WRITERS_PARAMETER_KEY)).thenReturn(WRITERS);
     when(request.getParameter(ACTORS_PARAMETER_KEY)).thenReturn(ACTORS);
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
 
     servlet.doPost(request, response);
 
@@ -237,7 +237,7 @@ public class ItemSubmissionServletTest {
 
   @Test
   public void getRequestWithNullParam_NoResponseIsSent() throws IOException {
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(null);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(null);
 
     servlet.doGet(request, response);
 
@@ -246,7 +246,7 @@ public class ItemSubmissionServletTest {
 
   @Test
   public void getRequestWithEmptyParam_NoResponseIsSent() throws IOException {
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn("");
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn("");
 
     servlet.doGet(request, response);
 
@@ -255,7 +255,7 @@ public class ItemSubmissionServletTest {
 
   @Test
   public void getRequestWithUniqueItem_ResponseReturnsItemIsUnique() throws IOException {
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
@@ -279,7 +279,7 @@ public class ItemSubmissionServletTest {
                                                       .setOmdbId(OMDB_ID)
                                                       .build());
 
-    when(request.getParameter(OMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
+    when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);

@@ -25,7 +25,7 @@ public class ItemSubmissionServlet extends HttpServlet {
   private static final String DIRECTORS_PARAMETER_KEY = "Director";
   private static final String WRITERS_PARAMETER_KEY = "Writer";
   private static final String ACTORS_PARAMETER_KEY = "Actors";
-  private static final String OMDB_ID_PARAMETER_KEY = "imdbID";
+  private static final String IMDB_ID_PARAMETER_KEY = "imdbID";
 
   private static final int MAX_TITLE_CHARS = 150;
 
@@ -47,7 +47,7 @@ public class ItemSubmissionServlet extends HttpServlet {
     String directors = request.getParameter(DIRECTORS_PARAMETER_KEY);
     String writers = request.getParameter(WRITERS_PARAMETER_KEY);
     String actors = request.getParameter(ACTORS_PARAMETER_KEY);
-    String omdbId = request.getParameter(OMDB_ID_PARAMETER_KEY);
+    String omdbId = request.getParameter(IMDB_ID_PARAMETER_KEY);
 
     if (!arePostRequestParametersValid(title, description, imageUrl, releaseDate, runtime, genre,
             directors, writers, actors, omdbId)) {
@@ -83,7 +83,7 @@ public class ItemSubmissionServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String omdbId = request.getParameter(OMDB_ID_PARAMETER_KEY);
+    String omdbId = request.getParameter(IMDB_ID_PARAMETER_KEY);
 
     if (!isParameterValid(omdbId, MAX_CHARS)) {
       System.err.println(
