@@ -66,6 +66,15 @@ function getItemPageComments(comments) {
   });
 }
 
+/**	
+ * Gets itemId from current URL	 
+ */	 
+function getItemId() {	
+  const queryString = window.location.search;	 
+  const urlParams = new URLSearchParams(queryString);	 
+  return urlParams.get('itemId');	 
+}
+
 /**
  * Creates list element which houses comments.
  */
