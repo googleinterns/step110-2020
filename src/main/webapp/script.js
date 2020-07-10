@@ -7,11 +7,23 @@ function loadDashboard() {
     $('#navbar').load('navbar.html', function() {
       $('#navbarDashboardSection').removeClass('d-none');
 
+      loadSearchValue();
       loadSortingDirection();
       getDashboardItems();
     });
 
     $('#itemSubmissionDiv').load('item-submission-dialog.html');
+  });
+}
+
+/**
+ * Adds callback to the search value input to fetch for entertainment items
+ * whenever the user types a new character.
+ */
+function loadSearchValue() {
+  $('#searchValue').on('input', function() {
+    $('#entertainmentItemsContainer').empty();
+    getDashboardItems();
   });
 }
 
@@ -29,6 +41,8 @@ function loadSortingDirection() {
 
   sortingSelector.change(function() {
     localStorage.setItem('sortDir', $(this).val());
+    $('#entertainmentItemsContainer').empty();
+
     getDashboardItems();
   });
 }
@@ -36,21 +50,20 @@ function loadSortingDirection() {
 /**
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
+ *
+ * @param { string } cursor - the cursor pointing to the page location
+ * to get the items from
  */
-function getDashboardItems() {
+function getDashboardItems(cursor = '') {
   fetch(
-      '/dashboard?cursor=' + getUrlParam('cursor') +
+      '/dashboard?cursor=' + cursor +
       '&searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
-        const entertainmentItemsContainer = $('#entertainmentItemsContainer');
-        entertainmentItemsContainer.empty();
-
-        const items = entertainmentItemList.items;
-
-        populateItemGrid(entertainmentItemsContainer, items);
-        updatePagination(items.length, entertainmentItemList.pageCursor);
+        populateItemGrid(
+            $('#entertainmentItemsContainer'), entertainmentItemList.items);
+        updatePagination(entertainmentItemList.pageCursor);
       })
       .catch((error) => {
         console.log(
@@ -115,7 +128,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
          currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
-
+      
       // If uniqueId Optional is empty then the item should not be created.
       if ($.isEmptyObject(item.uniqueId) ||
           !item.uniqueId.hasOwnProperty('value')) {
@@ -231,22 +244,19 @@ function submitItem(omdbItem) {
 }
 
 /**
- * Updates the display of buttons used for pagination if the
- * current page is full.
+ * Fetches for more entertainment items if the current page is fully scrolled
+ * down.
  *
- * @param { number } itemsInPage - number of items loaded in the page
  * @param { string } pageCursor - opaque key representing the cursor for the
  *     next page
  */
-function updatePagination(itemsInPage, pageCursor) {
-  const MAX_ITEMS_PER_PAGE = 18;
-  // Display pagination button only when needed(page is full).
-  if (itemsInPage === MAX_ITEMS_PER_PAGE) {
-    $('#paginationNav').removeClass('d-none');
-    $('#nextLink').attr('href', '/index.html?cursor=' + pageCursor);
-  } else {
-    $('#paginationNav').addClass('d-none');
-  }
+function updatePagination(pageCursor) {
+  $(window).off().scroll(function() {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      $(window).off('scroll');
+      getDashboardItems(pageCursor);
+    }
+  });
 }
 
 /**
