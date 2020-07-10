@@ -78,8 +78,7 @@ public class ItemSubmissionServlet extends HttpServlet {
   }
 
   /**
-   * The response of the GET request contains a boolean value that tells whether the item is unique
-   * or not.
+   * The response of the GET request contains an Optional with the possible item found.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -92,7 +91,8 @@ public class ItemSubmissionServlet extends HttpServlet {
     }
 
     response.setContentType("application/json");
-    response.getWriter().println(new Gson().toJson(!doesItemExist(omdbId)));
+    response.getWriter().println(
+        new Gson().toJson(EntertainmentItemDatastore.getInstance().queryItemByOmdbId(omdbId)));
   }
 
   /**
