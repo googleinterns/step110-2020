@@ -1,4 +1,37 @@
 /**
+ * Loads the dashboard nav-bar, the item submission dialog, and the grid of
+ * entertainment items.
+ */
+function loadDashboard() {
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html', function() {
+      loadSortingDirection();
+      getDashboardItems();
+    });
+
+    $('#itemSubmissionDiv').load('item-submission-dialog.html');
+  });
+}
+
+/**
+ * Loads the stored values for the sorting direction selector and adds a
+ * callback to load the entertainment items when the selector changes value.
+ */
+function loadSortingDirection() {
+  const sortingSelector = $('#sortingDirection');
+  const sortDir = localStorage.getItem('sortDir');
+
+  if (sortDir !== null) {
+    sortingSelector.val(sortDir);
+  }
+
+  sortingSelector.change(function() {
+    localStorage.setItem('sortDir', $(this).val());
+    getDashboardItems();
+  });
+}
+
+/**
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
  */
@@ -193,44 +226,6 @@ function submitItem(omdbItem) {
       .fail(function() {
         console.log('Failed to submit entertainment item!');
       });
-}
-
-/**
- * Loads a selector from another HTML file so that it can be used in the current
- * DOM.
- *
- * @param { string } selector - selector that will be used across the document
- *     to refer to the HTML element
- * @param { string } filename - filename of HTML file that is used to load the
- *     element
- *
- * @example loadSelector("#navbar", "navbar.html")
- */
-function loadSelector(selector, filename) {
-  $(document).ready(function() {
-    $(selector).load(filename);
-  });
-}
-
-/**
- * Loads the stored values for the sorting selector and populates dashboard with
- * the Entertainment Items.
- */
-function loadDashboard() {
-  $('#sortingDirection').change(function() {
-    localStorage.setItem('sortDir', $(this).val());
-    getDashboardItems();
-  });
-
-  $(document).ready(function() {
-    const sortDir = localStorage.getItem('sortDir');
-
-    if (sortDir !== null) {
-      $(`#sortingDirection`).val(sortDir);
-    }
-
-    getDashboardItems();
-  });
 }
 
 /**
