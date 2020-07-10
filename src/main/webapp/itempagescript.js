@@ -2,7 +2,7 @@
  * Retrieves ItemPageData and forms page using other functions.
  */
 async function loadItemPage() {
-  const itemId = getItemId();
+  const itemId = getUrlParam('itemId');
   if (itemId !== '') {
     fetch(`/itempagedata?itemId=${itemId}`)
       .then((response) => response.json())
@@ -43,7 +43,7 @@ async function createSelectedItemCard(entertainmentItem) {
  */
 async function sendFormData() {
   const comment = $('#comment').val();
-  const itemId = getItemId();
+  const itemId = getUrlParam('itemId');
   $.post('/itempagedata', { comment: comment, itemId: itemId })
     .done(function() {
       window.location.reload();
@@ -52,7 +52,6 @@ async function sendFormData() {
       console.log('Failed to send form data');
     });
 }
-
 
 /**
  * Function which builds the comment element from the ItemPageData object
@@ -65,15 +64,6 @@ function getItemPageComments(comments) {
       commentDataManager.comment + ' - ' +
       '(' + date.toLocaleString() + ')'));
   });
-}
-
-/**	
- * Gets itemId from current URL.
- */
-function getItemId() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  return urlParams.get('itemId');
 }
 
 /**
