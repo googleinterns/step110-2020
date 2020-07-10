@@ -104,7 +104,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
          currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
-
+      
       // If uniqueId Optional is empty then the item should not be created.
       if ($.isEmptyObject(item.uniqueId) ||
           !item.uniqueId.hasOwnProperty('value')) {
@@ -230,6 +230,7 @@ function updatePagination(pageCursor) {
   $(window).off().scroll(function() {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
       $(window).off('scroll');
+
       getDashboardItems(false, pageCursor);
     }
   });
