@@ -7,8 +7,6 @@ function loadDashboard() {
     $('#navbar').load('navbar.html', function() {
       $('#navbarDashboardSection').removeClass('d-none');
 
-      loadSearchValue();
-      loadSortingDirection();
       getDashboardItems();
     });
 
@@ -17,52 +15,30 @@ function loadDashboard() {
 }
 
 /**
- * Adds callback to the search value input to fetch for entertainment items
- * whenever the user types a new character.
- */
-function loadSearchValue() {
-  $('#searchValue').on('input', function() {
-    $('#entertainmentItemsContainer').empty();
-    getDashboardItems();
-  });
-}
-
-/**
- * Loads the stored values for the sorting direction selector and adds a
- * callback to load the entertainment items when the selector changes value.
- */
-function loadSortingDirection() {
-  const sortingSelector = $('#sortingDirection');
-  const sortDir = localStorage.getItem('sortDir');
-
-  if (sortDir !== null) {
-    sortingSelector.val(sortDir);
-  }
-
-  sortingSelector.change(function() {
-    localStorage.setItem('sortDir', $(this).val());
-    $('#entertainmentItemsContainer').empty();
-
-    getDashboardItems();
-  });
-}
-
-/**
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
  *
+ * @param { boolean } shouldRefresh - clears and loads the entertainment items
+ *     again if true
  * @param { string } cursor - the cursor pointing to the page location
  * to get the items from
  */
-function getDashboardItems(cursor = '') {
+function getDashboardItems(shouldRefresh = true, cursor = '') {
   fetch(
       '/dashboard?cursor=' + cursor +
       '&searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
-        populateItemGrid(
-            $('#entertainmentItemsContainer'), entertainmentItemList.items);
+        const itemContainer = $('#entertainmentItemsContainer');
+
+        // Pagination does not need to refresh dashboard items, but searching
+        // and sorting does.
+        if (shouldRefresh) {
+          itemContainer.empty();
+        }
+
+        populateItemGrid(itemContainer, entertainmentItemList.items);
         updatePagination(entertainmentItemList.pageCursor);
       })
       .catch((error) => {
@@ -117,7 +93,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
   while (currItemIndex < entertainmentItemsList.length) {
     // The grid gets added a new row if there are items that still haven't been
     // included.
-    const rowElem = $('<div class="row mb-4"></div>');
+    const rowElem = $('<div class="row mb-3"></div>');
 
     const MAX_CELLS_PER_ROW = 3;
 
@@ -128,14 +104,14 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
          currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
-      
+
       // If uniqueId Optional is empty then the item should not be created.
       if ($.isEmptyObject(item.uniqueId) ||
           !item.uniqueId.hasOwnProperty('value')) {
         continue;
       }
 
-      const colElem = $('<div class="col-md-4"</div>');
+      const colElem = $('<div class="col-md-4 mb-3"</div>');
       colElem.append(createEntertainmentItemCard(item));
 
       rowElem.append(colElem);
@@ -254,7 +230,7 @@ function updatePagination(pageCursor) {
   $(window).off().scroll(function() {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
       $(window).off('scroll');
-      getDashboardItems(pageCursor);
+      getDashboardItems(false, pageCursor);
     }
   });
 }
