@@ -4,7 +4,6 @@
 function loadProfile() {
   $(document).ready(function() {
     $('#navbar').load('navbar.html', function() {
-      $('#navbarDashboardSection').addClass('d-none');
       $('#navbarProfileSection').addClass('d-none');
     });
   });

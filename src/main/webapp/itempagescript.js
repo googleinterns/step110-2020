@@ -3,9 +3,7 @@
  */
 async function loadItemPage() {
   $(document).ready(function() {
-    $('#navbar').load('navbar.html', function() {
-      $('#navbarDashboardSection').addClass('d-none');
-    });
+    $('#navbar').load('navbar.html');
 
     const itemId = getUrlParam('itemId');
 
