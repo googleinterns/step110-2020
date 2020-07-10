@@ -2,18 +2,22 @@
  * Retrieves ItemPageData and forms page using other functions.
  */
 async function loadItemPage() {
-  const itemId = getUrlParam('itemId');
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html');
+    
+    const itemId = getUrlParam('itemId');
 
-  if (itemId !== '') {
-    fetch(`/itempagedata?itemId=${itemId}`)
-      .then((response) => response.json())
-      .then((ItemPageData) => {
-        createSelectedItemCard(ItemPageData.item);
-        getItemPageComments(ItemPageData.comments);
-      });
-  } else {
-    console.log('ItemId is empty!');
-  }
+    if (itemId !== '') {
+      fetch(`/itempagedata?itemId=${itemId}`)
+        .then((response) => response.json())
+        .then((ItemPageData) => {
+          createSelectedItemCard(ItemPageData.item);
+          getItemPageComments(ItemPageData.comments);
+        });
+    } else {
+      console.log('ItemId is empty!');
+    }
+  });
 }
 
 /**

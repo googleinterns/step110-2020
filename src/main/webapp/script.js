@@ -5,6 +5,8 @@
 function loadDashboard() {
   $(document).ready(function() {
     $('#navbar').load('navbar.html', function() {
+      $('#navbarDashboardSection').removeClass('d-none');
+
       loadSortingDirection();
       getDashboardItems();
     });
