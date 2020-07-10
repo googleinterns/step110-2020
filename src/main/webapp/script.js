@@ -18,12 +18,12 @@ function loadDashboard() {
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
  *
- * @param { boolean } shouldRefresh - clears and loads the entertainment items
+ * @param { boolean } clearCurrentItems - clears and loads the entertainment items
  *     again if true
  * @param { string } cursor - the cursor pointing to the page location
  * to get the items from
  */
-function getDashboardItems(shouldRefresh = true, cursor = '') {
+function getDashboardItems(clearCurrentItems = true, cursor = '') {
   fetch(
       '/dashboard?cursor=' + cursor +
       '&searchValue=' + $('#searchValue').val() +
@@ -34,7 +34,7 @@ function getDashboardItems(shouldRefresh = true, cursor = '') {
 
         // Pagination does not need to refresh dashboard items, but searching
         // and sorting does.
-        if (shouldRefresh) {
+        if (clearCurrentItems) {
           itemContainer.empty();
         }
 
@@ -231,7 +231,7 @@ function updatePagination(pageCursor) {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
       $(window).off('scroll');
 
-      getDashboardItems(false, pageCursor);
+      getDashboardItems(/* clearItems */ false, pageCursor);
     }
   });
 }
