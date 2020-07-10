@@ -7,6 +7,7 @@ function loadDashboard() {
     $('#navbar').load('navbar.html', function() {
       $('#navbarDashboardSection').removeClass('d-none');
 
+      enableProfileSectionIfLoggedIn();
       getDashboardItems();
     });
 
@@ -198,6 +199,29 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
       })
       .catch((error) => {
         console.log('failed to check if omdb Item is duplicate: ' + error);
+      });
+}
+
+/**
+ * Enables access to the profile if the user is logged in by adding a "Profile" link to the navbar,
+ * if the user is not logged in then it adds a link to login.
+ */
+function enableProfileSectionIfLoggedIn() {
+  fetch('/login')
+      .then((response) => response.json())
+      .then((isUserLoggedIn) => {
+        const profileLinks = $('#profileLinks');
+
+        if (isUserLoggedIn) {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+        } else {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/LoginPage.html">Login</a>'));
+        }
+      })
+      .catch((error) => {
+        console.log('failed to fetch login status: ' + error);
       });
 }
 
