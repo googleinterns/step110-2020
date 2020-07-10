@@ -53,6 +53,7 @@ async function sendFormData() {
     });
 }
 
+
 /**
  * Function which builds the comment element from the ItemPageData object
  */
