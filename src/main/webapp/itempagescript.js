@@ -4,7 +4,7 @@
 async function loadItemPage() {
   $(document).ready(function() {
     $('#navbar').load('navbar.html');
-
+    
     const itemId = getUrlParam('itemId');
 
     if (itemId !== '') {
