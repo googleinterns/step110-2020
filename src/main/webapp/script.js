@@ -18,8 +18,8 @@ function loadDashboard() {
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
  *
- * @param { boolean } clearCurrentItems - clears and loads the entertainment items
- *     again if true
+ * @param { boolean } clearCurrentItems - clears and loads the entertainment
+ *     items again if true
  * @param { string } cursor - the cursor pointing to the page location
  * to get the items from
  */
@@ -104,10 +104,9 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
          currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
-      
+
       // If uniqueId Optional is empty then the item should not be created.
-      if ($.isEmptyObject(item.uniqueId) ||
-          !item.uniqueId.hasOwnProperty('value')) {
+      if (isOptionalEmpty(item.uniqueId)) {
         continue;
       }
 
@@ -184,16 +183,24 @@ function createOmdbItemCard(omdbItem) {
 function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
   fetch('/item-submission?imdbID=' + omdbItem.imdbID)
       .then((response) => response.json())
-      .then((isItemUnique) => {
-        if (isItemUnique) {
+      .then((itemFound) => {
+        if (/* item is unique */ isOptionalEmpty(itemFound)) {
           submitButton.removeClass('d-none');
           submitButton.off().one('click', () => {
             submitItem(omdbItem);
           });
         } else {
-          // TODO: Add link to item that already exists.
+          const itemId = itemFound.value.uniqueId;
+          let itemLink = '';
+
+          if (!isOptionalEmpty(itemId)) {
+            itemLink = ' <a href="item-page.html?itemId=' + itemId.value +
+                '">Link to Item</a>';
+          }
+
           itemCard.append($(
-              '<p class="card-text">Item already exists on Entertainment Hub!</p>'));
+              '<p class="card-text">Item already exists on Entertainment Hub!' +
+              itemLink + '</p>'));
         }
       })
       .catch((error) => {
@@ -250,4 +257,15 @@ function getUrlParam(param) {
   }
 
   return '';
+}
+
+/**
+ * Checks if an object contains an optional value.
+ *
+ * @param { Optional } optional - the object containing an optional value
+ * @returns { boolean } if the optional is empty it returns true, otherwise
+ *     false
+ */
+function isOptionalEmpty(optional) {
+  return $.isEmptyObject(optional) || !optional.hasOwnProperty('value');
 }
