@@ -50,12 +50,4 @@ public class LoginServlet extends HttpServlet {
       response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
     }
   }
-
-  /**
-   * Returns the email of the currently logged in user
-   */
-  public String getEmail() {
-    UserService userService = UserServiceFactory.getUserService();
-    return userService.getCurrentUser().getEmail();
-  }
 }
