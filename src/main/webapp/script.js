@@ -8,10 +8,48 @@ function loadDashboard() {
       $('#navbarDashboardSection').removeClass('d-none');
 
       setupNavBarProfileSection();
+      loadSearchValue();
+      loadSortValue();
       getDashboardItems();
     });
 
     $('#itemSubmissionDiv').load('item-submission-dialog.html');
+  });
+}
+
+/**
+ * Loads the stored value used for the search input and adds a
+ * callback to load the entertainment items when the user types a key.
+ */
+function loadSearchValue() {
+  const searchInput = $('#searchValue');
+  const searchVal = localStorage.getItem('searchVal');
+
+  if (searchVal !== null) {
+    searchInput.val(searchVal);
+  }
+
+  searchInput.on('input', function() {
+    localStorage.setItem('searchVal', $(this).val());
+    getDashboardItems();
+  });
+}
+
+/**
+ * Loads the stored values for the sort type of the sort selector and adds a
+ * callback to load the entertainment items when the selector changes value.
+ */
+function loadSortValue() {
+  const sortSelector = $('#sortType');
+  const sortVal = localStorage.getItem('sortVal');
+
+  if (sortVal !== null) {
+    sortSelector.val(sortVal);
+  }
+
+  sortSelector.change(function() {
+    localStorage.setItem('sortVal', $(this).val());
+    getDashboardItems();
   });
 }
 
@@ -25,10 +63,8 @@ function loadDashboard() {
  * to get the items from
  */
 function getDashboardItems(clearCurrentItems = true, cursor = '') {
-  fetch(
-      '/dashboard?cursor=' + cursor +
-      '&searchValue=' + $('#searchValue').val() +
-      '&sortType=' + $('#sortType').val())
+  fetch('/dashboard?cursor=' + cursor + '&searchValue=' +
+        $('#searchValue').val() + '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
         const itemContainer = $('#entertainmentItemsContainer');
@@ -64,11 +100,9 @@ function getOmdbItem() {
 
         if (omdbItem.Response === 'False') {
           omdbItemEntry.append($('<p>Item not found!</p>'));
-
           submitButton.addClass('d-none');
         } else {
           const itemCard = createOmdbItemCard(omdbItem);
-
           omdbItemEntry.append(itemCard);
 
           enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
@@ -102,7 +136,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
     // reaches the maximum limit of cells per row, or if all the items on the
     // list have been included.
     for (let cell = 0; cell < MAX_CELLS_PER_ROW &&
-         currItemIndex < entertainmentItemsList.length;
+                       currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
 
@@ -135,9 +169,8 @@ function createEntertainmentItemCard(entertainmentItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
-  card.append(
-      $('<a class="stretched-link" href="item-page.html?itemId=' +
-        entertainmentItem.uniqueId.value + '"></a>'))
+  card.append($('<a class="stretched-link" href="item-page.html?itemId=' +
+                entertainmentItem.uniqueId.value + '"></a>'))
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -160,9 +193,8 @@ function createEntertainmentItemCard(entertainmentItem) {
  */
 function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
-  card.append(
-      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
-        '">'));
+  card.append($('<img class="card-img-top mx-auto item-image" src="' +
+                omdbItem.Poster + '">'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append($('<h5 class="card-title">' + omdbItem.Title + '</h5>'));
@@ -187,9 +219,7 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
       .then((itemFound) => {
         if (/* item is unique */ isOptionalEmpty(itemFound)) {
           submitButton.removeClass('d-none');
-          submitButton.off().one('click', () => {
-            submitItem(omdbItem);
-          });
+          submitButton.off().one('click', () => { submitItem(omdbItem); });
         } else {
           const itemId = itemFound.value.uniqueId;
           let itemLink = '';
@@ -199,6 +229,7 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
                 '">Link to Item</a>';
           }
 
+          submitButton.addClass('d-none');
           itemCard.append($(
               '<p class="card-text">Item already exists on Entertainment Hub!' +
               itemLink + '</p>'));
@@ -245,9 +276,8 @@ function submitItem(omdbItem) {
         // changes.
         window.location.reload();
       })
-      .fail(function() {
-        console.log('Failed to submit entertainment item!');
-      });
+      .fail(
+          function() { console.log('Failed to submit entertainment item!'); });
 }
 
 /**
