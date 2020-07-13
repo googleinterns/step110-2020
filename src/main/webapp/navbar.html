@@ -31,17 +31,20 @@
             />
             <select
               class="form-control my-2 my-sm-0 mr-sm-2"
-              name="sortingDirection"
-              id="sortingDirection"
+              name="sortType"
+              id="sortType"
               onchange="getDashboardItems()"
               required
             >
-              <option value="ASCENDING" selected
+              <option value="ASCENDING_TITLE" selected
                 >Title (Increasing Alphabetical Order)</option
               >
-              <option value="DESCENDING"
+              <option value="DESCENDING_TITLE"
                 >Title (Decreasing Alphabetical Order)</option
               >
+              <option value="RECENT_RELEASE_DATE">
+                Release Date (Most Recent)
+              </option>
             </select>
             <button
               type="button"
