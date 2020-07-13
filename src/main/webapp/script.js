@@ -7,6 +7,8 @@ function loadDashboard() {
     $('#navbar').load('navbar.html', function() {
       $('#navbarDashboardSection').removeClass('d-none');
 
+      loadSearchValue();
+      loadSortValue();
       getDashboardItems();
     });
 
@@ -15,19 +17,53 @@ function loadDashboard() {
 }
 
 /**
+ * Loads the stored value used for the search input and adds a
+ * callback to load the entertainment items when the user types a key.
+ */
+function loadSearchValue() {
+  const searchInput = $('#searchValue');
+  const searchVal = localStorage.getItem('searchVal');
+
+  if (searchVal !== null) {
+    searchInput.val(searchVal);
+  }
+
+  searchInput.on('input', function() {
+    localStorage.setItem('searchVal', $(this).val());
+    getDashboardItems();
+  });
+}
+
+/**
+ * Loads the stored values for the sort type of the sort selector and adds a
+ * callback to load the entertainment items when the selector changes value.
+ */
+function loadSortValue() {
+  const sortSelector = $('#sortType');
+  const sortVal = localStorage.getItem('sortVal');
+
+  if (sortVal !== null) {
+    sortSelector.val(sortVal);
+  }
+
+  sortSelector.change(function() {
+    localStorage.setItem('sortVal', $(this).val());
+    getDashboardItems();
+  });
+}
+
+/**
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
  *
- * @param { boolean } clearCurrentItems - clears and loads the entertainment items
- *     again if true
+ * @param { boolean } clearCurrentItems - clears and loads the entertainment
+ *     items again if true
  * @param { string } cursor - the cursor pointing to the page location
  * to get the items from
  */
 function getDashboardItems(clearCurrentItems = true, cursor = '') {
-  fetch(
-      '/dashboard?cursor=' + cursor +
-      '&searchValue=' + $('#searchValue').val() +
-      '&sortType=' + $('#sortType').val())
+  fetch('/dashboard?cursor=' + cursor + '&searchValue=' +
+        $('#searchValue').val() + '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
         const itemContainer = $('#entertainmentItemsContainer');
@@ -63,11 +99,9 @@ function getOmdbItem() {
 
         if (omdbItem.Response === 'False') {
           omdbItemEntry.append($('<p>Item not found!</p>'));
-
           submitButton.addClass('d-none');
         } else {
           const itemCard = createOmdbItemCard(omdbItem);
-
           omdbItemEntry.append(itemCard);
 
           enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
@@ -101,10 +135,10 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
     // reaches the maximum limit of cells per row, or if all the items on the
     // list have been included.
     for (let cell = 0; cell < MAX_CELLS_PER_ROW &&
-         currItemIndex < entertainmentItemsList.length;
+                       currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
-      
+
       // If uniqueId Optional is empty then the item should not be created.
       if ($.isEmptyObject(item.uniqueId) ||
           !item.uniqueId.hasOwnProperty('value')) {
@@ -135,9 +169,8 @@ function createEntertainmentItemCard(entertainmentItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
-  card.append(
-      $('<a class="stretched-link" href="item-page.html?itemId=' +
-        entertainmentItem.uniqueId.value + '"></a>'))
+  card.append($('<a class="stretched-link" href="item-page.html?itemId=' +
+                entertainmentItem.uniqueId.value + '"></a>'))
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -160,9 +193,8 @@ function createEntertainmentItemCard(entertainmentItem) {
  */
 function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
-  card.append(
-      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
-        '">'));
+  card.append($('<img class="card-img-top mx-auto item-image" src="' +
+                omdbItem.Poster + '">'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append($('<h5 class="card-title">' + omdbItem.Title + '</h5>'));
@@ -187,11 +219,10 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
       .then((isItemUnique) => {
         if (isItemUnique) {
           submitButton.removeClass('d-none');
-          submitButton.off().one('click', () => {
-            submitItem(omdbItem);
-          });
+          submitButton.off().one('click', () => { submitItem(omdbItem); });
         } else {
           // TODO: Add link to item that already exists.
+          submitButton.addClass('d-none');
           itemCard.append($(
               '<p class="card-text">Item already exists on Entertainment Hub!</p>'));
         }
@@ -214,9 +245,8 @@ function submitItem(omdbItem) {
         // changes.
         window.location.reload();
       })
-      .fail(function() {
-        console.log('Failed to submit entertainment item!');
-      });
+      .fail(
+          function() { console.log('Failed to submit entertainment item!'); });
 }
 
 /**
