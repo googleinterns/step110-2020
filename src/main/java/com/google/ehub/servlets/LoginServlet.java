@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Handles the GET request from the user login page provided by the Users API.
+ * Handles GET and POST requests that require info from Google's Users API.
  */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
