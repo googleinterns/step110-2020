@@ -27,7 +27,7 @@ function getDashboardItems(clearCurrentItems = true, cursor = '') {
   fetch(
       '/dashboard?cursor=' + cursor +
       '&searchValue=' + $('#searchValue').val() +
-      '&sortingDirection=' + $('#sortingDirection').val())
+      '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
         const itemContainer = $('#entertainmentItemsContainer');
