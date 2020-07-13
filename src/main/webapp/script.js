@@ -62,8 +62,9 @@ function loadSortValue() {
  * to get the items from
  */
 function getDashboardItems(clearCurrentItems = true, cursor = '') {
-  fetch('/dashboard?cursor=' + cursor + '&searchValue=' +
-        $('#searchValue').val() + '&sortType=' + $('#sortType').val())
+  fetch(
+      '/dashboard?cursor=' + cursor + '&searchValue=' +
+      $('#searchValue').val() + '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
         const itemContainer = $('#entertainmentItemsContainer');
@@ -135,7 +136,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
     // reaches the maximum limit of cells per row, or if all the items on the
     // list have been included.
     for (let cell = 0; cell < MAX_CELLS_PER_ROW &&
-                       currItemIndex < entertainmentItemsList.length;
+         currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
 
@@ -169,8 +170,9 @@ function createEntertainmentItemCard(entertainmentItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
-  card.append($('<a class="stretched-link" href="item-page.html?itemId=' +
-                entertainmentItem.uniqueId.value + '"></a>'))
+  card.append(
+      $('<a class="stretched-link" href="item-page.html?itemId=' +
+        entertainmentItem.uniqueId.value + '"></a>'))
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -193,8 +195,9 @@ function createEntertainmentItemCard(entertainmentItem) {
  */
 function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
-  card.append($('<img class="card-img-top mx-auto item-image" src="' +
-                omdbItem.Poster + '">'));
+  card.append(
+      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
+        '">'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append($('<h5 class="card-title">' + omdbItem.Title + '</h5>'));
@@ -219,7 +222,9 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
       .then((isItemUnique) => {
         if (isItemUnique) {
           submitButton.removeClass('d-none');
-          submitButton.off().one('click', () => { submitItem(omdbItem); });
+          submitButton.off().one('click', () => {
+            submitItem(omdbItem);
+          });
         } else {
           // TODO: Add link to item that already exists.
           submitButton.addClass('d-none');
@@ -245,8 +250,9 @@ function submitItem(omdbItem) {
         // changes.
         window.location.reload();
       })
-      .fail(
-          function() { console.log('Failed to submit entertainment item!'); });
+      .fail(function() {
+        console.log('Failed to submit entertainment item!');
+      });
 }
 
 /**
