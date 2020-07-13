@@ -4,7 +4,7 @@
 async function loadItemPage() {
   $(document).ready(function() {
     $('#navbar').load('navbar.html', function() {
-      enableProfileSectionIfLoggedIn();
+      setupNavBarProfileSection();
     });
     
     const itemId = getUrlParam('itemId');
