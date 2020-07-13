@@ -1,21 +1,45 @@
 /**
+ * Loads the dashboard nav-bar, the item submission dialog, and the grid of
+ * entertainment items.
+ */
+function loadDashboard() {
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html', function() {
+      $('#navbarDashboardSection').removeClass('d-none');
+
+      getDashboardItems();
+    });
+
+    $('#itemSubmissionDiv').load('item-submission-dialog.html');
+  });
+}
+
+/**
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
+ *
+ * @param { boolean } clearCurrentItems - clears and loads the entertainment items
+ *     again if true
+ * @param { string } cursor - the cursor pointing to the page location
+ * to get the items from
  */
-function getDashboardItems() {
+function getDashboardItems(clearCurrentItems = true, cursor = '') {
   fetch(
-      '/dashboard?cursor=' + getUrlParam('cursor') +
+      '/dashboard?cursor=' + cursor +
       '&searchValue=' + $('#searchValue').val() +
       '&sortingDirection=' + $('#sortingDirection').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
-        const entertainmentItemsContainer = $('#entertainmentItemsContainer');
-        entertainmentItemsContainer.empty();
+        const itemContainer = $('#entertainmentItemsContainer');
 
-        const items = entertainmentItemList.items;
+        // Pagination does not need to refresh dashboard items, but searching
+        // and sorting does.
+        if (clearCurrentItems) {
+          itemContainer.empty();
+        }
 
-        populateItemGrid(entertainmentItemsContainer, items);
-        updatePagination(items.length, entertainmentItemList.pageCursor);
+        populateItemGrid(itemContainer, entertainmentItemList.items);
+        updatePagination(entertainmentItemList.pageCursor);
       })
       .catch((error) => {
         console.log(
@@ -69,7 +93,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
   while (currItemIndex < entertainmentItemsList.length) {
     // The grid gets added a new row if there are items that still haven't been
     // included.
-    const rowElem = $('<div class="row mb-4"></div>');
+    const rowElem = $('<div class="row mb-3"></div>');
 
     const MAX_CELLS_PER_ROW = 3;
 
@@ -80,14 +104,14 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
          currItemIndex < entertainmentItemsList.length;
          cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
-
+      
       // If uniqueId Optional is empty then the item should not be created.
       if ($.isEmptyObject(item.uniqueId) ||
           !item.uniqueId.hasOwnProperty('value')) {
         continue;
       }
 
-      const colElem = $('<div class="col-md-4"</div>');
+      const colElem = $('<div class="col-md-4 mb-3"</div>');
       colElem.append(createEntertainmentItemCard(item));
 
       rowElem.append(colElem);
@@ -196,60 +220,20 @@ function submitItem(omdbItem) {
 }
 
 /**
- * Loads a selector from another HTML file so that it can be used in the current
- * DOM.
+ * Fetches for more entertainment items if the current page is fully scrolled
+ * down.
  *
- * @param { string } selector - selector that will be used across the document
- *     to refer to the HTML element
- * @param { string } filename - filename of HTML file that is used to load the
- *     element
- *
- * @example loadSelector("#navbar", "navbar.html")
- */
-function loadSelector(selector, filename) {
-  $(document).ready(function() {
-    $(selector).load(filename);
-  });
-}
-
-/**
- * Loads the stored values for the sorting selector and populates dashboard with
- * the Entertainment Items.
- */
-function loadDashboard() {
-  $('#sortingDirection').change(function() {
-    localStorage.setItem('sortDir', $(this).val());
-    getDashboardItems();
-  });
-
-  $(document).ready(function() {
-    const sortDir = localStorage.getItem('sortDir');
-
-    if (sortDir !== null) {
-      $(`#sortingDirection`).val(sortDir);
-    }
-
-    getDashboardItems();
-  });
-}
-
-/**
- * Updates the display of buttons used for pagination if the
- * current page is full.
- *
- * @param { number } itemsInPage - number of items loaded in the page
  * @param { string } pageCursor - opaque key representing the cursor for the
  *     next page
  */
-function updatePagination(itemsInPage, pageCursor) {
-  const MAX_ITEMS_PER_PAGE = 18;
-  // Display pagination button only when needed(page is full).
-  if (itemsInPage === MAX_ITEMS_PER_PAGE) {
-    $('#paginationNav').removeClass('d-none');
-    $('#nextLink').attr('href', '/index.html?cursor=' + pageCursor);
-  } else {
-    $('#paginationNav').addClass('d-none');
-  }
+function updatePagination(pageCursor) {
+  $(window).off().scroll(function() {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      $(window).off('scroll');
+
+      getDashboardItems(/* clearItems */ false, pageCursor);
+    }
+  });
 }
 
 /**

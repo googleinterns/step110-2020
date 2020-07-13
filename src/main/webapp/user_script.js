@@ -2,6 +2,12 @@
 * Fetches the json from ProfileServlet and displays the values on the Profile Page.
  */
 function loadProfile() {
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html', function() {
+      $('#navbarProfileSection').addClass('d-none');
+    });
+  });
+
   fetch('/profile-data').then((response) => response.json()).then((profile) => {
     const nameSection = document.getElementById('name');
     nameSection.innerHTML = profile.name;
