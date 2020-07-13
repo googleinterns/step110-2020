@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.ehub.utility.Utils;
 import java.util.List;
 import java.util.Optional;
 import org.junit.After;
@@ -26,6 +27,8 @@ public class EntertainmentItemDatastoreTest {
   private static final String DESCRIPTION_PROPERTY_KEY = "description";
   private static final String IMAGE_URL_PROPERTY_KEY = "imageUrl";
   private static final String RELEASE_DATE_PROPERTY_KEY = "releaseDate";
+  private static final String RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY =
+      "releaseDateTimestampMillis";
   private static final String RUNTIME_PROPERTY_KEY = "runtime";
   private static final String GENRE_PROPERTY_KEY = "genre";
   private static final String DIRECTORS_PROPERTY_KEY = "directors";
@@ -36,15 +39,20 @@ public class EntertainmentItemDatastoreTest {
   private static final String[] TITLES_IN_ASCENDING_ORDER = {
       "Avengers", "Nemo", "Shrek", "Star Wars", "Transformers"};
 
+  private static final String[] RELASE_DATE_IN_DESCENDING_ORDER = {
+      "01 Jul 2020", "07 Dec 2018", "15 Jun 2015", "11 Jan 2001", "26 Feb 2000"};
+
   private static final String DESCRIPTION = "Blah....";
   private static final String IMAGE_URL = "Image.png";
-  private static final String RELEASE_DATE = "09/26/1972";
+  private static final String RELEASE_DATE = "25 Dec 2012";
   private static final String RUNTIME = "2 hours";
   private static final String GENRE = "Sci-Fi";
   private static final String DIRECTORS = "George Lucas";
   private static final String WRITERS = "George Lucas";
   private static final String ACTORS = "Mark Hamill, Harrison Ford";
   private static final String OMDB_ID = "tt23113212";
+
+  private static final Long RELEASE_DATE_TIMESTAMP_MILLIS = 1356393600000L;
 
   private final EntertainmentItemDatastore entertainmentItemDatastore =
       EntertainmentItemDatastore.getInstance();
@@ -89,6 +97,8 @@ public class EntertainmentItemDatastoreTest {
     Assert.assertEquals(DESCRIPTION, entityList.get(0).getProperty(DESCRIPTION_PROPERTY_KEY));
     Assert.assertEquals(IMAGE_URL, entityList.get(0).getProperty(IMAGE_URL_PROPERTY_KEY));
     Assert.assertEquals(RELEASE_DATE, entityList.get(0).getProperty(RELEASE_DATE_PROPERTY_KEY));
+    Assert.assertEquals(RELEASE_DATE_TIMESTAMP_MILLIS,
+        entityList.get(0).getProperty(RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY));
     Assert.assertEquals(RUNTIME, entityList.get(0).getProperty(RUNTIME_PROPERTY_KEY));
     Assert.assertEquals(GENRE, entityList.get(0).getProperty(GENRE_PROPERTY_KEY));
     Assert.assertEquals(DIRECTORS, entityList.get(0).getProperty(DIRECTORS_PROPERTY_KEY));
@@ -140,7 +150,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryWithAlphabeticalTitleOrder_ItemListIsCorrectlyOrdered() {
+  public void queryWithAscendingTitlePrefix_ItemListIsCorrectlyOrdered() {
     for (int i = 0; i < TITLES_IN_ASCENDING_ORDER.length; i++) {
       Entity entity = new Entity(ENTERTAINMENT_ITEM_KIND);
       entity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, TITLES_IN_ASCENDING_ORDER[i]);
@@ -149,8 +159,8 @@ public class EntertainmentItemDatastoreTest {
       datastoreService.put(entity);
     }
 
-    EntertainmentItemList itemList = entertainmentItemDatastore.queryAllItemsWithTitleOrder(
-        FetchOptions.Builder.withDefaults(), SortDirection.ASCENDING);
+    EntertainmentItemList itemList = entertainmentItemDatastore.queryItemsByTitlePrefix(
+        FetchOptions.Builder.withDefaults(), /* Empty Search Value */ "", SortDirection.ASCENDING);
     String[] actual = new String[itemList.getItems().size()];
 
     for (int i = 0; i < actual.length; ++i) {
@@ -161,7 +171,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryWithDecreasingAlphabeticalOrderAndTitlePrefix_ItemListIsCorrectlySelected() {
+  public void queryWithDescendingTitlePrefix_ItemListIsCorrectlySelected() {
     for (int i = 0; i < TITLES_IN_ASCENDING_ORDER.length; i++) {
       Entity entity = new Entity(ENTERTAINMENT_ITEM_KIND);
       entity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, TITLES_IN_ASCENDING_ORDER[i]);
@@ -174,11 +184,31 @@ public class EntertainmentItemDatastoreTest {
         FetchOptions.Builder.withDefaults(), "S", SortDirection.DESCENDING);
     String[] actual = new String[itemList.getItems().size()];
 
-    for (int i = 0; i < actual.length; ++i) {
+    for (int i = 0; i < actual.length; i++) {
       actual[i] = itemList.getItems().get(i).getTitle();
     }
 
     Assert.assertArrayEquals(
         new String[] {TITLES_IN_ASCENDING_ORDER[3], TITLES_IN_ASCENDING_ORDER[2]}, actual);
+  }
+
+  @Test
+  public void queryWithRecentReleaseDate_ItemListIsCorrectlyOrdered() {
+    for (int i = 0; i < RELASE_DATE_IN_DESCENDING_ORDER.length; i++) {
+      entertainmentItemDatastore.addItemToDatastore(
+          new EntertainmentItem.Builder()
+              .setReleaseDate(RELASE_DATE_IN_DESCENDING_ORDER[i])
+              .build());
+    }
+
+    EntertainmentItemList itemList = entertainmentItemDatastore.queryItemsByReleaseDate(
+        FetchOptions.Builder.withDefaults(), SortDirection.DESCENDING);
+    String[] actual = new String[itemList.getItems().size()];
+
+    for (int i = 0; i < actual.length; i++) {
+      actual[i] = itemList.getItems().get(i).getReleaseDate();
+    }
+
+    Assert.assertArrayEquals(RELASE_DATE_IN_DESCENDING_ORDER, actual);
   }
 }
