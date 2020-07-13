@@ -7,6 +7,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -22,28 +24,20 @@ public class LoginServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
+    JsonObject loginJson = new JsonObject();
 
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/?authuser=0";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-
-      response.setContentType("text/html");
-      response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-      response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
+      String logoutUrl = userService.createLogoutURL("/?authuser=0");
+      loginJson.addProperty("LogoutURL", logoutUrl);
+      loginJson.addProperty("LoginURL", "");
+      
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/CreateProfilePage.html";
-      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-      // TODO(oyins): redirect to Profile Page after logging back in
-      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+      String loginUrl = userService.createLoginURL("/ProfilePage.html");
+       loginJson.addProperty("LoginURL", loginUrl);
+      loginJson.addProperty("LogoutURL", "");
     }
-  }
-
-  /**
-   * Returns the email of the currently logged in user
-   */
-  public String getEmail() {
-    UserService userService = UserServiceFactory.getUserService();
-    return userService.getCurrentUser().getEmail();
+    response.setContentType("application/json");
+    response.getWriter().println(loginJson.toString());
   }
 }
