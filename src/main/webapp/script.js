@@ -23,14 +23,14 @@ function loadDashboard() {
  */
 function loadSearchValue() {
   const searchInput = $('#searchValue');
-  const searchVal = localStorage.getItem('searchVal');
+  const searchVal = sessionStorage.getItem('searchVal');
 
   if (searchVal !== null) {
     searchInput.val(searchVal);
   }
 
   searchInput.on('input', function() {
-    localStorage.setItem('searchVal', $(this).val());
+    sessionStorage.setItem('searchVal', $(this).val());
     getDashboardItems();
   });
 }
@@ -41,14 +41,14 @@ function loadSearchValue() {
  */
 function loadSortValue() {
   const sortSelector = $('#sortType');
-  const sortVal = localStorage.getItem('sortVal');
+  const sortVal = sessionStorage.getItem('sortVal');
 
   if (sortVal !== null) {
     sortSelector.val(sortVal);
   }
 
   sortSelector.change(function() {
-    localStorage.setItem('sortVal', $(this).val());
+    sessionStorage.setItem('sortVal', $(this).val());
     getDashboardItems();
   });
 }
