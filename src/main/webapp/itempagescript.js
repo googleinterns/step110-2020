@@ -3,7 +3,9 @@
  */
 async function loadItemPage() {
   $(document).ready(function() {
-    $('#navbar').load('navbar.html');
+    $('#navbar').load('navbar.html', function() {
+      setupNavBarProfileSection();
+    });
     
     const itemId = getUrlParam('itemId');
 
