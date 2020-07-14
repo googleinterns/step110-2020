@@ -38,8 +38,7 @@ public final class EntertainmentItemDatastore {
 
   private static EntertainmentItemDatastore instance;
 
-  private final DatastoreService datastoreService =
-      DatastoreServiceFactory.getDatastoreService();
+  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
   private EntertainmentItemDatastore() {}
 
@@ -67,8 +66,7 @@ public final class EntertainmentItemDatastore {
 
     // Unique Id is created by Datastore so it's not added as a property.
     itemEntity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, item.getTitle());
-    itemEntity.setProperty(NORMALIZED_TITLE_PROPERTY_KEY,
-                           item.getTitle().toLowerCase());
+    itemEntity.setProperty(NORMALIZED_TITLE_PROPERTY_KEY, item.getTitle().toLowerCase());
     itemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, item.getDescription());
     itemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, item.getImageUrl());
     itemEntity.setProperty(RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY,
@@ -94,8 +92,7 @@ public final class EntertainmentItemDatastore {
    */
   public Optional<EntertainmentItem> queryItem(long uniqueId) {
     return queryItemByProperty(
-        Entity.KEY_RESERVED_PROPERTY,
-        KeyFactory.createKey(ENTERTAINMENT_ITEM_KIND, uniqueId));
+        Entity.KEY_RESERVED_PROPERTY, KeyFactory.createKey(ENTERTAINMENT_ITEM_KIND, uniqueId));
   }
 
   /**
@@ -118,8 +115,7 @@ public final class EntertainmentItemDatastore {
    *     be empty if no items were found
    */
   public EntertainmentItemList queryAllItems(FetchOptions fetchOptions) {
-    return createItemListFromQuery(fetchOptions,
-                                   new Query(ENTERTAINMENT_ITEM_KIND));
+    return createItemListFromQuery(fetchOptions, new Query(ENTERTAINMENT_ITEM_KIND));
   }
 
   /**
@@ -162,10 +158,11 @@ public final class EntertainmentItemDatastore {
             .addSort(RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY, sortDirection));
   }
 
-  private Optional<EntertainmentItem> queryItemByProperty(String propertyName, Object propertyValue) {
-    Query query = new Query(ENTERTAINMENT_ITEM_KIND)
-                      .setFilter(new FilterPredicate(
-                          propertyName, FilterOperator.EQUAL, propertyValue));
+  private Optional<EntertainmentItem> queryItemByProperty(
+      String propertyName, Object propertyValue) {
+    Query query =
+        new Query(ENTERTAINMENT_ITEM_KIND)
+            .setFilter(new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue));
     PreparedQuery queryResults = datastoreService.prepare(query);
 
     Entity itemEntity = queryResults.asSingleEntity();
@@ -177,25 +174,22 @@ public final class EntertainmentItemDatastore {
     return Optional.of(createItemFromEntity(itemEntity));
   }
 
-  private EntertainmentItemList
-  createItemListFromQuery(FetchOptions fetchOptions, Query query) {
+  private EntertainmentItemList createItemListFromQuery(FetchOptions fetchOptions, Query query) {
     PreparedQuery queryResults = datastoreService.prepare(query);
 
-    QueryResultList<Entity> entityList =
-        queryResults.asQueryResultList(fetchOptions);
+    QueryResultList<Entity> entityList = queryResults.asQueryResultList(fetchOptions);
     List<EntertainmentItem> itemList = new ArrayList<>();
 
     for (Entity itemEntity : entityList) {
       itemList.add(createItemFromEntity(itemEntity));
     }
 
-    return new EntertainmentItemList(itemList,
-                                     entityList.getCursor().toWebSafeString());
+    return new EntertainmentItemList(itemList, entityList.getCursor().toWebSafeString());
   }
 
   private static EntertainmentItem createItemFromEntity(Entity itemEntity) {
     Long uniqueId = itemEntity.getKey().getId();
-    
+
     String title = (String) itemEntity.getProperty(DISPLAY_TITLE_PROPERTY_KEY);
     String description = (String) itemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
     String imageUrl = (String) itemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
