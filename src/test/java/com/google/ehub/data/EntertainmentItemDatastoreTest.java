@@ -26,7 +26,6 @@ public class EntertainmentItemDatastoreTest {
   private static final String NORMALIZED_TITLE_PROPERTY_KEY = "normalizedTitle";
   private static final String DESCRIPTION_PROPERTY_KEY = "description";
   private static final String IMAGE_URL_PROPERTY_KEY = "imageUrl";
-  private static final String RELEASE_DATE_PROPERTY_KEY = "releaseDate";
   private static final String RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY =
       "releaseDateTimestampMillis";
   private static final String RUNTIME_PROPERTY_KEY = "runtime";
@@ -96,7 +95,6 @@ public class EntertainmentItemDatastoreTest {
         entityList.get(0).getProperty(NORMALIZED_TITLE_PROPERTY_KEY));
     Assert.assertEquals(DESCRIPTION, entityList.get(0).getProperty(DESCRIPTION_PROPERTY_KEY));
     Assert.assertEquals(IMAGE_URL, entityList.get(0).getProperty(IMAGE_URL_PROPERTY_KEY));
-    Assert.assertEquals(RELEASE_DATE, entityList.get(0).getProperty(RELEASE_DATE_PROPERTY_KEY));
     Assert.assertEquals(RELEASE_DATE_TIMESTAMP_MILLIS,
         entityList.get(0).getProperty(RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY));
     Assert.assertEquals(RUNTIME, entityList.get(0).getProperty(RUNTIME_PROPERTY_KEY));
