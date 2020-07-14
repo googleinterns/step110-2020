@@ -31,7 +31,8 @@ public class DashboardServlet extends HttpServlet {
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     String searchValue = request.getParameter(SEARCH_VALUE_PARAMETER_KEY);
     String sortType = request.getParameter(SORT_TYPE_PARAMETER_KEY);
 

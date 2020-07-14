@@ -5,8 +5,8 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Date;
 
 /**
