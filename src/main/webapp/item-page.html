@@ -1,33 +1,53 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Entertainment Hub - Item Page</title>
+   <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    /> 
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
 
-<head>
-	<meta charset="UTF-8" />
-	<title>Item Page</title>
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="style.css" />
-	<script src="itempagescript.js"></script>
-	<!-- Load an icon library -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-	<!-- Javascript for Bootstrap -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="script.js"></script>
+    <script src="itempagescript.js"></script>
+  </head>
 
-<body onload="loadItemPage()">
-	<div class="container">
-		<div id="item-container"></div>
-		<footer>
-			<ul id="comment-container"></ul>
-			<form>
-				<textarea name="comment"></textarea>
-				<br /><br />
-				<button onclick="sendFormData()">Submit</button>
-			</form>
-		</footer>
-	</div>
-</body>
+  <body onload="loadItemPage()">
+    <div id="navbar"></div>
 
+    <div class="container">
+      <div
+        class="card"
+        style="width: 27em; margin: 0 auto;"
+        style="height: 20rem;"
+      >
+        <div id="item-container"></div>
+      </div>
+      <footer>
+        <h2>Comments</h2>
+        <ul class="list-group" id="comment-container"></ul>
+        <div id="comments" class="p-1">
+          <form>
+            <h4>Enter a comment below</h4>
+            <textarea id="comment"></textarea>
+            <button
+              type="button"
+              class="btn btn-dark my-sm-0"
+              onclick="sendFormData()"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
 </html>
