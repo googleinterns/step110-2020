@@ -1,17 +1,46 @@
 /**
+ * Loads the dashboard nav-bar, the item submission dialog, and the grid of
+ * entertainment items.
+ */
+function loadDashboard() {
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html', function() {
+      $('#navbarDashboardSection').removeClass('d-none');
+
+      setupNavBarProfileSection();
+      getDashboardItems();
+    });
+
+    $('#itemSubmissionDiv').load('item-submission-dialog.html');
+  });
+}
+
+/**
  * Fetches entertainment items from DashboardServlet
  * to populate the Dashboard.
+ *
+ * @param { boolean } clearCurrentItems - clears and loads the entertainment
+ *     items again if true
+ * @param { string } cursor - the cursor pointing to the page location
+ * to get the items from
  */
-function getDashboardItems() {
+function getDashboardItems(clearCurrentItems = true, cursor = '') {
   fetch(
-      '/dashboard?searchValue=' + $('#searchValue').val() +
-      '&sortingDirection=' + $('#sortingDirection').val())
+      '/dashboard?cursor=' + cursor +
+      '&searchValue=' + $('#searchValue').val() +
+      '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
-      .then((entertainmentItemsList) => {
-        const entertainmentItemsContainer = $('#entertainmentItemsContainer');
-        entertainmentItemsContainer.empty();
+      .then((entertainmentItemList) => {
+        const itemContainer = $('#entertainmentItemsContainer');
 
-        populateItemGrid(entertainmentItemsContainer, entertainmentItemsList);
+        // Pagination does not need to refresh dashboard items, but searching
+        // and sorting does.
+        if (clearCurrentItems) {
+          itemContainer.empty();
+        }
+
+        populateItemGrid(itemContainer, entertainmentItemList.items);
+        updatePagination(entertainmentItemList.pageCursor);
       })
       .catch((error) => {
         console.log(
@@ -32,19 +61,17 @@ function getOmdbItem() {
         omdbItemEntry.empty();
 
         const submitButton = $('#submitButton');
-        submitButton.off('click');
 
         if (omdbItem.Response === 'False') {
           omdbItemEntry.append($('<p>Item not found!</p>'));
 
           submitButton.addClass('d-none');
         } else {
-          omdbItemEntry.append(createOmdbItemCard(omdbItem));
+          const itemCard = createOmdbItemCard(omdbItem);
 
-          submitButton.removeClass('d-none');
-          submitButton.click(() => {
-            submitItem(omdbItem);
-          });
+          omdbItemEntry.append(itemCard);
+
+          enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
         }
       })
       .catch((error) => {
@@ -67,7 +94,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
   while (currItemIndex < entertainmentItemsList.length) {
     // The grid gets added a new row if there are items that still haven't been
     // included.
-    const rowElem = $('<div class="row mb-4"></div>');
+    const rowElem = $('<div class="row mb-3"></div>');
 
     const MAX_CELLS_PER_ROW = 3;
 
@@ -80,12 +107,11 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
       const item = entertainmentItemsList[currItemIndex];
 
       // If uniqueId Optional is empty then the item should not be created.
-      if ($.isEmptyObject(item.uniqueId) ||
-          !item.uniqueId.hasOwnProperty('value')) {
+      if (isOptionalEmpty(item.uniqueId)) {
         continue;
       }
 
-      const colElem = $('<div class="col-md-4"</div>');
+      const colElem = $('<div class="col-md-4 mb-3"</div>');
       colElem.append(createEntertainmentItemCard(item));
 
       rowElem.append(colElem);
@@ -149,6 +175,64 @@ function createOmdbItemCard(omdbItem) {
 }
 
 /**
+ * Makes the item submission button visible if the item is not a duplicate.
+ *
+ * @param { jQuery } submitButton - button used to submit omdb items
+ * @param { jQuery } itemCard - card div that displays info about the item found
+ * @param { JSON } omdbItem - the item found by omdb API
+ */
+function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
+  fetch('/item-submission?imdbID=' + omdbItem.imdbID)
+      .then((response) => response.json())
+      .then((itemFound) => {
+        if (/* item is unique */ isOptionalEmpty(itemFound)) {
+          submitButton.removeClass('d-none');
+          submitButton.off().one('click', () => {
+            submitItem(omdbItem);
+          });
+        } else {
+          const itemId = itemFound.value.uniqueId;
+          let itemLink = '';
+
+          if (!isOptionalEmpty(itemId)) {
+            itemLink = ' <a href="item-page.html?itemId=' + itemId.value +
+                '">Link to Item</a>';
+          }
+
+          itemCard.append($(
+              '<p class="card-text">Item already exists on Entertainment Hub!' +
+              itemLink + '</p>'));
+        }
+      })
+      .catch((error) => {
+        console.log('failed to check if omdb Item is duplicate: ' + error);
+      });
+}
+
+/**
+ * Enables access to the profile if the user is logged in by adding a "Profile" link to the navbar,
+ * if the user is not logged in then it adds a link to login.
+ */
+function setupNavBarProfileSection() {
+  fetch('/login')
+      .then((response) => response.json())
+      .then((isUserLoggedIn) => {
+        const profileLinks = $('#profileLinks');
+
+        if (isUserLoggedIn) {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+        } else {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/LoginPage.html">Login</a>'));
+        }
+      })
+      .catch((error) => {
+        console.log('failed to fetch login status: ' + error);
+      });
+}
+
+/**
  * Sends an omdbItem to the ItemSubmissionServlet using a Post request.
  *
  * @param { JSON } omdbItem - item that will be sent to the
@@ -167,18 +251,45 @@ function submitItem(omdbItem) {
 }
 
 /**
- * Loads a selector from another HTML file so that it can be used in the current
- * DOM.
+ * Fetches for more entertainment items if the current page is fully scrolled
+ * down.
  *
- * @param { string } selector - selector that will be used across the document
- *     to refer to the HTML element
- * @param { string } filename - filename of HTML file that is used to load the
- *     element
- *
- * @example loadSelector("#navbar", "navbar.html")
+ * @param { string } pageCursor - opaque key representing the cursor for the
+ *     next page
  */
-function loadSelector(selector, filename) {
-  $(document).ready(function() {
-    $(selector).load(filename);
+function updatePagination(pageCursor) {
+  $(window).off().scroll(function() {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      $(window).off('scroll');
+
+      getDashboardItems(/* clearItems */ false, pageCursor);
+    }
   });
+}
+
+/**
+ * Finds a query string parameter in the current Url.
+ *
+ * @param { string } param - the parameter to look for in the window Url
+ * @returns { string } if the parameter exists it returns the value found,
+ *     otherwise an empty string
+ */
+function getUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has(param)) {
+    return urlParams.get(param);
+  }
+
+  return '';
+}
+
+/**
+ * Checks if an object contains an optional value.
+ *
+ * @param { Optional } optional - the object containing an optional value
+ * @returns { boolean } if the optional is empty it returns true, otherwise
+ *     false
+ */
+function isOptionalEmpty(optional) {
+  return $.isEmptyObject(optional) || !optional.hasOwnProperty('value');
 }

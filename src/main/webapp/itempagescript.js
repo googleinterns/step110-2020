@@ -6,7 +6,6 @@ async function loadItemPage() {
     $('#navbar').load('navbar.html', function() {
       setupNavBarProfileSection();
     });
-
     const itemId = getUrlParam('itemId');
 
     if (itemId !== '') {
@@ -96,3 +95,4 @@ function createListElement(comment) {
   liElement.append(comment);
   return liElement;
 }
+

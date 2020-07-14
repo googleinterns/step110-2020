@@ -23,6 +23,13 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("application/json");
+    response.getWriter().println(
+        new Gson().toJson(UserServiceFactory.getUserService().isUserLoggedIn()));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     JsonObject loginJson = new JsonObject();
 
@@ -33,6 +40,7 @@ public class LoginServlet extends HttpServlet {
       loginJson.addProperty("LoginURL", "");
 
     } else {
+
       String loginUrl = userService.createLoginURL("/ProfilePage.html");
       loginJson.addProperty("LoginURL", loginUrl);
       loginJson.addProperty("LogoutURL", "");
