@@ -31,14 +31,12 @@ public class DashboardServlet extends HttpServlet {
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String searchValue = request.getParameter(SEARCH_VALUE_PARAMETER_KEY);
     String sortType = request.getParameter(SORT_TYPE_PARAMETER_KEY);
 
     if (!areGetRequestParametersValid(searchValue, sortType)) {
-      response.sendError(
-          HttpServletResponse.SC_BAD_REQUEST,
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
           "DashboardServlet: Get Request parameters not specified correctly!");
       return;
     }
@@ -67,30 +65,25 @@ public class DashboardServlet extends HttpServlet {
    * @return true if the parameters given in the Get request are valid, false
    *     otherwise
    */
-  private static boolean areGetRequestParametersValid(String searchValue,
-                                                      String sortType) {
-    return (searchValue != null &&
-            searchValue.length() <= MAX_SEARCH_VALUE_CHARS) &&
-        sortType != null &&
-        (sortType.equals(ASCENDING_TITLE_SORT) ||
-         sortType.equals(DESCENDING_TITLE_SORT) ||
-         sortType.equals(RECENT_RELEASE_DATE_SORT));
+  private static boolean areGetRequestParametersValid(String searchValue, String sortType) {
+    return (searchValue != null && searchValue.length() <= MAX_SEARCH_VALUE_CHARS)
+        && (sortType != null
+            && (sortType.equals(ASCENDING_TITLE_SORT) || sortType.equals(DESCENDING_TITLE_SORT)
+                || sortType.equals(RECENT_RELEASE_DATE_SORT)));
   }
 
-  private static EntertainmentItemList
-  getItemList(FetchOptions fetchOptions, String searchValue, String sortType) {
-    EntertainmentItemDatastore itemDatastore =
-        EntertainmentItemDatastore.getInstance();
+  private static EntertainmentItemList getItemList(
+      FetchOptions fetchOptions, String searchValue, String sortType) {
+    EntertainmentItemDatastore itemDatastore = EntertainmentItemDatastore.getInstance();
 
     if (sortType.equals(ASCENDING_TITLE_SORT)) {
-      return itemDatastore.queryItemsByTitlePrefix(fetchOptions, searchValue,
-                                                   SortDirection.ASCENDING);
+      return itemDatastore.queryItemsByTitlePrefix(
+          fetchOptions, searchValue, SortDirection.ASCENDING);
     } else if (sortType.equals(DESCENDING_TITLE_SORT)) {
-      return itemDatastore.queryItemsByTitlePrefix(fetchOptions, searchValue,
-                                                   SortDirection.DESCENDING);
+      return itemDatastore.queryItemsByTitlePrefix(
+          fetchOptions, searchValue, SortDirection.DESCENDING);
     } else {
-      return itemDatastore.queryItemsByReleaseDate(fetchOptions,
-                                                   SortDirection.DESCENDING);
+      return itemDatastore.queryItemsByReleaseDate(fetchOptions, SortDirection.DESCENDING);
     }
   }
 }
