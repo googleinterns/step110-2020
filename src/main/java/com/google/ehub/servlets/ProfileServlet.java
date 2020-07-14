@@ -34,22 +34,22 @@ public class ProfileServlet extends HttpServlet {
   private static final String BIO_PROPERTY_KEY = "bio";
   private static final String EDIT_PROPERTY_KEY = "edit";
 
+  UserService userService = UserServiceFactory.getUserService();
   ProfileDatastore profileData = new ProfileDatastore();
-  String editValue;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String email = userService.getCurrentUser().getEmail();
     String name = request.getParameter(NAME_PROPERTY_KEY);
-    String email = request.getParameter(EMAIL_PROPERTY_KEY);
     String username = request.getParameter(USERNAME_PROPERTY_KEY);
     String bio = request.getParameter(BIO_PROPERTY_KEY);
-    editValue = request.getParameter(EDIT_PROPERTY_KEY);
+    String editValue = request.getParameter(EDIT_PROPERTY_KEY);
 
     if (editValue != null && editValue.equals("true")) {
       profileData.editProfile(name, username, bio);
     } else {
-      if (!areValidParameters(name, email, username, bio)) {
-        System.err.println("ProfileServlet: Post Request parameters empty");
+      if (!areValidParameters(name, username, bio)) {
+        response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Post Request parameters empty");
         return;
       }
       profileData.addUserProfileToDatastore(name, email, username, bio);
@@ -60,11 +60,19 @@ public class ProfileServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    LoginServlet login = new LoginServlet();
-    String useremail = login.getEmail();
-    UserProfile newUser = profileData.getUserProfile(useremail);
-    response.setContentType("application/json");
-    response.getWriter().println(convertToJson(newUser));
+    if (userService.isUserLoggedIn() == false) {
+      response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "User must logged in");
+    } else {
+      String useremail = userService.getCurrentUser().getEmail();
+      UserProfile newUser = profileData.getUserProfile(useremail);
+
+      if (newUser == null) {
+        response.sendRedirect("/CreateProfilePage.html");
+      } else {
+        response.setContentType("application/json");
+        response.getWriter().println(convertToJson(newUser));
+      }
+    }
   }
 
   /**
@@ -86,8 +94,8 @@ public class ProfileServlet extends HttpServlet {
    * @param bio the bio of the User
    * @return true if not null
    */
-  private boolean areValidParameters(String name, String email, String username, String bio) {
-    return (name != null && !name.isEmpty() && email != null && !email.isEmpty() && username != null
-        && !username.isEmpty() && bio != null && !bio.isEmpty());
+  private boolean areValidParameters(String name, String username, String bio) {
+    return (name != null && !name.isEmpty() && username != null && !username.isEmpty()
+        && bio != null && !bio.isEmpty());
   }
 }

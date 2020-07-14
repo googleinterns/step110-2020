@@ -10,6 +10,8 @@ import com.google.appengine.api.datastore.Query.CompositeFilter;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.servlets.LoginServlet;
 import java.io.IOException;
 
@@ -22,6 +24,7 @@ public final class ProfileDatastore {
   private static final String BIO_PROPERTY_KEY = "bio";
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  UserService userService = UserServiceFactory.getUserService();
 
   /**
    * Adds a the User Profile variables to Datastore.
@@ -89,7 +92,7 @@ public final class ProfileDatastore {
    */
   public void editProfile(String name, String username, String bio) {
     LoginServlet login = new LoginServlet();
-    String email = login.getEmail();
+    String email = userService.getCurrentUser().getEmail();
 
     Filter propertyFilter = new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
     Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
