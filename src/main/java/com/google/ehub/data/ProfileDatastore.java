@@ -24,7 +24,7 @@ public final class ProfileDatastore {
   private static final String BIO_PROPERTY_KEY = "bio";
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  UserService userService = UserServiceFactory.getUserService();
+  private static final UserService userService = UserServiceFactory.getUserService();
 
   /**
    * Adds a the User Profile variables to Datastore.
@@ -91,7 +91,6 @@ public final class ProfileDatastore {
    * @param bio the new biography of the user
    */
   public void editProfile(String name, String username, String bio) {
-    LoginServlet login = new LoginServlet();
     String email = userService.getCurrentUser().getEmail();
 
     Filter propertyFilter = new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
