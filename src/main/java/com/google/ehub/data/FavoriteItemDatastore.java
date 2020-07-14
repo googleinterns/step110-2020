@@ -5,6 +5,8 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +17,7 @@ public final class FavoriteItemDatastore {
 
   private static FavoriteItemDatastore instance;
 
-  private final DatastoreService datastoreService =
-      DatastoreServiceFactory.getDatastoreService();
+  private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
   private FavoriteItemDatastore() {}
 
@@ -55,15 +56,38 @@ public final class FavoriteItemDatastore {
    * @return list holding the item Ids liked by the user with the given email
    */
   public List<Long> queryFavoriteIds(String userEmail) {
-    Query query = new Query(FAVORITE_ITEM_KIND);
+    Query query = new Query(FAVORITE_ITEM_KIND)
+                      .setFilter(new FilterPredicate(
+                          USER_EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, userEmail));
     PreparedQuery queryResults = datastoreService.prepare(query);
 
     List<Long> favoriteIds = new ArrayList<>();
 
     for (Entity itemEntity : queryResults.asIterable()) {
-      favoriteIds.add((Long)itemEntity.getProperty(ITEM_ID_PROPERTY_KEY));
+      favoriteIds.add((Long) itemEntity.getProperty(ITEM_ID_PROPERTY_KEY));
     }
 
     return favoriteIds;
+  }
+
+  /**
+   * Queries the emails that have liked a given item.
+   *
+   * @param itemId the Id of the item that the users to search for have liked
+   * @return list holding the emails have have liked the given item Id
+   */
+  public List<String> queryEmails(Long itemId) {
+    Query query =
+        new Query(FAVORITE_ITEM_KIND)
+            .setFilter(new FilterPredicate(ITEM_ID_PROPERTY_KEY, FilterOperator.EQUAL, itemId));
+    PreparedQuery queryResults = datastoreService.prepare(query);
+
+    List<String> emails = new ArrayList<>();
+
+    for (Entity itemEntity : queryResults.asIterable()) {
+      emails.add((String) itemEntity.getProperty(USER_EMAIL_PROPERTY_KEY));
+    }
+
+    return emails;
   }
 }
