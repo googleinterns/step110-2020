@@ -169,8 +169,8 @@ public class ProfileServletTest {
   @Test
   public void getRequestWithLoggedInUser_SendsJsonResponse() throws IOException {
     userHelper.setEnvIsLoggedIn(true);
-    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
 
+    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
     userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
     userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
     userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
@@ -178,10 +178,6 @@ public class ProfileServletTest {
 
     datastoreService.put(userEntity);
 
-    when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
-    when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
-    when(request.getParameter(BIO_PROPERTY_KEY)).thenReturn(BIO);
-    when(request.getParameter(USERNAME_PROPERTY_KEY)).thenReturn(USERNAME);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);

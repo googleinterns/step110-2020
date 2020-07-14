@@ -72,11 +72,11 @@ public class LoginServletTest {
   public void getRequestWithLoggedInUser_sendsLogoutUrl() throws IOException {
     JsonObject responseJsonObject = getLoginServletResponse();
 
-    String LOGIN_URL = responseJsonObject.get("LoginURL").getAsString();
-    String LOGOUT_URL = responseJsonObject.get("LogoutURL").getAsString();
+    String loginUrl = responseJsonObject.get("LoginURL").getAsString();
+    String logoutUrl = responseJsonObject.get("LogoutURL").getAsString();
 
-    Assert.assertTrue(LOGOUT_URL.contains("logout"));
-    Assert.assertTrue(LOGIN_URL.isEmpty());
+    Assert.assertTrue(logoutUrl.contains("logout"));
+    Assert.assertTrue(loginUrl.isEmpty());
   }
 
   @Test
@@ -85,10 +85,10 @@ public class LoginServletTest {
 
     JsonObject responseJsonObject = getLoginServletResponse();
 
-    String LOGIN_URL = responseJsonObject.get("LoginURL").getAsString();
-    String LOGOUT_URL = responseJsonObject.get("LogoutURL").getAsString();
+    String loginUrl = responseJsonObject.get("LoginURL").getAsString();
+    String logoutUrl = responseJsonObject.get("LogoutURL").getAsString();
 
-    Assert.assertTrue(LOGIN_URL.contains("login"));
-    Assert.assertTrue(LOGOUT_URL.isEmpty());
+    Assert.assertTrue(loginUrl.contains("login"));
+    Assert.assertTrue(logoutUrl.isEmpty());
   }
 }
