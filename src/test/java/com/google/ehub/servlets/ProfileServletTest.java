@@ -53,10 +53,8 @@ public class ProfileServletTest {
   private final ProfileServlet servlet = new ProfileServlet();
   private final ProfileDatastore profileData = new ProfileDatastore();
 
-  private LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-  private final LocalServiceTestHelper userHelper =
-      new LocalServiceTestHelper(new LocalUserServiceTestConfig())
+  private LocalServiceTestHelper helper = new LocalServiceTestHelper(
+      new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig())
           .setEnvEmail(EMAIL)
           .setEnvIsLoggedIn(true)
           .setEnvAuthDomain("gmail.com");
