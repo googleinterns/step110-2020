@@ -7,8 +7,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gson.JsonObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -31,10 +31,10 @@ public class LoginServlet extends HttpServlet {
       String logoutUrl = userService.createLogoutURL("/?authuser=0");
       loginJson.addProperty("LogoutURL", logoutUrl);
       loginJson.addProperty("LoginURL", "");
-      
+
     } else {
       String loginUrl = userService.createLoginURL("/ProfilePage.html");
-       loginJson.addProperty("LoginURL", loginUrl);
+      loginJson.addProperty("LoginURL", loginUrl);
       loginJson.addProperty("LogoutURL", "");
     }
     response.setContentType("application/json");

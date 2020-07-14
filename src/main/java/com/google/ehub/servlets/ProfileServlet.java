@@ -43,9 +43,9 @@ public class ProfileServlet extends HttpServlet {
     String name = request.getParameter(NAME_PROPERTY_KEY);
     String username = request.getParameter(USERNAME_PROPERTY_KEY);
     String bio = request.getParameter(BIO_PROPERTY_KEY);
-    String editValue = request.getParameter(EDIT_PROPERTY_KEY);
+    boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PROPERTY_KEY));
 
-    if (editValue != null && editValue.equals("true")) {
+    if (edit) {
       profileData.editProfile(name, username, bio);
     } else {
       if (!areValidParameters(name, username, bio)) {

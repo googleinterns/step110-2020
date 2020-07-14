@@ -33,19 +33,17 @@ import org.mockito.MockitoAnnotations;
 public class LoginServletTest {
   private static String LOGOUT_URL;
   private static String LOGIN_URL;
+
   private final LoginServlet servlet = new LoginServlet();
-
-  @Mock HttpServletRequest request;
-  @Mock HttpServletResponse response;
-  @Mock PrintWriter printWriter;
-
-  UserService userService = UserServiceFactory.getUserService();
-
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalUserServiceTestConfig())
           .setEnvEmail("test@gmail.com")
           .setEnvIsLoggedIn(true)
           .setEnvAuthDomain("gmail.com");
+
+  @Mock HttpServletRequest request;
+  @Mock HttpServletResponse response;
+  @Mock PrintWriter printWriter;
 
   @Before
   public void init() throws IOException {
@@ -74,7 +72,7 @@ public class LoginServletTest {
   }
 
   @Test
-  public void getRequestWithLoggedInUser_validContentGetsSent() throws IOException {
+  public void getRequestWithLoggedInUser_sendsLogoutUrl() throws IOException {
     JsonObject responseJsonObject = getLoginServletResponse();
 
     LOGIN_URL = responseJsonObject.get("LoginURL").getAsString();
@@ -85,7 +83,7 @@ public class LoginServletTest {
   }
 
   @Test
-  public void getRequestWithLoggedOut_validContentGetsSent() throws IOException {
+  public void getRequestWithLoggedOut_sendsLoginUrl() throws IOException {
     helper.setEnvIsLoggedIn(false);
 
     JsonObject responseJsonObject = getLoginServletResponse();
