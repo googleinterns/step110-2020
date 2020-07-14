@@ -31,9 +31,6 @@ import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
 public class LoginServletTest {
-  private static String LOGOUT_URL;
-  private static String LOGIN_URL;
-
   private final LoginServlet servlet = new LoginServlet();
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalUserServiceTestConfig())
@@ -75,8 +72,8 @@ public class LoginServletTest {
   public void getRequestWithLoggedInUser_sendsLogoutUrl() throws IOException {
     JsonObject responseJsonObject = getLoginServletResponse();
 
-    LOGIN_URL = responseJsonObject.get("LoginURL").getAsString();
-    LOGOUT_URL = responseJsonObject.get("LogoutURL").getAsString();
+    String LOGIN_URL = responseJsonObject.get("LoginURL").getAsString();
+    String LOGOUT_URL = responseJsonObject.get("LogoutURL").getAsString();
 
     Assert.assertTrue(LOGOUT_URL.contains("logout"));
     Assert.assertTrue(LOGIN_URL.isEmpty());
@@ -88,8 +85,8 @@ public class LoginServletTest {
 
     JsonObject responseJsonObject = getLoginServletResponse();
 
-    LOGIN_URL = responseJsonObject.get("LoginURL").getAsString();
-    LOGOUT_URL = responseJsonObject.get("LogoutURL").getAsString();
+    String LOGIN_URL = responseJsonObject.get("LoginURL").getAsString();
+    String LOGOUT_URL = responseJsonObject.get("LogoutURL").getAsString();
 
     Assert.assertTrue(LOGIN_URL.contains("login"));
     Assert.assertTrue(LOGOUT_URL.isEmpty());
