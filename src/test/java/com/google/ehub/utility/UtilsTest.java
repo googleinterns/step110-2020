@@ -41,12 +41,12 @@ public final class UtilsTest {
 
   @Test
   public void getTimestampMillisFromDateWithNullDate_ReturnsNull() {
-    Assert.assertEquals(null, Utils.getTimestampMillisFromDate(null, DATE_FORMAT));
+    Assert.assertNull(Utils.getTimestampMillisFromDate(null, DATE_FORMAT));
   }
 
   @Test
   public void getTimestampMillisFromDateWithNullFormat_ReturnsNull() {
-    Assert.assertEquals(null, Utils.getTimestampMillisFromDate(VALID_DATE, null));
+    Assert.assertNull(Utils.getTimestampMillisFromDate(VALID_DATE, null));
   }
 
   @Test
@@ -57,23 +57,22 @@ public final class UtilsTest {
 
   @Test
   public void getTimestampMillisFromDateWithConflictingFormat_ReturnsNull() {
-    Assert.assertEquals(
-        null, Utils.getTimestampMillisFromDate(DATE_WITH_CONFLICTING_FORMAT, DATE_FORMAT));
+    Assert.assertNull(Utils.getTimestampMillisFromDate(DATE_WITH_CONFLICTING_FORMAT, DATE_FORMAT));
   }
 
   @Test
   public void getTimestampMillisFromDateWithInvalidFormat_ReturnsNull() {
-    Assert.assertEquals(null, Utils.getTimestampMillisFromDate(VALID_DATE, INVALID_DATE_FORMAT));
+    Assert.assertNull(Utils.getTimestampMillisFromDate(VALID_DATE, INVALID_DATE_FORMAT));
   }
 
   @Test
   public void getDateFromTimestampMillisWithNullTimestampMillis_ReturnsNull() {
-    Assert.assertEquals(null, Utils.getDateFromTimestampMillis(null, DATE_FORMAT));
+    Assert.assertNull(Utils.getDateFromTimestampMillis(null, DATE_FORMAT));
   }
 
   @Test
   public void getDateFromTimestampMillisWithNullFormat_ReturnsNull() {
-    Assert.assertEquals(null, Utils.getDateFromTimestampMillis(CORRECT_TIMESTAMP, null));
+    Assert.assertNull(Utils.getDateFromTimestampMillis(CORRECT_TIMESTAMP, null));
   }
 
   @Test
@@ -84,7 +83,6 @@ public final class UtilsTest {
 
   @Test
   public void getDateFromTimestampMillisWithInvalidFormat_ReturnsNull() {
-    Assert.assertEquals(
-        null, Utils.getDateFromTimestampMillis(CORRECT_TIMESTAMP, INVALID_DATE_FORMAT));
+    Assert.assertNull(Utils.getDateFromTimestampMillis(CORRECT_TIMESTAMP, INVALID_DATE_FORMAT));
   }
 }
