@@ -38,11 +38,9 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that compiles the data for the item page*/
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
-    
 
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
@@ -73,7 +71,7 @@ public class ItemPageServlet extends HttpServlet {
       return;
     }
     String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
-    if(comment == null) {
+    if (comment == null) {
       System.out.println("Comment was not entered");
       return;
     }
