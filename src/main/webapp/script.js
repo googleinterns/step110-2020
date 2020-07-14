@@ -246,8 +246,9 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
 }
 
 /**
- * Enables access to the profile if the user is logged in by adding a "Profile" link to the navbar,
- * if the user is not logged in then it adds a link to login.
+ * Enables access to the profile if the user is logged in by adding a "Profile"
+ * link to the navbar, if the user is not logged in then it adds a link to
+ * login.
  */
 function setupNavBarProfileSection() {
   fetch('/login')
