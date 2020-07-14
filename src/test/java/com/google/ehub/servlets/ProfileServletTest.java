@@ -69,7 +69,6 @@ public class ProfileServletTest {
   public void init() throws IOException {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
-    userHelper.setUp();
   }
 
   @After
@@ -157,7 +156,7 @@ public class ProfileServletTest {
 
   @Test
   public void getRequestWithLoggedOutUser_ErrorGetsSent() throws IOException {
-    userHelper.setEnvIsLoggedIn(false);
+    helper.setEnvIsLoggedIn(false);
 
     servlet.doGet(request, response);
 
@@ -166,7 +165,7 @@ public class ProfileServletTest {
 
   @Test
   public void getRequestWithLoggedInUser_SendsJsonResponse() throws IOException {
-    userHelper.setEnvIsLoggedIn(true);
+    helper.setEnvIsLoggedIn(true);
 
     Entity userEntity = new Entity(PROFILE_ITEM_KIND);
     userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
@@ -186,7 +185,7 @@ public class ProfileServletTest {
 
   @Test
   public void getRequestWithNullUser_SendsRedirect() throws IOException {
-    userHelper.setEnvIsLoggedIn(true);
+    helper.setEnvIsLoggedIn(true);
 
     servlet.doGet(request, response);
 
