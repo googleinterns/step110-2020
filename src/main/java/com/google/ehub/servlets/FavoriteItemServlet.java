@@ -17,13 +17,12 @@ public class FavoriteItemServlet extends HttpServlet {
   private static final String FAVORITE_ITEM_ID_PARAMETER_KEY = "favoriteItemId";
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
     if (!userService.isUserLoggedIn()) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                         "FavoriteItemServlet: User is not logged in!");
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "FavoriteItemServlet: User is not logged in!");
       return;
     }
 
@@ -34,14 +33,11 @@ public class FavoriteItemServlet extends HttpServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-    String favoriteItemStringId =
-        request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String favoriteItemStringId = request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY);
 
     if (!isPostRequestParameterValid(favoriteItemStringId)) {
-      response.sendError(
-          HttpServletResponse.SC_BAD_REQUEST,
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
           "FavoriteItemServlet: Post request parameter not specified correctly!");
       return;
     }
@@ -49,8 +45,7 @@ public class FavoriteItemServlet extends HttpServlet {
     Long itemId = Long.parseLong(favoriteItemStringId);
 
     if (!doesItemExist(itemId)) {
-      response.sendError(
-          HttpServletResponse.SC_BAD_REQUEST,
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
           "FavoriteItemServlet: Favorite Item Id doesn't map to a known item!");
       return;
     }
@@ -58,8 +53,8 @@ public class FavoriteItemServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
 
     if (!userService.isUserLoggedIn()) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                         "FavoriteItemServlet: User is not logged in!");
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "FavoriteItemServlet: User is not logged in!");
       return;
     }
 
@@ -67,15 +62,12 @@ public class FavoriteItemServlet extends HttpServlet {
         userService.getCurrentUser().getEmail(), itemId);
   }
 
-  private static boolean
-  isPostRequestParameterValid(String favoriteItemStringId) {
-    return favoriteItemStringId != null && !favoriteItemStringId.isEmpty() &&
-        NumberUtils.isParsable(favoriteItemStringId);
+  private static boolean isPostRequestParameterValid(String favoriteItemStringId) {
+    return favoriteItemStringId != null && !favoriteItemStringId.isEmpty()
+        && NumberUtils.isParsable(favoriteItemStringId);
   }
 
   private static boolean doesItemExist(Long itemId) {
-    return EntertainmentItemDatastore.getInstance()
-        .queryItem(itemId)
-        .isPresent();
+    return EntertainmentItemDatastore.getInstance().queryItem(itemId).isPresent();
   }
 }
