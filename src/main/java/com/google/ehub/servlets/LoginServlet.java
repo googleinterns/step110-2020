@@ -21,6 +21,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+  private static final String LOGOUT_URL_KEY = "LogoutURL";
+  private static final String LOGIN_URL_KEY = "LoginURL";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -29,13 +32,13 @@ public class LoginServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
       String logoutUrl = userService.createLogoutURL("/?authuser=0");
-      loginJson.addProperty("LogoutURL", logoutUrl);
-      loginJson.addProperty("LoginURL", "");
+      loginJson.addProperty(LOGOUT_URL_KEY, logoutUrl);
+      loginJson.addProperty(LOGIN_URL_KEY, "");
 
     } else {
       String loginUrl = userService.createLoginURL("/ProfilePage.html");
-      loginJson.addProperty("LoginURL", loginUrl);
-      loginJson.addProperty("LogoutURL", "");
+      loginJson.addProperty(LOGIN_URL_KEY, loginUrl);
+      loginJson.addProperty(LOGOUT_URL_KEY, "");
     }
     response.setContentType("application/json");
     response.getWriter().println(loginJson.toString());

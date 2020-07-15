@@ -34,8 +34,8 @@ public class ProfileServlet extends HttpServlet {
   private static final String BIO_PROPERTY_KEY = "bio";
   private static final String EDIT_PROPERTY_KEY = "edit";
   
-  private static final UserService userService = UserServiceFactory.getUserService();
-  private static final ProfileDatastore profileData = new ProfileDatastore();
+  private final UserService userService = UserServiceFactory.getUserService();
+  private final ProfileDatastore profileData = new ProfileDatastore();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -64,13 +64,13 @@ public class ProfileServlet extends HttpServlet {
       response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "User must logged in");
     } else {
       String userEmail = userService.getCurrentUser().getEmail();
-      UserProfile newUser = profileData.getUserProfile(userEmail);
+      UserProfile userProfile = profileData.getUserProfile(userEmail);
 
-      if (newUser == null) {
+      if (userProfile == null) {
         response.sendRedirect("/CreateProfilePage.html");
       } else {
         response.setContentType("application/json");
-        response.getWriter().println(convertToJson(newUser));
+        response.getWriter().println(convertToJson(userProfile));
       }
     }
   }

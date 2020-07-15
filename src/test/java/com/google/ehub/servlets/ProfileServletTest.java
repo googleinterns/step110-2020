@@ -4,14 +4,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
@@ -29,8 +27,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 
 @RunWith(JUnit4.class)
 public class ProfileServletTest {
@@ -63,7 +63,6 @@ public class ProfileServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
   @Mock PrintWriter printWriter;
-  @Mock UserService userService;
 
   @Before
   public void init() throws IOException {
@@ -73,15 +72,6 @@ public class ProfileServletTest {
 
   @After
   public void tearDown() throws IOException {
-    
-    // Clears datastore after each test case
-    Query query = new Query(PROFILE_ITEM_KIND);
-    PreparedQuery queryResults = datastoreService.prepare(query);
-    Iterable<Entity> profileEntity = queryResults.asIterable();
-    for (Entity entity : profileEntity) {
-      datastoreService.delete(entity.getKey());
-    }
-
     helper.tearDown();
   }
 
