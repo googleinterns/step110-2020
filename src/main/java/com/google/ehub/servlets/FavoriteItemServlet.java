@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**
- * Handles Get and Post requests for items favorited by the logged in user.
+ * Handles Get and Post requests for items favorited by the user that is logged in.
  */
 @WebServlet("/favorite-item")
 public class FavoriteItemServlet extends HttpServlet {
