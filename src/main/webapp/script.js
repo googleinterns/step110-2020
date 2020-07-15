@@ -184,7 +184,7 @@ function createEntertainmentItemCard(entertainmentItem) {
 
   const likeButton = $('<button class="btn btn-dark">Like</button>');
   likeButton.click(function() {
-    addLike(entertainmentItem.uniqueId.value);
+    addLikeToEntertainmentItem(entertainmentItem.uniqueId.value);
   });
 
   cardBody.append(likeButton);
@@ -313,7 +313,16 @@ function updatePagination(pageCursor) {
   });
 }
 
-function addLike(itemId) {}
+/**
+ * Fetches FavoriteItemServlet to add a like to a specific entertainment item.
+ *
+ * @param { number } itemId - the Id used to identify the entertainment item
+ */
+function addLikeToEntertainmentItem(itemId) {
+  $.post('/favorite-item?favoriteItemId=' + itemId).fail(function() {
+    console.log('Failed to add a like to the given entertainment item!');
+  });
+}
 
 /**
  * Finds a query string parameter in the current Url.
