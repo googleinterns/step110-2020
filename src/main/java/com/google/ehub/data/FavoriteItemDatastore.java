@@ -5,6 +5,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
@@ -39,12 +40,16 @@ public final class FavoriteItemDatastore {
   }
 
   /**
-   * Adds a favorite item Entity to Datastore.
+   * Adds a favorite item Entity to Datastore if it doesn't exist yet.
    *
    * @param userEmail The email of the user that liked the item
    * @param itemId the id of the item that was liked
    */
   public void addFavoriteItem(String userEmail, Long itemId) {
+    if (doesFavoriteItemExist(userEmail, itemId)) {
+      return;
+    }
+
     Entity favoriteItemEntity = new Entity(FAVORITE_ITEM_KIND);
     favoriteItemEntity.setProperty(USER_EMAIL_PROPERTY_KEY, userEmail);
     favoriteItemEntity.setProperty(ITEM_ID_PROPERTY_KEY, itemId);
@@ -92,5 +97,23 @@ public final class FavoriteItemDatastore {
     }
 
     return emails;
+  }
+
+  /**
+   * Uses a query to check if a favorite item relation already exists in Datastore.
+   *
+   * @param userEmail the email that liked the item
+   * @param itemId the item that was liked by the user
+   * @return true if the favorite item exists in Datastore, otherwise false
+   */
+  private boolean doesFavoriteItemExist(String userEmail, Long itemId) {
+    Query query =
+        new Query(FAVORITE_ITEM_KIND)
+            .setFilter(CompositeFilterOperator.and(
+                new FilterPredicate(USER_EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, userEmail),
+                new FilterPredicate(ITEM_ID_PROPERTY_KEY, FilterOperator.EQUAL, itemId)));
+    PreparedQuery queryResults = datastoreService.prepare(query);
+
+    return queryResults.asSingleEntity() != null;
   }
 }
