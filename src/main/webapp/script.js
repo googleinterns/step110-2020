@@ -209,9 +209,11 @@ function createOmdbItemCard(omdbItem) {
         '">'));
 
   const cardBody = $('<div class="card-body"></div>');
-  cardBody.append($('<h5 class="card-title">' + omdbItem.Title + '</h5>'));
   cardBody.append(
-      $('<p class="card-text">Released: ' + omdbItem.Released + '</p>'));
+      $('<h5 class="card-title text-center">' + omdbItem.Title + '</h5>'));
+  cardBody.append(
+      $('<p class="card-text text-center">Released: ' + omdbItem.Released +
+        '</p>'));
 
   card.append(cardBody);
 
@@ -245,7 +247,7 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
 
           submitButton.addClass('d-none');
           itemCard.append($(
-              '<p class="card-text">Item already exists on Entertainment Hub!' +
+              '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
               itemLink + '</p>'));
         }
       })
