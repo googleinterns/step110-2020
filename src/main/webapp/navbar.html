@@ -14,6 +14,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <div class="form-inline my-2 my-lg-0">
+        <div id="navbarProfileSection">
+          <ul class="navbar-nav">
+            <li class="nav-item" id="profileLinks"></li>
+          </ul>
+        </div>
         <div class="d-none" id="navbarDashboardSection">
           <div class="form-inline my-2 my-lg-0">
             <input
@@ -21,22 +26,23 @@
               type="search"
               name="searchValue"
               id="searchValue"
-              oninput="getDashboardItems()"
               placeholder="Search by Title"
             />
             <select
               class="form-control my-2 my-sm-0 mr-sm-2"
-              name="sortingDirection"
-              id="sortingDirection"
-              onchange="getDashboardItems()"
+              name="sortType"
+              id="sortType"
               required
             >
-              <option value="ASCENDING" selected
+              <option value="ASCENDING_TITLE" selected
                 >Title (Increasing Alphabetical Order)</option
               >
-              <option value="DESCENDING"
+              <option value="DESCENDING_TITLE"
                 >Title (Decreasing Alphabetical Order)</option
               >
+              <option value="RECENT_RELEASE_DATE">
+                Release Date (Most Recent)
+              </option>
             </select>
             <button
               type="button"
@@ -47,15 +53,6 @@
               Add Entertainment Item
             </button>
           </div>
-        </div>
-        <div id="navbarProfileSection">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link text-light" href="/ProfilePage.html">
-                Profile
-              </a>
-            </li>
-          </ul>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
-import com.google.ehub.utility.DatastoreUtils;
+import com.google.ehub.utility.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +25,16 @@ public final class EntertainmentItemDatastore {
   private static final String NORMALIZED_TITLE_PROPERTY_KEY = "normalizedTitle";
   private static final String DESCRIPTION_PROPERTY_KEY = "description";
   private static final String IMAGE_URL_PROPERTY_KEY = "imageUrl";
-  private static final String RELEASE_DATE_PROPERTY_KEY = "releaseDate";
+  private static final String RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY =
+      "releaseDateTimestampMillis";
   private static final String RUNTIME_PROPERTY_KEY = "runtime";
   private static final String GENRE_PROPERTY_KEY = "genre";
   private static final String DIRECTORS_PROPERTY_KEY = "directors";
   private static final String WRITERS_PROPERTY_KEY = "writers";
   private static final String ACTORS_PROPERTY_KEY = "actors";
   private static final String OMDB_ID_PROPERTY_KEY = "omdbId";
+
+  private static final String RELEASE_DATE_FORMAT = "dd MMM yyyy";
 
   private static EntertainmentItemDatastore instance;
 
@@ -40,8 +43,8 @@ public final class EntertainmentItemDatastore {
   private EntertainmentItemDatastore() {}
 
   /**
-   * Gives access to the single instance of the class, and creates this instance if it was not
-   * initialized previously.
+   * Gives access to the single instance of the class, and creates this instance
+   * if it was not initialized previously.
    *
    * @return single instance of the class
    */
@@ -66,7 +69,8 @@ public final class EntertainmentItemDatastore {
     itemEntity.setProperty(NORMALIZED_TITLE_PROPERTY_KEY, item.getTitle().toLowerCase());
     itemEntity.setProperty(DESCRIPTION_PROPERTY_KEY, item.getDescription());
     itemEntity.setProperty(IMAGE_URL_PROPERTY_KEY, item.getImageUrl());
-    itemEntity.setProperty(RELEASE_DATE_PROPERTY_KEY, item.getReleaseDate());
+    itemEntity.setProperty(RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY,
+        Utils.getTimestampMillisFromDate(item.getReleaseDate(), RELEASE_DATE_FORMAT));
     itemEntity.setProperty(RUNTIME_PROPERTY_KEY, item.getRuntime());
     itemEntity.setProperty(GENRE_PROPERTY_KEY, item.getGenre());
     itemEntity.setProperty(DIRECTORS_PROPERTY_KEY, item.getDirectors());
@@ -80,8 +84,10 @@ public final class EntertainmentItemDatastore {
   /**
    * Finds a single entertainment item based on unique id.
    *
-   * @param uniqueId id used to identify the EntertainmentItem Entity in the Datastore
-   * @return the EntertainmentItem found in Datastore wrapped in an {@link Optional}, the
+   * @param uniqueId id used to identify the EntertainmentItem Entity in the
+   *     Datastore
+   * @return the EntertainmentItem found in Datastore wrapped in an {@link
+   *     Optional}, the
    * optional object will be empty if the EntertainmentItem Entity was not found
    */
   public Optional<EntertainmentItem> queryItem(long uniqueId) {
@@ -93,7 +99,8 @@ public final class EntertainmentItemDatastore {
    * Finds a single entertainment item based on ombd Id.
    *
    * @param omdbId the omdbId that the item is supposed to have
-   * @return the EntertainmentItem found in Datastore wrapped in an {@link Optional}, the
+   * @return the EntertainmentItem found in Datastore wrapped in an {@link
+   *     Optional}, the
    * optional object will be empty if the EntertainmentItem Entity was not found
    */
   public Optional<EntertainmentItem> queryItemByOmdbId(String omdbId) {
@@ -104,44 +111,51 @@ public final class EntertainmentItemDatastore {
    * Queries all entertainment items found in Datastore.
    *
    * @param fetchOptions the fetch options used by the resulting query
-   * @return list with all entertainment items found in Datastore, the list will be empty if no
-   *     items were found
+   * @return list with all entertainment items found in Datastore, the list will
+   *     be empty if no items were found
    */
   public EntertainmentItemList queryAllItems(FetchOptions fetchOptions) {
     return createItemListFromQuery(fetchOptions, new Query(ENTERTAINMENT_ITEM_KIND));
   }
 
   /**
-   * Queries all entertainment items found in Datastore and orders them based on title with the
-   * given sorting direction.
-   *
-   * @param fetchOptions the fetch options used by the resulting query
-   * @param sortDirection the sort direction used to order the entertainment items based on title
-   * @return list with all the entertainment items following the specified sort direction, the list
-   *     will be empty if no items were found
-   */
-  public EntertainmentItemList queryAllItemsWithTitleOrder(
-      FetchOptions fetchOptions, SortDirection sortDirection) {
-    return createItemListFromQuery(fetchOptions,
-        new Query(ENTERTAINMENT_ITEM_KIND).addSort(NORMALIZED_TITLE_PROPERTY_KEY, sortDirection));
-  }
-
-  /**
-   * Queries entertainment items with the specified title prefix and sorting direction.
+   * Queries entertainment items with the specified title prefix and sorting
+   * direction.
    *
    * @param fetchOptions the fetch options used by the resulting query
    * @param titlePrefix the title prefix used to filter the query
-   * @param sortDirection the sort direction used to order the entertainment items based on title
-   * @return list with the entertainment items that match the title prefix and sorting direction,
-   *     the list will be empty if no items were found
+   * @param sortDirection the sort direction used to order the entertainment
+   *     items based on title
+   * @return list with the entertainment items that match the title prefix and
+   *     sorting direction, the list will be empty if no items were found
    */
   public EntertainmentItemList queryItemsByTitlePrefix(
       FetchOptions fetchOptions, String titlePrefix, SortDirection sortDirection) {
+    Query query =
+        new Query(ENTERTAINMENT_ITEM_KIND).addSort(NORMALIZED_TITLE_PROPERTY_KEY, sortDirection);
+
+    if (!titlePrefix.isEmpty()) {
+      query = query.setFilter(
+          Utils.getPrefixFilter(NORMALIZED_TITLE_PROPERTY_KEY, titlePrefix.toLowerCase()));
+    }
+
+    return createItemListFromQuery(fetchOptions, query);
+  }
+
+  /**
+   * Queries entertainment items based on recent release date.
+   *
+   * @param fetchOptions the fetch options used by the resulting query
+   * @param sortDirection the sort direction used to order the entertainment
+   *     items based on release date
+   * @return list with the entertainment items that match the given release date
+   *     ordering, the list will be empty if no items were found
+   */
+  public EntertainmentItemList queryItemsByReleaseDate(
+      FetchOptions fetchOptions, SortDirection sortDirection) {
     return createItemListFromQuery(fetchOptions,
         new Query(ENTERTAINMENT_ITEM_KIND)
-            .addSort(NORMALIZED_TITLE_PROPERTY_KEY, sortDirection)
-            .setFilter(DatastoreUtils.getPrefixFilter(
-                NORMALIZED_TITLE_PROPERTY_KEY, titlePrefix.toLowerCase())));
+            .addSort(RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY, sortDirection));
   }
 
   private Optional<EntertainmentItem> queryItemByProperty(
@@ -175,10 +189,13 @@ public final class EntertainmentItemDatastore {
 
   private static EntertainmentItem createItemFromEntity(Entity itemEntity) {
     Long uniqueId = itemEntity.getKey().getId();
+
     String title = (String) itemEntity.getProperty(DISPLAY_TITLE_PROPERTY_KEY);
     String description = (String) itemEntity.getProperty(DESCRIPTION_PROPERTY_KEY);
     String imageUrl = (String) itemEntity.getProperty(IMAGE_URL_PROPERTY_KEY);
-    String releaseDate = (String) itemEntity.getProperty(RELEASE_DATE_PROPERTY_KEY);
+    String releaseDate = Utils.getDateFromTimestampMillis(
+        (Long) itemEntity.getProperty(RELEASE_DATE_TIMESTAMP_MILLIS_PROPERTY_KEY),
+        RELEASE_DATE_FORMAT);
     String runtime = (String) itemEntity.getProperty(RUNTIME_PROPERTY_KEY);
     String genre = (String) itemEntity.getProperty(GENRE_PROPERTY_KEY);
     String directors = (String) itemEntity.getProperty(DIRECTORS_PROPERTY_KEY);

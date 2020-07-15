@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -254,18 +255,18 @@ public class ItemSubmissionServletTest {
   }
 
   @Test
-  public void getRequestWithUniqueItem_ResponseReturnsItemIsUnique() throws IOException {
+  public void getRequestWithUniqueItem_ResponseReturnsEmptyOptional() throws IOException {
     when(request.getParameter(IMDB_ID_PARAMETER_KEY)).thenReturn(OMDB_ID);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
-    verify(printWriter).println(new Gson().toJson(/* isItemUnique */ true));
+    verify(printWriter).println(new Gson().toJson(Optional.empty()));
   }
 
   @Test
-  public void getRequestWithDuplicateItem_ResponseReturnsItemIsNotUnique() throws IOException {
+  public void getRequestWithDuplicateItem_ResponseReturnsOptionalWithItem() throws IOException {
     entertainmentItemDatastore.addItemToDatastore(new EntertainmentItem.Builder()
                                                       .setTitle(TITLE)
                                                       .setDescription(DESCRIPTION)
@@ -285,7 +286,8 @@ public class ItemSubmissionServletTest {
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
-    verify(printWriter).println(new Gson().toJson(/* isItemUnique */ false));
+    verify(printWriter)
+        .println(new Gson().toJson(entertainmentItemDatastore.queryItemByOmdbId(OMDB_ID)));
   }
 
   private static String getStringOfLength(int characterLength) {

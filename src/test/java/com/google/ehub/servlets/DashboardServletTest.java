@@ -33,11 +33,11 @@ import org.mockito.MockitoAnnotations;
 @RunWith(JUnit4.class)
 public class DashboardServletTest {
   private static final String SEARCH_VALUE_PARAMETER_KEY = "searchValue";
-  private static final String SORTING_DIRECTION_PARAMETER_KEY = "sortingDirection";
-  private static final String ASCENDING_PARAMETER_VALUE = "ASCENDING";
+  private static final String SORT_TYPE_PARAMETER_KEY = "sortType";
   private static final String JSON_CONTENT_TYPE = "application/json";
 
-  private static final String INVALID_SORTING = "Invalid sort";
+  private static final String ASCENDING_TITLE_PARAMETER_VALUE = "ASCENDING_TITLE";
+  private static final String INVALID_SORT_PARAMETER_VALUE = "Invalid sort";
 
   private static final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
   private static final String DISPLAY_TITLE_PROPERTY_KEY = "displayTitle";
@@ -88,7 +88,7 @@ public class DashboardServletTest {
   @Test
   public void getRequestWithNullParams_NoContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY)).thenReturn(null);
-    when(request.getParameter(SORTING_DIRECTION_PARAMETER_KEY)).thenReturn(null);
+    when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(null);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
@@ -99,7 +99,7 @@ public class DashboardServletTest {
   @Test
   public void getRequestWithEmptyParams_NoContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY)).thenReturn("");
-    when(request.getParameter(SORTING_DIRECTION_PARAMETER_KEY)).thenReturn("");
+    when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn("");
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
@@ -126,8 +126,7 @@ public class DashboardServletTest {
     datastoreService.put(itemEntity);
 
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY)).thenReturn(TITLE);
-    when(request.getParameter(SORTING_DIRECTION_PARAMETER_KEY))
-        .thenReturn(ASCENDING_PARAMETER_VALUE);
+    when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(ASCENDING_TITLE_PARAMETER_VALUE);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
@@ -141,7 +140,7 @@ public class DashboardServletTest {
   @Test
   public void getRequestWithInvalidSortingParam_NoContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY)).thenReturn(TITLE);
-    when(request.getParameter(SORTING_DIRECTION_PARAMETER_KEY)).thenReturn(INVALID_SORTING);
+    when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(INVALID_SORT_PARAMETER_VALUE);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
@@ -153,7 +152,7 @@ public class DashboardServletTest {
   public void getRequestWithExceedingSearchValueLength_NoContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY))
         .thenReturn(getSearchValue(MAX_SEARCH_VALUE_CHARS + 1));
-    when(request.getParameter(SORTING_DIRECTION_PARAMETER_KEY)).thenReturn(INVALID_SORTING);
+    when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(ASCENDING_TITLE_PARAMETER_VALUE);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
@@ -165,17 +164,16 @@ public class DashboardServletTest {
   public void getRequestWithMaximumValidSearchValueLength_ContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY))
         .thenReturn(getSearchValue(MAX_SEARCH_VALUE_CHARS));
-    when(request.getParameter(SORTING_DIRECTION_PARAMETER_KEY))
-        .thenReturn(ASCENDING_PARAMETER_VALUE);
+    when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(ASCENDING_TITLE_PARAMETER_VALUE);
     when(response.getWriter()).thenReturn(printWriter);
 
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
-        .println(
-            new Gson().toJson(EntertainmentItemDatastore.getInstance().queryAllItemsWithTitleOrder(
-                FetchOptions.Builder.withLimit(PAGE_SIZE), SortDirection.ASCENDING)));
+        .println(new Gson().toJson(EntertainmentItemDatastore.getInstance().queryItemsByTitlePrefix(
+            FetchOptions.Builder.withLimit(PAGE_SIZE), /* Empty Search Value */ "",
+            SortDirection.ASCENDING)));
   }
 
   private static String getSearchValue(int characterLength) {
