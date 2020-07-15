@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -61,7 +62,7 @@ public final class EntertainmentItemDatastore {
    *
    * @param item the EntertainmentItem being added to Datastore
    */
-  public void addItemToDatastore(EntertainmentItem item) {
+  public Key addItemToDatastore(EntertainmentItem item) {
     Entity itemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
 
     // Unique Id is created by Datastore so it's not added as a property.
@@ -78,7 +79,7 @@ public final class EntertainmentItemDatastore {
     itemEntity.setProperty(ACTORS_PROPERTY_KEY, item.getActors());
     itemEntity.setProperty(OMDB_ID_PROPERTY_KEY, item.getOmdbId());
 
-    datastoreService.put(itemEntity);
+    return datastoreService.put(itemEntity);
   }
 
   /**

@@ -22,7 +22,7 @@ public final class ProfileDatastore {
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
- /**
+  /**
    * Adds a the User Profile variables to Datastore.
    *
    * @param name the name of the User being added to Datastore
@@ -45,10 +45,10 @@ public final class ProfileDatastore {
    * Create a UserProfile object from a given entity.
    *
    * @param userEntity the User Entity in the Datastore
-   * @return a UserProfile object with correct credentials 
+   * @return a UserProfile object with correct credentials
    */
   public UserProfile createUserProfileFromEntity(Entity userEntity) {
-    if (userEntity== null){
+    if (userEntity == null) {
       return null;
     }
     String name = (String) userEntity.getProperty(NAME_PROPERTY_KEY);
@@ -60,17 +60,17 @@ public final class ProfileDatastore {
   }
 
   /**
-   * Finds a single entity using the email passed in and returns a UserProfile object from the found entity.  
-   * 
+   * Finds a single entity using the email passed in and returns a UserProfile object from the found
+   * entity.
+   *
    * @param email the email of the User being added to Datastore
    * @return a UserProfile object using the entity found
    */
   public UserProfile getUserProfile(String email) {
-    if(email == null){
+    if (email == null) {
       return null;
     }
-    Filter propertyFilter =
-        new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
+    Filter propertyFilter = new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
     Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
 
     PreparedQuery queryResults = datastore.prepare(query);

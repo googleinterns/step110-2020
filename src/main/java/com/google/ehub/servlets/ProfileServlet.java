@@ -17,14 +17,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** 
-* Handles adding the form submission to the datastore in 
-* POST and returns json of the user's profile information
-* to client.
-*/
+/**
+ * Handles adding the form submission to the datastore in
+ * POST and returns json of the user's profile information
+ * to client.
+ */
 @WebServlet("/profile-data")
 public class ProfileServlet extends HttpServlet {
-  
   private static final String NAME_PROPERTY_KEY = "name";
   private static final String EMAIL_PROPERTY_KEY = "email";
   private static final String USERNAME_PROPERTY_KEY = "username";
@@ -33,11 +32,9 @@ public class ProfileServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
-
     String name = request.getParameter(NAME_PROPERTY_KEY);
     String email = request.getParameter(EMAIL_PROPERTY_KEY);
-    String username = request.getParameter(USERNAME_PROPERTY_KEY );
+    String username = request.getParameter(USERNAME_PROPERTY_KEY);
     String bio = request.getParameter(BIO_PROPERTY_KEY);
 
     if (!areValidParameters(name, email, username, bio)) {
@@ -72,10 +69,10 @@ public class ProfileServlet extends HttpServlet {
   /**
    * Checks if any of the request values are null.
    *
-   * @param name the name of the User 
-   * @param email the email of the User 
-   * @param username the username of the User 
-   * @param bio the bio of the User 
+   * @param name the name of the User
+   * @param email the email of the User
+   * @param username the username of the User
+   * @param bio the bio of the User
    * @return true if not null
    */
   private boolean areValidParameters(String name, String email, String username, String bio) {
