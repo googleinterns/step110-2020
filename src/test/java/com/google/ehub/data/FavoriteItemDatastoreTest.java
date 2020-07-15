@@ -42,7 +42,7 @@ public class FavoriteItemDatastoreTest {
   }
 
   @Test
-  public void addFavoriteItemToDatastore_EntityGetsAddedWithValidKindAndProperties() {
+  public void addFavoriteItemToDatastore_entityGetsAddedWithValidKindAndProperties() {
     favoriteItemDatastore.addFavoriteItem(USER_EMAIL, ITEM_ID);
 
     Query query = new Query(FAVORITE_ITEM_KIND);
@@ -55,12 +55,29 @@ public class FavoriteItemDatastoreTest {
   }
 
   @Test
-  public void queryFavoriteIdsWithNonExistentEmail_ListIsEmpty() {
+  public void addFavoriteItemToDatastoreWithDuplicateItems_onlyOneEntityGetsAdded() {
+    Entity favoriteItemEntity = new Entity(FAVORITE_ITEM_KIND);
+    favoriteItemEntity.setProperty(USER_EMAIL_PROPERTY_KEY, USER_EMAIL);
+    favoriteItemEntity.setProperty(ITEM_ID_PROPERTY_KEY, ITEM_ID);
+
+    datastoreService.put(favoriteItemEntity);
+
+    favoriteItemDatastore.addFavoriteItem(USER_EMAIL, ITEM_ID);
+
+    Query query = new Query(FAVORITE_ITEM_KIND);
+    PreparedQuery queryResults = datastoreService.prepare(query);
+    List<Entity> entityList = queryResults.asList(FetchOptions.Builder.withDefaults());
+
+    Assert.assertEquals(1, entityList.size());
+  }
+
+  @Test
+  public void queryFavoriteIdsWithNonExistentEmail_listIsEmpty() {
     Assert.assertTrue(favoriteItemDatastore.queryFavoriteIds(USER_EMAIL).isEmpty());
   }
 
   @Test
-  public void queryFavoriteIdsWithEmailThatHasLikes_ListContainsLikedIds() {
+  public void queryFavoriteIdsWithEmailThatHasLikes_listContainsLikedIds() {
     List<Long> favoriteIds = new ArrayList<>();
 
     for (Long Id = 0L; Id < 5; Id++) {
@@ -75,12 +92,12 @@ public class FavoriteItemDatastoreTest {
   }
 
   @Test
-  public void queryEmailsWithNonExistemItemId_ListIsEmpty() {
+  public void queryEmailsWithNonExistemItemId_listIsEmpty() {
     Assert.assertTrue(favoriteItemDatastore.queryEmails(ITEM_ID).isEmpty());
   }
 
   @Test
-  public void queryEmailsWithItemWithLikes_ListContainsEmailsThatLiked() {
+  public void queryEmailsWithItemWithLikes_listContainsEmailsThatLiked() {
     List<String> emails = new ArrayList<>();
 
     String email = "a";
