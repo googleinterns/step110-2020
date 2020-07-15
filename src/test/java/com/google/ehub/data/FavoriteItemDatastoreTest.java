@@ -3,18 +3,19 @@ package com.google.ehub.data;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import java.util.List;
 
 @RunWith(JUnit4.class)
 public class FavoriteItemDatastoreTest {
@@ -40,7 +41,7 @@ public class FavoriteItemDatastoreTest {
     helper.tearDown();
   }
 
-  @Test 
+  @Test
   public void addFavoriteItemToDatastore_EntityGetsAddedWithValidKindAndProperties() {
     favoriteItemDatastore.addFavoriteItem(USER_EMAIL, ITEM_ID);
 
@@ -54,9 +55,45 @@ public class FavoriteItemDatastoreTest {
   }
 
   @Test
-  public void queryFavoriteIdsWithNonExistentEmailParam_ListIsEmpty() {
-    List<Long> favoriteItems = favoriteItemDatastore.queryFavoriteIds(USER_EMAIL);
+  public void queryFavoriteIdsWithNonExistentEmail_ListIsEmpty() {
+    Assert.assertTrue(favoriteItemDatastore.queryFavoriteIds(USER_EMAIL).isEmpty());
+  }
 
-    Assert.assertTrue(favoriteItems.isEmpty());
+  @Test
+  public void queryFavoriteIdsWithEmailThatHasLikes_ListContainsLikedIds() {
+    List<Long> favoriteIds = new ArrayList<>();
+
+    for (Long Id = 0L; Id < 5; Id++) {
+      favoriteItemDatastore.addFavoriteItem(USER_EMAIL, Id);
+      favoriteIds.add(Id);
+    }
+
+    List<Long> actualIds = favoriteItemDatastore.queryFavoriteIds(USER_EMAIL);
+
+    Assert.assertEquals(favoriteIds.size(), actualIds.size());
+    Assert.assertTrue(actualIds.containsAll(favoriteIds));
+  }
+
+  @Test
+  public void queryEmailsWithNonExistemItemId_ListIsEmpty() {
+    Assert.assertTrue(favoriteItemDatastore.queryEmails(ITEM_ID).isEmpty());
+  }
+
+  @Test
+  public void queryEmailsWithItemWithLikes_ListContainsEmailsThatLiked() {
+    List<String> emails = new ArrayList<>();
+
+    String email = "a";
+
+    for (int i = 0; i < 5; ++i) {
+      favoriteItemDatastore.addFavoriteItem(email, ITEM_ID);
+      emails.add(email);
+      email += "a";
+    }
+
+    List<String> actualEmails = favoriteItemDatastore.queryEmails(ITEM_ID);
+
+    Assert.assertEquals(emails.size(), actualEmails.size());
+    Assert.assertTrue(actualEmails.containsAll(emails));
   }
 }
