@@ -7,9 +7,11 @@ hidden {
   height: 445px;
 }
 
-.container {
-  text-align: center;
+.card .btn {
+  z-index: 2;
+  position: relative;
 }
+
 ul {
     list-style-type: none;
 }

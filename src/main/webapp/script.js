@@ -176,9 +176,18 @@ function createEntertainmentItemCard(entertainmentItem) {
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-      $('<h5 class="card-title">' + entertainmentItem.title + '</h5>'));
+      $('<h5 class="card-title text-center">' + entertainmentItem.title +
+        '</h5>'));
   cardBody.append(
-      $('<p class="card-text">' + entertainmentItem.description + '</p>'));
+      $('<p class="card-text text-center">' + entertainmentItem.description +
+        '</p>'));
+
+  const likeButton = $('<button class="btn btn-dark">Like</button>');
+  likeButton.click(function() {
+    addLike(entertainmentItem.uniqueId.value);
+  });
+
+  cardBody.append(likeButton);
 
   card.append(cardBody);
 
@@ -303,6 +312,8 @@ function updatePagination(pageCursor) {
     }
   });
 }
+
+function addLike(itemId) {}
 
 /**
  * Finds a query string parameter in the current Url.
