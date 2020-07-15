@@ -62,7 +62,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void getRequestUserNotLoggedIn_ErrorIsSent() throws IOException {
+  public void getRequestUserNotLoggedIn_errorIsSent() throws IOException {
     helper.setEnvIsLoggedIn(false);
 
     servlet.doGet(request, response);
@@ -71,7 +71,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void getRequestUserLoggedInWithNoFavoriteItems_ResponseSendsEmptyList()
+  public void getRequestUserLoggedInWithNoFavoriteItems_responseSendsEmptyList()
       throws IOException {
     when(response.getWriter()).thenReturn(printWriter);
 
@@ -82,7 +82,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void getRequestUserLoggedInWithFavoriteItems_ResponseSendsListWithFavoriteItems()
+  public void getRequestUserLoggedInWithFavoriteItems_responseSendsListWithFavoriteItems()
       throws IOException {
     for (Long itemId : ITEM_IDS) {
       favoriteItemDatastore.addFavoriteItem(EMAIL, itemId);
@@ -97,7 +97,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void postRequestWithNullParam_ErrorIsSent() throws IOException {
+  public void postRequestWithNullParam_errorIsSent() throws IOException {
     when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY)).thenReturn(null);
 
     servlet.doPost(request, response);
@@ -106,7 +106,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void postRequestWithEmptyParam_ErrorIsSent() throws IOException {
+  public void postRequestWithEmptyParam_errorIsSent() throws IOException {
     when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY)).thenReturn("");
 
     servlet.doPost(request, response);
@@ -115,7 +115,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void postRequestWithInvalidParam_ErrorIsSent() throws IOException {
+  public void postRequestWithInvalidParam_errorIsSent() throws IOException {
     when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY))
         .thenReturn(INVALID_ITEM_ID_PARAMETER);
 
@@ -125,7 +125,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void postRequestWithValidParamButItemDoesNotExist_ErrorIsSent() throws IOException {
+  public void postRequestWithValidParamButItemDoesNotExist_errorIsSent() throws IOException {
     when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY)).thenReturn(VALID_ITEM_ID_PARAMETER);
 
     servlet.doPost(request, response);
@@ -134,7 +134,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void postRequestWithValidParamAndItemExists_FavoriteItemIsAdded() throws IOException {
+  public void postRequestWithValidParamAndItemExists_favoriteItemIsAdded() throws IOException {
     Entity itemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
     datastoreService.put(itemEntity);
 
@@ -147,7 +147,7 @@ public class FavoriteItemServletTest {
   }
 
   @Test
-  public void postRequestWithValidParamButUserNotLoggedIn_FavoriteItemIsNotAdded()
+  public void postRequestWithValidParamButUserNotLoggedIn_favoriteItemIsNotAdded()
       throws IOException {
     Entity itemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
     datastoreService.put(itemEntity);
