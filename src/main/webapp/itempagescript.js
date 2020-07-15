@@ -6,7 +6,6 @@ async function loadItemPage() {
     $('#navbar').load('navbar.html', function() {
       setupNavBarProfileSection();
     });
-    
     const itemId = getUrlParam('itemId');
 
     if (itemId !== '') {
@@ -34,11 +33,11 @@ async function createSelectedItemCard(entertainmentItem) {
   cardBody.append(
     $(
       '<h5 class="card-title">' +
-        entertainmentItem.title +
-        "(" +
-        entertainmentItem.releaseDate +
-        ")" +
-        "</h5>"
+      entertainmentItem.title +
+      "(" +
+      entertainmentItem.releaseDate +
+      ")" +
+      "</h5>"
     )
   );
   cardBody.append(
@@ -47,8 +46,8 @@ async function createSelectedItemCard(entertainmentItem) {
   cardBody.append(
     $(
       '<p class="card-text"><b>Description: </b>' +
-        entertainmentItem.description +
-        "</p>"
+      entertainmentItem.description +
+      "</p>"
     )
   );
 
@@ -64,10 +63,10 @@ async function sendFormData() {
   const comment = $("#comment").val();
   const itemId = getUrlParam("itemId");
   $.post("/itempagedata", { comment: comment, itemId: itemId })
-    .done(function () {
+    .done(function() {
       window.location.reload();
     })
-    .fail(function () {
+    .fail(function() {
       console.log("Failed to send form data");
     });
 }
@@ -96,3 +95,4 @@ function createListElement(comment) {
   liElement.append(comment);
   return liElement;
 }
+
