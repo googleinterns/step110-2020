@@ -1,5 +1,7 @@
 package com.google.ehub.servlets;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -47,8 +48,6 @@ public class ProfileServletTest {
   private static final String BIO = "My name means honey!";
   private static final String REDIRECT = "/ProfilePage.html";
   private static final String REDIRECT_GET = "/CreateProfilePage.html";
-  private static final String ERROR_MESSAGE = "User must logged in";
-  private static final String POST_ERROR_MESSAGE = "Post Request parameters empty";
   private final ProfileServlet servlet = new ProfileServlet();
   private final ProfileDatastore profileData = new ProfileDatastore();
 
@@ -84,7 +83,7 @@ public class ProfileServletTest {
 
     servlet.doPost(request, response);
 
-    verify(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, POST_ERROR_MESSAGE);
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
   }
 
   @Test
@@ -97,7 +96,7 @@ public class ProfileServletTest {
 
     servlet.doPost(request, response);
 
-    verify(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, POST_ERROR_MESSAGE);
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
   }
 
   @Test
@@ -149,7 +148,7 @@ public class ProfileServletTest {
 
     servlet.doGet(request, response);
 
-    verify(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, ERROR_MESSAGE);
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
   }
 
   @Test

@@ -37,7 +37,6 @@ public class LoginServlet extends HttpServlet {
     JsonObject loginJson = new JsonObject();
 
     if (userService.isUserLoggedIn()) {
-      String userEmail = userService.getCurrentUser().getEmail();
       String logoutUrl = userService.createLogoutURL("/?authuser=0");
       loginJson.addProperty(LOGOUT_URL_KEY, logoutUrl);
       loginJson.addProperty(LOGIN_URL_KEY, "");

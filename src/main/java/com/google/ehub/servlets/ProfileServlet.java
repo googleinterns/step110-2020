@@ -45,13 +45,13 @@ public class ProfileServlet extends HttpServlet {
     String bio = request.getParameter(BIO_PROPERTY_KEY);
     boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PROPERTY_KEY));
 
+    if (!areValidParameters(name, username, bio)) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Post Request parameters empty");
+      return;
+    }
     if (edit) {
       profileData.editProfile(name, username, bio);
     } else {
-      if (!areValidParameters(name, username, bio)) {
-        response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Post Request parameters empty");
-        return;
-      }
       profileData.addUserProfileToDatastore(name, email, username, bio);
     }
 
@@ -61,7 +61,7 @@ public class ProfileServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     if (!userService.isUserLoggedIn()) {
-      response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "User must logged in");
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
     } else {
       String userEmail = userService.getCurrentUser().getEmail();
       UserProfile userProfile = profileData.getUserProfile(userEmail);

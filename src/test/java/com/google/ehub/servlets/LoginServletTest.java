@@ -59,17 +59,17 @@ public class LoginServletTest {
 
     when(response.getWriter()).thenReturn(printWriter);
 
-    servlet.doGet(request, response);
+    servlet.doPost(request, response);
 
     String responseStr = stringWriter.getBuffer().toString().trim();
     JsonElement responseJsonElement = new JsonParser().parse(responseStr);
     JsonObject responseJsonObject = responseJsonElement.getAsJsonObject();
-
+    
     return responseJsonObject;
   }
 
   @Test
-  public void getRequestWithLoggedInUser_sendsLogoutUrl() throws IOException {
+  public void postRequestWithLoggedInUser_sendsLogoutUrl() throws IOException {
     JsonObject responseJsonObject = getLoginServletResponse();
 
     String loginUrl = responseJsonObject.get("LoginURL").getAsString();
@@ -80,7 +80,7 @@ public class LoginServletTest {
   }
 
   @Test
-  public void getRequestWithLoggedOut_sendsLoginUrl() throws IOException {
+  public void postRequestWithLoggedOut_sendsLoginUrl() throws IOException {
     helper.setEnvIsLoggedIn(false);
 
     JsonObject responseJsonObject = getLoginServletResponse();
