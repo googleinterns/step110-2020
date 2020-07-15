@@ -261,7 +261,7 @@ function setupNavBarProfileSection() {
               '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
         } else {
           profileLinks.append($(
-              '<a class="nav-link text-light" href="/LoginPage.html">Login</a>'));
+              '<a class="nav-link text-light" href="/profile-data">Login</a>'));
         }
       })
       .catch((error) => {
