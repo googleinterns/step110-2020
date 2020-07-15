@@ -8,10 +8,48 @@ function loadDashboard() {
       $('#navbarDashboardSection').removeClass('d-none');
 
       setupNavBarProfileSection();
+      loadSearchValue();
+      loadSortValue();
       getDashboardItems();
     });
 
     $('#itemSubmissionDiv').load('item-submission-dialog.html');
+  });
+}
+
+/**
+ * Loads the stored value used for the search input and adds a
+ * callback to load the entertainment items when the user types a key.
+ */
+function loadSearchValue() {
+  const searchInput = $('#searchValue');
+  const searchVal = sessionStorage.getItem('searchVal');
+
+  if (searchVal !== null) {
+    searchInput.val(searchVal);
+  }
+
+  searchInput.on('input', function() {
+    sessionStorage.setItem('searchVal', $(this).val());
+    getDashboardItems();
+  });
+}
+
+/**
+ * Loads the stored values for the sort type of the sort selector and adds a
+ * callback to load the entertainment items when the selector changes value.
+ */
+function loadSortValue() {
+  const sortSelector = $('#sortType');
+  const sortVal = sessionStorage.getItem('sortVal');
+
+  if (sortVal !== null) {
+    sortSelector.val(sortVal);
+  }
+
+  sortSelector.change(function() {
+    sessionStorage.setItem('sortVal', $(this).val());
+    getDashboardItems();
   });
 }
 
@@ -26,9 +64,8 @@ function loadDashboard() {
  */
 function getDashboardItems(clearCurrentItems = true, cursor = '') {
   fetch(
-      '/dashboard?cursor=' + cursor +
-      '&searchValue=' + $('#searchValue').val() +
-      '&sortType=' + $('#sortType').val())
+      '/dashboard?cursor=' + cursor + '&searchValue=' +
+      $('#searchValue').val() + '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
       .then((entertainmentItemList) => {
         const itemContainer = $('#entertainmentItemsContainer');
@@ -64,11 +101,9 @@ function getOmdbItem() {
 
         if (omdbItem.Response === 'False') {
           omdbItemEntry.append($('<p>Item not found!</p>'));
-
           submitButton.addClass('d-none');
         } else {
           const itemCard = createOmdbItemCard(omdbItem);
-
           omdbItemEntry.append(itemCard);
 
           enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
@@ -199,6 +234,7 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
                 '">Link to Item</a>';
           }
 
+          submitButton.addClass('d-none');
           itemCard.append($(
               '<p class="card-text">Item already exists on Entertainment Hub!' +
               itemLink + '</p>'));
@@ -210,8 +246,9 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
 }
 
 /**
- * Enables access to the profile if the user is logged in by adding a "Profile" link to the navbar,
- * if the user is not logged in then it adds a link to login.
+ * Enables access to the profile if the user is logged in by adding a "Profile"
+ * link to the navbar, if the user is not logged in then it adds a link to
+ * login.
  */
 function setupNavBarProfileSection() {
   fetch('/login')
