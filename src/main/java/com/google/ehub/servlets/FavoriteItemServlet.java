@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.math.NumberUtils;
 
+/**
+ * Handles Get and Post requests for items favorited by the logged in user.
+ */
 @WebServlet("/favorite-item")
 public class FavoriteItemServlet extends HttpServlet {
   private static final String FAVORITE_ITEM_ID_PARAMETER_KEY = "favoriteItemId";
