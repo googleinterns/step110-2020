@@ -10,6 +10,9 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Singleton class that manages FavoriteItems stored in Datastore.
+ */
 public final class FavoriteItemDatastore {
   private static final String FAVORITE_ITEM_KIND = "favoriteItem";
   private static final String USER_EMAIL_PROPERTY_KEY = "userEmail";
