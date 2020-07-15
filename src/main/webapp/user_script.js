@@ -19,4 +19,9 @@ function loadProfile() {
       .catch((error) => {
         console.log('Fetching profile data servlet failed: ' + error);
       });
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html', function() {
+      $('#navbarProfileSection').addClass('d-none');
+    });
+  });
 }

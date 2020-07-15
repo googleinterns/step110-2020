@@ -8,10 +8,31 @@ hidden {
 }
 
 .container {
-  margin-top: 0px;
   text-align: center;
 }
-
+ul {
+    list-style-type: none;
+}
 .selector-for-some-widget {
   box-sizing: content-box;
+}
+
+#comments {
+  margin-top: 40px;
+}
+
+#comments textarea {
+  margin-bottom: 10px;
+  display: block;
+  width: 100%;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -o-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -khtml-border-radius: 10px;   
+  border-radius: 10px;
+
+  line-height: 1.4em;
 }

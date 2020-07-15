@@ -13,62 +13,10 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
-    <script>
-      loadSelector("#itemSubmissionDiv", "item-submission-dialog.html");
-    </script>
     <title>Entertainment Hub - Dashboard</title>
   </head>
-  <body onload="getDashboardItems()">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
-      <div class="container">
-        <a class="navbar-brand" href="#">Entertainment Hub</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <div class="form-inline my-2 my-lg-0">
-            <input
-              class="form-control mr-sm-2"
-              type="search"
-              name="searchValue"
-              id="searchValue"
-              placeholder="Search by Title"
-              oninput="getDashboardItems()"
-            />
-            <select
-              class="form-control my-2 my-sm-0 mr-sm-2"
-              name="sortingDirection"
-              id="sortingDirection"
-              onchange="getDashboardItems()"
-              required
-            >
-              <option value="ASCENDING" selected
-                >Title (Increasing Alphabetical Order)</option
-              >
-              <option value="DESCENDING"
-                >Title (Decreasing Alphabetical Order)</option
-              >
-            </select>
-            <button
-              type="button"
-              class="btn btn-light navbar-btn text-nowrap my-sm-0"
-              data-toggle="modal"
-              data-target="#itemSubmissionDialog"
-            >
-              Add Entertainment Item
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
+  <body onload="loadDashboard()">
+    <div id="navbar"></div>
     <div class="container">
       <div id="itemSubmissionDiv"></div>
       <div id="entertainmentItemsContainer"></div>

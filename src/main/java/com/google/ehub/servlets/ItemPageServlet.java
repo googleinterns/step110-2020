@@ -47,12 +47,9 @@ public class ItemPageServlet extends HttpServlet {
 
     CommentDataManager commentDataManager = new CommentDataManager();
     List<CommentData> comments = commentDataManager.retrieveComments(itemId);
-    System.out.println("doGet: " + comments);
 
     if (optionalItem.isPresent()) {
       EntertainmentItem selectedItem = optionalItem.get();
-      System.out.println("ItemPageServlet Selected item:" + selectedItem);
-
       ItemPageData itemData = new ItemPageData(selectedItem, comments);
       response.setContentType("application/json");
       response.getWriter().println(new Gson().toJson(itemData));
@@ -72,13 +69,11 @@ public class ItemPageServlet extends HttpServlet {
     }
     String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
     if (comment == null) {
-      System.out.println("Comment was not entered");
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
       return;
     }
     long timestampMillis = System.currentTimeMillis();
     CommentDataManager comments = new CommentDataManager();
     comments.addItemComment(itemId, comment, timestampMillis);
-
-    response.sendRedirect("/item-page.html?=" + itemId);
   }
 }

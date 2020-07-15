@@ -5,11 +5,16 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * Utility class with useful methods used in Datastore.
+ * Utility class holding miscellaneous methods used across the codebase.
  */
-public final class DatastoreUtils {
+public final class Utils {
+  private Utils() {}
+
   /**
    * Creates the filter used for prefix searches in Datastore.
    *
@@ -58,5 +63,70 @@ public final class DatastoreUtils {
     }
   }
 
-  private DatastoreUtils() {}
+  /**
+   * Gets the millisecond timestamp of a given date in a specific format.
+   *
+   * @param date the date to convert into a timestamp eg. ("04-23-2020")
+   * @param format the format used by the given date eg. ("MM-DD-YYYY")
+   * @return the timestamp of the date in milliseconds, or null if it failed to parse
+   */
+  public static Long getTimestampMillisFromDate(String date, String format) {
+    SimpleDateFormat dateFormatter;
+
+    try {
+      dateFormatter = new SimpleDateFormat(format);
+    } catch (NullPointerException e) {
+      System.err.println("Date format can't be null: " + e);
+      return null;
+    } catch (IllegalArgumentException e) {
+      System.err.println("Date formatter couldn't be created with given arguments: " + e);
+      return null;
+    }
+
+    Date parsedDate;
+
+    try {
+      parsedDate = dateFormatter.parse(date);
+    } catch (NullPointerException e) {
+      System.err.println("Date can't be null: " + e);
+      return null;
+    } catch (ParseException e) {
+      System.err.println("Failed to parse date: " + e);
+      return null;
+    }
+
+    return parsedDate.getTime();
+  }
+
+  /**
+   * Gets the date with a specific format from a millisecond timestamp.
+   *
+   * @param timestampMillis the millisecond timestamp to get the date from
+   * @param format the format used to write the date on the string
+   * @return the date as a string with the format that was given
+   */
+  public static String getDateFromTimestampMillis(Long timestampMillis, String format) {
+    Date date;
+
+    try {
+      date = new Date(timestampMillis);
+    } catch (NullPointerException e) {
+      System.err.println("Date could not be created: " + e);
+      return null;
+    }
+
+    SimpleDateFormat dateFormatter;
+
+    try {
+      dateFormatter = new SimpleDateFormat(format);
+    } catch (NullPointerException e) {
+      System.err.println("Date format can't be null: " + e);
+      return null;
+    } catch (IllegalArgumentException e) {
+      System.err.println("Date formatter couldn't be created with given arguments: " + e);
+      return null;
+    }
+
+    return dateFormatter.format(date);
+  }
 }
