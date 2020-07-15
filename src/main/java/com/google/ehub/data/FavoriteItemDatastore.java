@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Singleton class that manages FavoriteItems stored in Datastore.
+ * Singleton class that manages the addition and querying of FavoriteItems stored in Datastore.
  */
 public final class FavoriteItemDatastore {
   private static final String FAVORITE_ITEM_KIND = "favoriteItem";
