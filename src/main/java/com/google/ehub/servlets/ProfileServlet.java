@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/profile-data")
 public class ProfileServlet extends HttpServlet {
-
   private static final String NAME_PROPERTY_KEY = "name";
   private static final String EMAIL_PROPERTY_KEY = "email";
   private static final String USERNAME_PROPERTY_KEY = "username";
@@ -32,9 +31,7 @@ public class ProfileServlet extends HttpServlet {
   ProfileDatastore profileData = new ProfileDatastore();
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter(NAME_PROPERTY_KEY);
     String email = request.getParameter(EMAIL_PROPERTY_KEY);
     String username = request.getParameter(USERNAME_PROPERTY_KEY);
@@ -50,18 +47,16 @@ public class ProfileServlet extends HttpServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
     if (!userService.isUserLoggedIn()) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                         "ProfileServlet: User is not logged in!");
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "ProfileServlet: User is not logged in!");
       return;
     }
 
-    UserProfile newUser =
-        profileData.getUserProfile(userService.getCurrentUser().getEmail());
+    UserProfile newUser = profileData.getUserProfile(userService.getCurrentUser().getEmail());
 
     response.setContentType("application/json");
     response.getWriter().println(convertToJson(newUser));
@@ -86,10 +81,8 @@ public class ProfileServlet extends HttpServlet {
    * @param bio the bio of the User
    * @return true if not null
    */
-  private boolean areValidParameters(String name, String email, String username,
-                                     String bio) {
-    return (name != null && !name.isEmpty() && email != null &&
-            !email.isEmpty() && username != null && !username.isEmpty() &&
-            bio != null && !bio.isEmpty());
+  private boolean areValidParameters(String name, String email, String username, String bio) {
+    return (name != null && !name.isEmpty() && email != null && !email.isEmpty() && username != null
+        && !username.isEmpty() && bio != null && !bio.isEmpty());
   }
 }
