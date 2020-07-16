@@ -11,9 +11,9 @@ async function loadItemPage() {
     if (itemId !== '') {
       fetch(`/itempagedata?itemId=${itemId}`)
           .then((response) => response.json())
-          .then((ItemPageData) => {
-            createSelectedItemCard(ItemPageData.item);
-            getItemPageComments(ItemPageData.comments);
+          .then((itemPageData) => {
+            createSelectedItemCard(itemPageData.item);
+            getItemPageComments(itemPageData.comments);
           });
     } else {
       console.log('ItemId is empty!');
@@ -30,14 +30,13 @@ async function createSelectedItemCard(entertainmentItem) {
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-      $('<h5 class="card-title text-center">' + entertainmentItem.title + '(' +
+      $('<h5 class="card-title">' + entertainmentItem.title + '(' +
         entertainmentItem.releaseDate + ')' +
         '</h5>'));
   cardBody.append(
-      $('<h5 class="card-title text-center">' + entertainmentItem.genre +
-        '</h5>'));
+      $('<h5 class="card-title">' + entertainmentItem.genre + '</h5>'));
   cardBody.append(
-      $('<p class="card-text text-center"><b>Description: </b>' +
+      $('<p class="card-text"><b>Description: </b>' +
         entertainmentItem.description + '</p>'));
 
   card.append(cardBody);
@@ -51,13 +50,15 @@ async function createSelectedItemCard(entertainmentItem) {
 async function sendFormData() {
   const comment = $('#comment').val();
   const itemId = getUrlParam('itemId');
-  $.post('/itempagedata', {comment: comment, itemId: itemId})
-      .done(function() {
-        window.location.reload();
-      })
-      .fail(function() {
-        console.log('Failed to send form data');
-      });
+  if (comment != '' && itemId != null) {
+    $.post('/itempagedata', {comment: comment, itemId: itemId})
+        .done(function() {
+          window.location.reload();
+        })
+        .fail(function() {
+          console.log('Failed to send form data');
+        });
+  }
 }
 
 /**
