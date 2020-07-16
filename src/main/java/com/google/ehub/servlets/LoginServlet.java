@@ -45,7 +45,7 @@ public class LoginServlet extends HttpServlet {
       loginJson.addProperty(LOGIN_URL_KEY, loginUrl);
       loginJson.addProperty(LOGOUT_URL_KEY, "");
     }
-    
+
     response.setContentType("application/json");
     response.getWriter().println(loginJson.toString());
   }

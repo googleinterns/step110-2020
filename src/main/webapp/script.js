@@ -176,9 +176,18 @@ function createEntertainmentItemCard(entertainmentItem) {
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-      $('<h5 class="card-title">' + entertainmentItem.title + '</h5>'));
+      $('<h5 class="card-title text-center">' + entertainmentItem.title +
+        '</h5>'));
   cardBody.append(
-      $('<p class="card-text">' + entertainmentItem.description + '</p>'));
+      $('<p class="card-text text-center">' + entertainmentItem.description +
+        '</p>'));
+
+  const likeButton = $('<button class="btn btn-dark">Like</button>');
+  likeButton.click(function() {
+    addLikeToEntertainmentItem(entertainmentItem.uniqueId.value);
+  });
+
+  cardBody.append(likeButton);
 
   card.append(cardBody);
 
@@ -200,9 +209,11 @@ function createOmdbItemCard(omdbItem) {
         '">'));
 
   const cardBody = $('<div class="card-body"></div>');
-  cardBody.append($('<h5 class="card-title">' + omdbItem.Title + '</h5>'));
   cardBody.append(
-      $('<p class="card-text">Released: ' + omdbItem.Released + '</p>'));
+      $('<h5 class="card-title text-center">' + omdbItem.Title + '</h5>'));
+  cardBody.append(
+      $('<p class="card-text text-center">Released: ' + omdbItem.Released +
+        '</p>'));
 
   card.append(cardBody);
 
@@ -236,7 +247,7 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
 
           submitButton.addClass('d-none');
           itemCard.append($(
-              '<p class="card-text">Item already exists on Entertainment Hub!' +
+              '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
               itemLink + '</p>'));
         }
       })
@@ -301,6 +312,17 @@ function updatePagination(pageCursor) {
 
       getDashboardItems(/* clearItems */ false, pageCursor);
     }
+  });
+}
+
+/**
+ * Fetches FavoriteItemServlet to add a like to a specific entertainment item.
+ *
+ * @param { number } itemId - the Id used to identify the entertainment item
+ */
+function addLikeToEntertainmentItem(itemId) {
+  $.post('/favorite-item?favoriteItemId=' + itemId).fail(function() {
+    console.log('Failed to add a like to the given entertainment item!');
   });
 }
 
