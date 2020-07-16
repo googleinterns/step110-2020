@@ -91,7 +91,7 @@ public class FavoriteCounterServletTest {
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
-    verify(printWriter).println("[]");
+    verify(printWriter).println("0");
   }
 
   @Test
@@ -107,7 +107,6 @@ public class FavoriteCounterServletTest {
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
-    verify(printWriter)
-        .println(new Gson().toJson(favoriteItemDatastore.queryEmails(VALID_ITEM_ID)));
+    verify(printWriter).println(new Gson().toJson(EMAILS.length));
   }
 }

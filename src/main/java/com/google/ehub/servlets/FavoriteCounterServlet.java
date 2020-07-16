@@ -27,8 +27,8 @@ public class FavoriteCounterServlet extends HttpServlet {
     }
 
     response.setContentType("application/json");
-    response.getWriter().println(
-        new Gson().toJson(FavoriteItemDatastore.getInstance().queryEmails(Long.parseLong(itemId))));
+    response.getWriter().println(new Gson().toJson(
+        FavoriteItemDatastore.getInstance().queryEmails(Long.parseLong(itemId)).size()));
   }
 
   private static boolean isGetRequestParameterValid(String itemId) {
