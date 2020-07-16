@@ -10,17 +10,21 @@ import com.google.appengine.api.datastore.Query.CompositeFilter;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.ehub.servlets.LoginServlet;
 import java.io.IOException;
 
 /** Manages the User Profiles stored in Datastore. **/
 public final class ProfileDatastore {
-  public static final String PROFILE_ITEM_KIND = "profile";
-  public static final String NAME_PROPERTY_KEY = "name";
-  public static final String EMAIL_PROPERTY_KEY = "email";
-  public static final String USERNAME_PROPERTY_KEY = "username";
-  public static final String BIO_PROPERTY_KEY = "bio";
+  private static final String PROFILE_ITEM_KIND = "profile";
+  private static final String NAME_PROPERTY_KEY = "name";
+  private static final String EMAIL_PROPERTY_KEY = "email";
+  private static final String USERNAME_PROPERTY_KEY = "username";
+  private static final String BIO_PROPERTY_KEY = "bio";
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  private static final UserService userService = UserServiceFactory.getUserService();
 
   /**
    * Adds a the User Profile variables to Datastore.
@@ -77,5 +81,27 @@ public final class ProfileDatastore {
     Entity userEntity = queryResults.asSingleEntity();
 
     return createUserProfileFromEntity(userEntity);
+  }
+
+  /**
+   * Changes the property of the User entity with the new edited values and updates the datastore.
+   *
+   * @param name the new name of the user
+   * @param username the new username of the user
+   * @param bio the new biography of the user
+   */
+  public void editProfile(String name, String username, String bio) {
+    String email = userService.getCurrentUser().getEmail();
+
+    Filter propertyFilter = new FilterPredicate(EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, email);
+    Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
+
+    PreparedQuery queryResults = datastore.prepare(query);
+    Entity userEntity = queryResults.asSingleEntity();
+
+    userEntity.setProperty(NAME_PROPERTY_KEY, name);
+    userEntity.setProperty(USERNAME_PROPERTY_KEY, username);
+    userEntity.setProperty(BIO_PROPERTY_KEY, bio);
+    datastore.put(userEntity);
   }
 }
