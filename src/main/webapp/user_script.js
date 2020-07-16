@@ -15,6 +15,8 @@ function loadProfile() {
         const bioSection = document.getElementById('bio');
         bioSection.innerHTML = profile.bio;
         bioSection.value = profile.bio;
+        const profileImage = document.getElementById("avatar");
+        profileImage.src = "https://icotar.com/initials/" + profile.username;
       })
       .catch((error) => {
         console.log('Fetching profile data servlet failed: ' + error);
