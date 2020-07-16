@@ -12,9 +12,9 @@ async function loadItemPage() {
     if (itemId !== '') {
       fetch(`/itempagedata?itemId=${itemId}`)
           .then((response) => response.json())
-          .then((ItemPageData) => {
-            createSelectedItemCard(ItemPageData.item);
-            getItemPageComments(ItemPageData.comments);
+          .then((itemPageData) => {
+            createSelectedItemCard(itemPageData.item);
+            getItemPageComments(itemPageData.comments);
           });
     } else {
       console.log('ItemId is empty!');
