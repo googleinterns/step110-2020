@@ -40,13 +40,12 @@ public class LoginServlet extends HttpServlet {
       String logoutUrl = userService.createLogoutURL("/?authuser=0");
       loginJson.addProperty(LOGOUT_URL_KEY, logoutUrl);
       loginJson.addProperty(LOGIN_URL_KEY, "");
-
     } else {
-
       String loginUrl = userService.createLoginURL("/ProfilePage.html");
       loginJson.addProperty(LOGIN_URL_KEY, loginUrl);
       loginJson.addProperty(LOGOUT_URL_KEY, "");
     }
+
     response.setContentType("application/json");
     response.getWriter().println(loginJson.toString());
   }

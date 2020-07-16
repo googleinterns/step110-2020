@@ -83,4 +83,3 @@ function createListElement(comment) {
   liElement.append(comment);
   return liElement;
 }
-
