@@ -63,6 +63,7 @@ public class ProfileServlet extends HttpServlet {
     if (!userService.isUserLoggedIn()) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
     } else {
+      String userEmail = userService.getCurrentUser().getEmail();
       UserProfile userProfile = profileData.getUserProfile(userEmail);
 
       if (userProfile == null) {
