@@ -266,8 +266,8 @@ function addLikeToEntertainmentItem(itemId, likeCounter) {
 function updateLikeCounter(itemId, likeCounter) {
   fetch('/favorite-counter?itemId=' + itemId)
       .then((response) => response.json())
-      .then((emails) => {
-        likeCounter.text(emails.length);
+      .then((numberOfLikes) => {
+        likeCounter.text(numberOfLikes);
       })
       .catch((error) => {
         console.log(
