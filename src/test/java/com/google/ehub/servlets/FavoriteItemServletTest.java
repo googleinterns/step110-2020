@@ -159,7 +159,58 @@ public class FavoriteItemServletTest {
 
     servlet.doPost(request, response);
 
-    Assert.assertEquals(
-        0, FavoriteItemDatastore.getInstance().queryEmails(itemEntity.getKey().getId()).size());
+    Assert.assertTrue(favoriteItemDatastore.queryEmails(itemEntity.getKey().getId()).isEmpty());
+  }
+
+  @Test
+  public void deleteRequestWithNullParam_errorIsSent() throws IOException {
+    when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY)).thenReturn(null);
+
+    servlet.doDelete(request, response);
+
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
+  }
+
+  @Test
+  public void deleteRequestWithEmptyParam_errorIsSent() throws IOException {
+    when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY)).thenReturn("");
+
+    servlet.doDelete(request, response);
+
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
+  }
+
+  @Test
+  public void deleteRequestWithInvalidParam_errorIsSent() throws IOException {
+    when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY))
+        .thenReturn(INVALID_ITEM_ID_PARAMETER);
+
+    servlet.doDelete(request, response);
+
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
+  }
+
+  @Test
+  public void deleteRequestWithValidParamAndUserIsNotLoggedIn_errorIsSent() throws IOException {
+    helper.setEnvIsLoggedIn(false);
+
+    when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY)).thenReturn(VALID_ITEM_ID_PARAMETER);
+
+    servlet.doDelete(request, response);
+
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
+  }
+
+  @Test
+  public void deleteRequestWithValidParamAndUserIsLoggedIn_favoriteItemEntityIsDeleted()
+      throws IOException {
+    favoriteItemDatastore.addFavoriteItem(EMAIL, ITEM_IDS[0]);
+
+    when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY))
+        .thenReturn(String.valueOf(ITEM_IDS[0]));
+
+    servlet.doDelete(request, response);
+
+    Assert.assertTrue(favoriteItemDatastore.queryEmails(ITEM_IDS[0]).isEmpty());
   }
 }
