@@ -10,7 +10,7 @@ function loadDashboard() {
       setupNavBarProfileSection();
       loadSearchValue();
       loadSortValue();
-      getDashboardItems();
+      loadDashboardItems();
     });
 
     $('#itemSubmissionDiv').load('item-submission-dialog.html');
@@ -31,7 +31,7 @@ function loadSearchValue() {
 
   searchInput.on('input', function() {
     sessionStorage.setItem('searchVal', $(this).val());
-    getDashboardItems();
+    loadDashboardItems();
   });
 }
 
@@ -49,8 +49,24 @@ function loadSortValue() {
 
   sortSelector.change(function() {
     sessionStorage.setItem('sortVal', $(this).val());
-    getDashboardItems();
+    loadDashboardItems();
   });
+}
+
+/**
+ * Fetches the items that have been liked by the user from the
+ * FavoriteItemServlet and then populates the dashboard items using the favorite
+ * item Ids list to select which buttons have like/undo-like functionality.
+ */
+function loadDashboardItems() {
+  fetch('/favorite-item')
+      .then((response) => response.json())
+      .then((favoriteItemIds) => {
+        getDashboardItems(/* clearItems */ true, favoriteItemIds);
+      })
+      .catch((error) => {
+        getDashboardItems();
+      });
 }
 
 /**
@@ -59,15 +75,18 @@ function loadSortValue() {
  *
  * @param { boolean } clearCurrentItems - clears and loads the entertainment
  *     items again if true
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @param { string } cursor - the cursor pointing to the page location
  * to get the items from
  */
-function getDashboardItems(clearCurrentItems = true, cursor = '') {
+function getDashboardItems(
+    clearCurrentItems = true, favoriteItemIds = [], cursor = '') {
   fetch(
       '/dashboard?cursor=' + cursor + '&searchValue=' +
       $('#searchValue').val() + '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
-      .then((entertainmentItemList) => {
+      .then((entertainmentItems) => {
         const itemContainer = $('#entertainmentItemsContainer');
 
         // Pagination does not need to refresh dashboard items, but searching
@@ -76,8 +95,9 @@ function getDashboardItems(clearCurrentItems = true, cursor = '') {
           itemContainer.empty();
         }
 
-        populateItemGrid(itemContainer, entertainmentItemList.items);
-        updatePagination(entertainmentItemList.pageCursor);
+        populateItemGrid(
+            itemContainer, entertainmentItems.items, favoriteItemIds);
+        updatePagination(entertainmentItems.pageCursor, favoriteItemIds);
       })
       .catch((error) => {
         console.log(
@@ -120,13 +140,16 @@ function getOmdbItem() {
  *
  * @param { jQuery } entertainmentItemsContainer - the div element used as a
  *     parent in which to add the rows and columns of the grid
- * @param { Array } entertainmentItemsList - the list of EntertainmentItems to
+ * @param { Array } entertainmentItems - the list of entertainment items to
  *     add to the grid
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  */
-function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
+function populateItemGrid(
+    entertainmentItemsContainer, entertainmentItems, favoriteItemIds) {
   let currItemIndex = 0;
 
-  while (currItemIndex < entertainmentItemsList.length) {
+  while (currItemIndex < entertainmentItems.length) {
     // The grid gets added a new row if there are items that still haven't been
     // included.
     const rowElem = $('<div class="row mb-3"></div>');
@@ -136,10 +159,10 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
     // The loop adds cells containing cards to the current row element until it
     // reaches the maximum limit of cells per row, or if all the items on the
     // list have been included.
-    for (let cell = 0; cell < MAX_CELLS_PER_ROW &&
-         currItemIndex < entertainmentItemsList.length;
+    for (let cell = 0;
+         cell < MAX_CELLS_PER_ROW && currItemIndex < entertainmentItems.length;
          cell++, currItemIndex++) {
-      const item = entertainmentItemsList[currItemIndex];
+      const item = entertainmentItems[currItemIndex];
 
       // If uniqueId Optional is empty then the item should not be created.
       if (isOptionalEmpty(item.uniqueId)) {
@@ -147,7 +170,7 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
       }
 
       const colElem = $('<div class="col-md-4 mb-3"</div>');
-      colElem.append(createEntertainmentItemCard(item));
+      colElem.append(createEntertainmentItemCard(item, favoriteItemIds));
 
       rowElem.append(colElem);
     }
@@ -164,9 +187,11 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
  *
  * @param { JSON } entertainmentItem - the entertainment item whose
  *     data will be displayed in the card element
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @returns { jQuery } card element representing the entertainment item
  */
-function createEntertainmentItemCard(entertainmentItem) {
+function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
@@ -181,7 +206,8 @@ function createEntertainmentItemCard(entertainmentItem) {
   cardBody.append(
       $('<p class="card-text text-center">' + entertainmentItem.description +
         '</p>'));
-  cardBody.append(createLikeButton(entertainmentItem.uniqueId.value));
+  cardBody.append(
+      createLikeButton(entertainmentItem.uniqueId.value, favoriteItemIds));
 
   card.append(cardBody);
 
@@ -220,17 +246,22 @@ function createOmdbItemCard(omdbItem) {
  *
  * @param { number } itemId - the Id of the item that is going to be connected
  *     to the like button
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @returns { jQuery } a new button ready to be displayed in the entertainment
  *     item card
  */
-function createLikeButton(itemId) {
-  const likeButton = $('<button class="btn btn-dark">Like</button>');
-  const likeCounter = $('<span class="badge badge-light ml-2"></span>');
+function createLikeButton(itemId, favoriteItemIds) {
+  const likeButton = $('<button class="btn">Like</button>');
 
+  const likeCounter = $('<span class="badge badge-light ml-2"></span>');
   likeButton.append(likeCounter);
-  likeButton.click(function() {
-    addLikeToEntertainmentItem(itemId, likeCounter);
-  });
+
+  if (favoriteItemIds.includes(itemId)) {
+    switchToUndoLikeButton(itemId, likeButton, likeCounter);
+  } else {
+    switchToLikeButton(itemId, likeButton, likeCounter);
+  }
 
   updateLikeCounter(itemId, likeCounter);
 
@@ -241,17 +272,79 @@ function createLikeButton(itemId) {
  * Fetches FavoriteItemServlet to add a like to a specific entertainment item.
  *
  * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { jQuery } likeButton - the button that adds a like to the
+ *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
-function addLikeToEntertainmentItem(itemId, likeCounter) {
+function addLikeToEntertainmentItem(itemId, likeButton, likeCounter) {
   $.post('/favorite-item?favoriteItemId=' + itemId)
       .done(function() {
+        switchToUndoLikeButton(itemId, likeButton, likeCounter);
         updateLikeCounter(itemId, likeCounter);
       })
       .fail(function() {
-        console.log('Failed to add a like to the given entertainment item!');
+        console.log(
+            'Failed to add a like to the entertainment item with Id: ' +
+            itemId);
       });
+}
+
+/**
+ * Fetches FavoriteItemServlet to remove a like from a specific entertainment
+ * item.
+ *
+ * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { jQuery } likeButton - the button that adds a like to the
+ *     entertainment item
+ * @param { jQuery } likeCounter - span div that displays the number of likes an
+ *     item has
+ */
+function removeLikeFromEntertainmentItem(itemId, likeButton, likeCounter) {
+  fetch('/favorite-item?favoriteItemId=' + itemId, {method: 'DELETE'})
+      .then(() => {
+        switchToLikeButton(itemId, likeButton, likeCounter);
+        updateLikeCounter(itemId, likeCounter);
+      })
+      .catch((error) => {
+        console.log(
+            'Failed to remove like from the entertainment item with Id: ' +
+            itemId);
+      });
+}
+
+/**
+ * Toggles the like button to use like item functionality.
+ *
+ * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { jQuery } likeButton - the button that adds a like to the
+ *     entertainment item
+ * @param { jQuery } likeCounter - span div that displays the number of likes an
+ *     item has
+ */
+function switchToLikeButton(itemId, likeButton, likeCounter) {
+  likeButton.addClass('btn-secondary');
+  likeButton.removeClass('btn-dark');
+  likeButton.off().click(function() {
+    addLikeToEntertainmentItem(itemId, likeButton, likeCounter);
+  });
+}
+
+/**
+ * Toggles the like button to use undo-like item functionality.
+ *
+ * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { jQuery } likeButton - the button that adds a like to the
+ *     entertainment item
+ * @param { jQuery } likeCounter - span div that displays the number of likes an
+ *     item has
+ */
+function switchToUndoLikeButton(itemId, likeButton, likeCounter) {
+  likeButton.addClass('btn-dark');
+  likeButton.removeClass('btn-secondary');
+  likeButton.off().click(function() {
+    removeLikeFromEntertainmentItem(itemId, likeButton, likeCounter);
+  });
 }
 
 /**
@@ -361,12 +454,12 @@ function submitItem(omdbItem) {
  * @param { string } pageCursor - opaque key representing the cursor for the
  *     next page
  */
-function updatePagination(pageCursor) {
+function updatePagination(pageCursor, favoriteItemIds) {
   $(window).off().scroll(function() {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
       $(window).off('scroll');
 
-      getDashboardItems(/* clearItems */ false, pageCursor);
+      getDashboardItems(/* clearItems */ false, favoriteItemIds, pageCursor);
     }
   });
 }
