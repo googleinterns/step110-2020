@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets;
+package com.google.ehub.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -54,7 +54,8 @@ public class ItemPageServlet extends HttpServlet {
       response.setContentType("application/json");
       response.getWriter().println(new Gson().toJson(itemData));
     } else {
-      System.out.println("ItemPageServlet: itemData is absent");
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "ItemPageServlet: itemData is not present");
     }
   }
 
@@ -71,9 +72,10 @@ public class ItemPageServlet extends HttpServlet {
     if (comment == null) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
       return;
+    } else {
+      long timestampMillis = System.currentTimeMillis();
+      CommentDataManager comments = new CommentDataManager();
+      comments.addItemComment(itemId, comment, timestampMillis);
     }
-    long timestampMillis = System.currentTimeMillis();
-    CommentDataManager comments = new CommentDataManager();
-    comments.addItemComment(itemId, comment, timestampMillis);
   }
 }

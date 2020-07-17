@@ -176,9 +176,12 @@ function createEntertainmentItemCard(entertainmentItem) {
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-    $('<h5 class="card-title">' + entertainmentItem.title + '</h5>'));
+      $('<h5 class="card-title text-center">' + entertainmentItem.title +
+        '</h5>'));
   cardBody.append(
-    $('<p class="card-text">' + entertainmentItem.description + '</p>'));
+      $('<p class="card-text text-center">' + entertainmentItem.description +
+        '</p>'));
+  cardBody.append(createLikeButton(entertainmentItem.uniqueId.value));
 
   card.append(cardBody);
 
@@ -200,13 +203,77 @@ function createOmdbItemCard(omdbItem) {
       '">'));
 
   const cardBody = $('<div class="card-body"></div>');
-  cardBody.append($('<h5 class="card-title">' + omdbItem.Title + '</h5>'));
   cardBody.append(
-    $('<p class="card-text">Released: ' + omdbItem.Released + '</p>'));
+      $('<h5 class="card-title text-center">' + omdbItem.Title + '</h5>'));
+  cardBody.append(
+      $('<p class="card-text text-center">Released: ' + omdbItem.Released +
+        '</p>'));
 
   card.append(cardBody);
 
   return card;
+}
+
+/**
+ * Creates the like button for a specific entertainment item and adds all its
+ * necessary callbacks.
+ *
+ * @param { number } itemId - the Id of the item that is going to be connected
+ *     to the like button
+ * @returns { jQuery } a new button ready to be displayed in the entertainment
+ *     item card
+ */
+function createLikeButton(itemId) {
+  const likeButton = $('<button class="btn btn-dark">Like</button>');
+  const likeCounter = $('<span class="badge badge-light ml-2"></span>');
+
+  likeButton.append(likeCounter);
+  likeButton.click(function() {
+    addLikeToEntertainmentItem(itemId, likeCounter);
+  });
+
+  updateLikeCounter(itemId, likeCounter);
+
+  return likeButton;
+}
+
+/**
+ * Fetches FavoriteItemServlet to add a like to a specific entertainment item.
+ *
+ * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { jQuery } likeCounter - span div that displays the number of likes an
+ *     item has
+ */
+function addLikeToEntertainmentItem(itemId, likeCounter) {
+  $.post('/favorite-item?favoriteItemId=' + itemId)
+      .done(function() {
+        updateLikeCounter(itemId, likeCounter);
+      })
+      .fail(function() {
+        console.log('Failed to add a like to the given entertainment item!');
+      });
+}
+
+/**
+ * Fetches for the amount of likes an entertainment item has and updates its
+ * counter with that value.
+ *
+ * @param { number } itemId - the Id of the item that is going to be connected
+ *     to the like counter
+ * @param { jQuery } likeCounter - span div that displays the number of likes an
+ *     item has
+ */
+function updateLikeCounter(itemId, likeCounter) {
+  fetch('/favorite-counter?itemId=' + itemId)
+      .then((response) => response.json())
+      .then((numberOfLikes) => {
+        likeCounter.text(numberOfLikes);
+      })
+      .catch((error) => {
+        console.log(
+            'Failed to fetch like counter for item: ' + itemId +
+            ' , with error: ' + error);
+      });
 }
 
 /**
@@ -218,20 +285,26 @@ function createOmdbItemCard(omdbItem) {
  */
 function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
   fetch('/item-submission?imdbID=' + omdbItem.imdbID)
-    .then((response) => response.json())
-    .then((itemFound) => {
-      if (/* item is unique */ isOptionalEmpty(itemFound)) {
-        submitButton.removeClass('d-none');
-        submitButton.off().one('click', () => {
-          submitItem(omdbItem);
-        });
-      } else {
-        const itemId = itemFound.value.uniqueId;
-        let itemLink = '';
+      .then((response) => response.json())
+      .then((itemFound) => {
+        if (/* item is unique */ isOptionalEmpty(itemFound)) {
+          submitButton.removeClass('d-none');
+          submitButton.off().one('click', () => {
+            submitItem(omdbItem);
+          });
+        } else {
+          const itemId = itemFound.value.uniqueId;
+          let itemLink = '';
 
-        if (!isOptionalEmpty(itemId)) {
-          itemLink = ' <a href="item-page.html?itemId=' + itemId.value +
-            '">Link to Item</a>';
+          if (!isOptionalEmpty(itemId)) {
+            itemLink = ' <a href="item-page.html?itemId=' + itemId.value +
+                '">Link to Item</a>';
+          }
+
+          submitButton.addClass('d-none');
+          itemCard.append($(
+              '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
+              itemLink + '</p>'));
         }
 
         submitButton.addClass('d-none');
