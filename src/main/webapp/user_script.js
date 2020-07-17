@@ -6,6 +6,9 @@ function loadProfile() {
   fetch('/profile-data')
       .then((response) => response.json())
       .then((profile) => {
+        if(profile.NeedsProfile == true){
+          window.location.replace("/CreateProfilePage.html");
+        }
         const nameSection = document.getElementById('name');
         nameSection.innerHTML = profile.name;
         nameSection.value = profile.name;

@@ -18,8 +18,12 @@ import com.google.ehub.data.ProfileDatastore;
 import com.google.ehub.data.UserProfile;
 import com.google.ehub.servlets.LoginServlet;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -172,11 +176,15 @@ public class ProfileServletTest {
   }
 
   @Test
-  public void getRequestWithNullUser_SendsRedirect() throws IOException {
+  public void getRequestWithNullUser_ValidatesJson() throws IOException {
     helper.setEnvIsLoggedIn(true);
 
+    JsonObject profileJson = new JsonObject();
+    profileJson.addProperty("NeedsProfile", true);
+
+    when(response.getWriter()).thenReturn(printWriter);
     servlet.doGet(request, response);
 
-    verify(response).sendRedirect(REDIRECT_GET);
+    verify(response).setContentType(JSON_CONTENT_TYPE);
   }
 }

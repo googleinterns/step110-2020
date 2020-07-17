@@ -14,6 +14,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.data.ProfileDatastore;
 import com.google.ehub.data.UserProfile;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -63,11 +64,16 @@ public class ProfileServlet extends HttpServlet {
     if (!userService.isUserLoggedIn()) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
     } else {
+      String userEmail = userService.getCurrentUser().getEmail();
       UserProfile userProfile = profileData.getUserProfile(userEmail);
-
+      JsonObject profileJson = new JsonObject();
+      
       if (userProfile == null) {
-        response.sendRedirect("/CreateProfilePage.html");
-      } else {
+        profileJson.addProperty("NeedsProfile", true);
+        response.setContentType("application/json");
+        response.getWriter().println(profileJson);
+      } 
+      else {
         response.setContentType("application/json");
         response.getWriter().println(convertToJson(userProfile));
       }
