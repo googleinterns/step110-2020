@@ -5,6 +5,8 @@
  */
 function loadDashboardPage() {
   $(document).ready(function() {
+    $('#itemSubmissionDiv').load('item-submission-dialog.html');
+
     $('#navbar').load('navbar.html', function() {
       $('#navbarDashboardSection').removeClass('d-none');
 
@@ -13,8 +15,6 @@ function loadDashboardPage() {
       initializeSortSelector();
       initializeDashboard();
     });
-
-    $('#itemSubmissionDiv').load('item-submission-dialog.html');
   });
 }
 
@@ -88,7 +88,7 @@ async function initializeDashboard() {
               dashboardResult.reason);
           return;
         }
-      
+
         try {
           const entertainmentItems = await dashboardResult.value.json();
           const favoriteItemIds =
@@ -189,21 +189,21 @@ function getEntertainmentItems(
  */
 function getOmdbItem() {
   fetch('https://www.omdbapi.com/?apikey=a28d48cd&t=' + $('#itemTitle').val())
-    .then((response) => response.json())
-    .then((omdbItem) => {
-      const omdbItemEntry = $('#omdbItemEntry');
-      omdbItemEntry.empty();
+      .then((response) => response.json())
+      .then((omdbItem) => {
+        const omdbItemEntry = $('#omdbItemEntry');
+        omdbItemEntry.empty();
 
-      const submitButton = $('#submitButton');
+        const submitButton = $('#submitButton');
 
-      if (omdbItem.Response === 'False') {
-        omdbItemEntry.append($('<p>Item not found!</p>'));
-        submitButton.addClass('d-none');
-      } else {
-        const itemCard = createOmdbItemCard(omdbItem);
-        omdbItemEntry.append(itemCard);
+        if (omdbItem.Response === 'False') {
+          omdbItemEntry.append($('<p>Item not found!</p>'));
+          submitButton.addClass('d-none');
+        } else {
+          const itemCard = createOmdbItemCard(omdbItem);
+          omdbItemEntry.append(itemCard);
 
-        updateItemSubmission(submitButton, itemCard, omdbItem);
+          updateItemSubmission(submitButton, itemCard, omdbItem);
         }
       })
       .catch((error) => {
@@ -271,10 +271,10 @@ function populateItemGrid(
 function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-    $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
+      $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(
-    $('<a class="stretched-link" href="item-page.html?itemId=' +
-      entertainmentItem.uniqueId.value + '"></a>'))
+      $('<a class="stretched-link" href="item-page.html?itemId=' +
+        entertainmentItem.uniqueId.value + '"></a>'))
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -302,8 +302,8 @@ function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
 function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-    $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
-      '">'));
+      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
+        '">'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -497,43 +497,13 @@ function updateItemSubmission(submitButton, itemCard, omdbItem) {
               '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
               itemLink + '</p>'));
         }
-
-        submitButton.addClass('d-none');
-        itemCard.append($(
-          '<p class="card-text">Item already exists on Entertainment Hub!' +
-          itemLink + '</p>'));
-    })
-    .catch((error) => {
-      console.log('failed to check if omdb Item is duplicate: ' + error);
-    });
+      })
+      .catch((error) => {
+        console.log('failed to check if omdb Item is duplicate: ' + error);
+      });
 }
 
 /**
- * Enables access to the profile if the user is logged in by adding a "Profile"
- * link to the navbar, if the user is not logged in then it adds a link to
- * login.
- */
-function setupNavBarProfileSection() {
-  fetch('/login')
-    .then((response) => response.json())
-    .then((loginResponse) => {
-      const profileLinks = $('#profileLinks');
-
-      if (loginResponse.isUserLoggedIn) {
-        profileLinks.append($(
-          '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
-      } else {
-        profileLinks.append($(
-        '<a class="nav-link text-light" href="'+ loginResponse.LoginURL + '">Login</a>'));
-      }
-    })
-    .catch((error) => {
-      console.log('failed to fetch login status: ' + error);
-    });
-}
-
-/**
- * Combine fetch calls with Promise.allSettled() and refactor dashboard loading methods
  * Sends an omdbItem to the ItemSubmissionServlet using a Post request.
  *
  * @param { JSON } omdbItem - item that will be sent to the
@@ -541,14 +511,14 @@ function setupNavBarProfileSection() {
  */
 function submitItem(omdbItem) {
   $.post('/item-submission', omdbItem)
-    .done(function() {
-      // If the item gets added, the page needs to reload to see the
-      // changes.
-      window.location.reload();
-    })
-    .fail(function() {
-      console.log('Failed to submit entertainment item!');
-    });
+      .done(function() {
+        // If the item gets added, the page needs to reload to see the
+        // changes.
+        window.location.reload();
+      })
+      .fail(function() {
+        console.log('Failed to submit entertainment item!');
+      });
 }
 
 /**
