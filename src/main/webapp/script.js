@@ -1,16 +1,17 @@
 /**
- * Loads the dashboard nav-bar, the item submission dialog, and the grid of
- * entertainment items.
+ * Loads the dashboard nav-bar, item submission dialog, search input, sort
+ * selector, and the grid of entertainment items to completely setup the
+ * dashboard page.
  */
-function loadDashboard() {
+function loadDashboardPage() {
   $(document).ready(function() {
     $('#navbar').load('navbar.html', function() {
       $('#navbarDashboardSection').removeClass('d-none');
 
-      setupNavBarProfileSection();
-      loadSearchValue();
-      loadSortValue();
-      loadDashboardItems();
+      initializeNavBarProfileSection();
+      initializeSearchInput();
+      initializeSortSelector();
+      initializeDashboard();
     });
 
     $('#itemSubmissionDiv').load('item-submission-dialog.html');
@@ -18,91 +19,170 @@ function loadDashboard() {
 }
 
 /**
- * Loads the stored value used for the search input and adds a
- * callback to load the entertainment items when the user types a key.
+ * Enables access to the profile if the user is logged in by adding a "Profile"
+ * link to the navbar, if the user is not logged in then it adds a link to
+ * login.
  */
-function loadSearchValue() {
-  const searchInput = $('#searchValue');
-  const searchVal = sessionStorage.getItem('searchVal');
-
-  if (searchVal !== null) {
-    searchInput.val(searchVal);
-  }
-
-  searchInput.on('input', function() {
-    sessionStorage.setItem('searchVal', $(this).val());
-    loadDashboardItems();
-  });
-}
-
-/**
- * Loads the stored values for the sort type of the sort selector and adds a
- * callback to load the entertainment items when the selector changes value.
- */
-function loadSortValue() {
-  const sortSelector = $('#sortType');
-  const sortVal = sessionStorage.getItem('sortVal');
-
-  if (sortVal !== null) {
-    sortSelector.val(sortVal);
-  }
-
-  sortSelector.change(function() {
-    sessionStorage.setItem('sortVal', $(this).val());
-    loadDashboardItems();
-  });
-}
-
-/**
- * Fetches the items that have been liked by the user from the
- * FavoriteItemServlet and then populates the dashboard items using the favorite
- * item Ids list to select which buttons have like/undo-like functionality.
- */
-function loadDashboardItems() {
-  fetch('/favorite-item')
+function initializeNavBarProfileSection() {
+  fetch('/login')
       .then((response) => response.json())
-      .then((favoriteItemIds) => {
-        getDashboardItems(/* clearItems */ true, favoriteItemIds);
+      .then((isUserLoggedIn) => {
+        const profileLinks = $('#profileLinks');
+
+        if (isUserLoggedIn) {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+        } else {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/LoginPage.html">Login</a>'));
+        }
       })
       .catch((error) => {
-        getDashboardItems();
+        console.log('failed to fetch login status: ' + error);
       });
 }
 
 /**
- * Fetches entertainment items from DashboardServlet
- * to populate the Dashboard.
+ * Loads the stored value used for the search input from sessionStorage
+ */
+function initializeSearchInput() {
+  const searchVal = sessionStorage.getItem('searchVal');
+
+  if (searchVal !== null) {
+    $('#searchValue').val(searchVal);
+  }
+}
+
+/**
+ * Loads the stored values for the sort type of the sort selector from
+ * sessionStorage
+ */
+function initializeSortSelector() {
+  const sortVal = sessionStorage.getItem('sortVal');
+
+  if (sortVal !== null) {
+    $('#sortType').val(sortVal);
+  }
+}
+
+/**
+ * Fetches for the entertainment items from DashboardServlet and the favorite
+ * item ids from FavoriteItemServlet to initialize the dashboard with items that
+ * have correct like button state.
+ */
+async function initializeDashboard() {
+  Promise
+      .allSettled([
+        fetch(
+            '/dashboard?searchValue=' + $('#searchValue').val() +
+            '&sortType=' + $('#sortType').val()),
+        fetch('/favorite-item')
+      ])
+      .then(async (results) => {
+        dashboardResult = results[0];
+        favResult = results[1];
+
+        if (!dashboardResult.value.ok) {
+          console.log(
+              'Failed to fetch Entertainment Items from DashboardServlet: ' +
+              dashboardResult.reason);
+          return;
+        }
+        if (favResult.status === 'fulfilled') {
+          console.log('hiiii');
+        }
+        console.log(favResult);
+        try {
+          const entertainmentItems = await dashboardResult.value.json();
+          const favoriteItemIds =
+              favResult.value.ok ? await favResult.value.json() : [];
+
+          setupSeachInputCallback(favoriteItemIds);
+          setupSortSelectorCallback(favoriteItemIds);
+          updateDashboardItems(entertainmentItems, favoriteItemIds);
+        } catch (error) {
+          console.log('Failed to populate dashboard: ' + error);
+        }
+      });
+}
+
+/**
+ * Adds an input value callback to the search input for it to update its value
+ * to sessionStorage and fetch for new items.
  *
- * @param { boolean } clearCurrentItems - clears and loads the entertainment
- *     items again if true
  * @param { Array } favoriteItemIds - the list of entertainment item Ids that
  *     have been liked by the logged in user
- * @param { string } cursor - the cursor pointing to the page location
- * to get the items from
  */
-function getDashboardItems(
-    clearCurrentItems = true, favoriteItemIds = [], cursor = '') {
+function setupSeachInputCallback(favoriteItemIds) {
+  $('#searchValue').on('input', function() {
+    sessionStorage.setItem('searchVal', $(this).val());
+    getEntertainmentItems(favoriteItemIds);
+  });
+}
+
+/**
+ * Adds a change value callback to the sort selector for it to update its value
+ * to sessionStorage and fetch for new items.
+ *
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
+ */
+function setupSortSelectorCallback(favoriteItemIds) {
+  $('#sortType').change(function() {
+    sessionStorage.setItem('sortVal', $(this).val());
+    getEntertainmentItems(favoriteItemIds);
+  });
+}
+
+/**
+ * Updates the dashboard with the new items that are given.
+ *
+ * @param { JSON } entertainmentItems - the entertainment items JSON object
+ *     obtained by fetching the DashboardServlet
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
+ * @param { boolean } clearCurrentItems - clears and loads the entertainment
+ *     items again if true
+ */
+function updateDashboardItems(
+    entertainmentItems, favoriteItemIds, clearCurrentItems = true) {
+  const itemContainer = $('#entertainmentItemsContainer');
+
+  // Pagination does not need to refresh dashboard items, but searching
+  // and sorting does.
+  if (clearCurrentItems) {
+    itemContainer.empty();
+  }
+
+  populateItemGrid(itemContainer, entertainmentItems.items, favoriteItemIds);
+  updatePagination(favoriteItemIds, entertainmentItems.pageCursor);
+}
+
+/**
+ * Fetches for entertainment items from the DashboardServlet and then updates
+ * the dashboard grid with the items that were retrieved.
+ *
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
+ * @param { string } pageCursor - opaque key representing the cursor for the
+ *     next page
+ * @param { boolean } clearCurrentItems - clears and loads the entertainment
+ *     items again if true
+ */
+function getEntertainmentItems(
+    favoriteItemIds, pageCursor = '', clearCurrentItems = true) {
   fetch(
-      '/dashboard?cursor=' + cursor + '&searchValue=' +
+      '/dashboard?cursor=' + pageCursor + '&searchValue=' +
       $('#searchValue').val() + '&sortType=' + $('#sortType').val())
       .then((response) => response.json())
       .then((entertainmentItems) => {
-        const itemContainer = $('#entertainmentItemsContainer');
-
-        // Pagination does not need to refresh dashboard items, but searching
-        // and sorting does.
-        if (clearCurrentItems) {
-          itemContainer.empty();
-        }
-
-        populateItemGrid(
-            itemContainer, entertainmentItems.items, favoriteItemIds);
-        updatePagination(entertainmentItems.pageCursor, favoriteItemIds);
+        updateDashboardItems(
+            entertainmentItems, favoriteItemIds, clearCurrentItems);
       })
       .catch((error) => {
         console.log(
-            'Failed to fetch entertainment items from DashboardServlet: ' +
-            error);
+            'Failed to fetch Entertainment Items on page with cursor: ' +
+            pageCursor + ', and error: ' + error);
       });
 }
 
@@ -126,7 +206,7 @@ function getOmdbItem() {
           const itemCard = createOmdbItemCard(omdbItem);
           omdbItemEntry.append(itemCard);
 
-          enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
+          updateItemSubmission(submitButton, itemCard, omdbItem);
         }
       })
       .catch((error) => {
@@ -207,7 +287,7 @@ function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
       $('<p class="card-text text-center">' + entertainmentItem.description +
         '</p>'));
   cardBody.append(
-      createLikeButton(entertainmentItem.uniqueId.value, favoriteItemIds));
+      createLikeButton(favoriteItemIds, entertainmentItem.uniqueId.value));
 
   card.append(cardBody);
 
@@ -244,23 +324,23 @@ function createOmdbItemCard(omdbItem) {
  * Creates the like button for a specific entertainment item and adds all its
  * necessary callbacks.
  *
- * @param { number } itemId - the Id of the item that is going to be connected
- *     to the like button
  * @param { Array } favoriteItemIds - the list of entertainment item Ids that
  *     have been liked by the logged in user
+ * @param { number } itemId - the Id of the item that is going to be connected
+ *     to the like button
  * @returns { jQuery } a new button ready to be displayed in the entertainment
  *     item card
  */
-function createLikeButton(itemId, favoriteItemIds) {
+function createLikeButton(favoriteItemIds, itemId) {
   const likeButton = $('<button class="btn">Like</button>');
 
   const likeCounter = $('<span class="badge badge-light ml-2"></span>');
   likeButton.append(likeCounter);
 
   if (favoriteItemIds.includes(itemId)) {
-    switchToUndoLikeButton(itemId, likeButton, likeCounter);
+    switchToUndoLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
   } else {
-    switchToLikeButton(itemId, likeButton, likeCounter);
+    switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
   }
 
   updateLikeCounter(itemId, likeCounter);
@@ -271,17 +351,24 @@ function createLikeButton(itemId, favoriteItemIds) {
 /**
  * Fetches FavoriteItemServlet to add a like to a specific entertainment item.
  *
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @param { number } itemId - the Id used to identify the entertainment item
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
-function addLikeToEntertainmentItem(itemId, likeButton, likeCounter) {
+function addLikeToEntertainmentItem(
+    favoriteItemIds, itemId, likeButton, likeCounter) {
   $.post('/favorite-item?favoriteItemId=' + itemId)
       .done(function() {
-        switchToUndoLikeButton(itemId, likeButton, likeCounter);
+        switchToUndoLikeButton(
+            favoriteItemIds, itemId, likeButton, likeCounter);
         updateLikeCounter(itemId, likeCounter);
+
+        // Add item to favorite list to avoid fetching for the list again.
+        favoriteItemIds.push(itemId);
       })
       .fail(function() {
         console.log(
@@ -294,17 +381,23 @@ function addLikeToEntertainmentItem(itemId, likeButton, likeCounter) {
  * Fetches FavoriteItemServlet to remove a like from a specific entertainment
  * item.
  *
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @param { number } itemId - the Id used to identify the entertainment item
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
-function removeLikeFromEntertainmentItem(itemId, likeButton, likeCounter) {
+function removeLikeFromEntertainmentItem(
+    favoriteItemIds, itemId, likeButton, likeCounter) {
   fetch('/favorite-item?favoriteItemId=' + itemId, {method: 'DELETE'})
       .then(() => {
-        switchToLikeButton(itemId, likeButton, likeCounter);
+        switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
         updateLikeCounter(itemId, likeCounter);
+
+        // Remove item from favorite list to avoid fetching for the list again.
+        favoriteItemIds.splice(favoriteItemIds.indexOf(itemId, 1));
       })
       .catch((error) => {
         console.log(
@@ -316,34 +409,41 @@ function removeLikeFromEntertainmentItem(itemId, likeButton, likeCounter) {
 /**
  * Toggles the like button to use like item functionality.
  *
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @param { number } itemId - the Id used to identify the entertainment item
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
-function switchToLikeButton(itemId, likeButton, likeCounter) {
+function switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter) {
   likeButton.addClass('btn-secondary');
   likeButton.removeClass('btn-dark');
   likeButton.off().click(function() {
-    addLikeToEntertainmentItem(itemId, likeButton, likeCounter);
+    addLikeToEntertainmentItem(
+        favoriteItemIds, itemId, likeButton, likeCounter);
   });
 }
 
 /**
  * Toggles the like button to use undo-like item functionality.
  *
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @param { number } itemId - the Id used to identify the entertainment item
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
-function switchToUndoLikeButton(itemId, likeButton, likeCounter) {
+function switchToUndoLikeButton(
+    favoriteItemIds, itemId, likeButton, likeCounter) {
   likeButton.addClass('btn-dark');
   likeButton.removeClass('btn-secondary');
   likeButton.off().click(function() {
-    removeLikeFromEntertainmentItem(itemId, likeButton, likeCounter);
+    removeLikeFromEntertainmentItem(
+        favoriteItemIds, itemId, likeButton, likeCounter);
   });
 }
 
@@ -370,13 +470,14 @@ function updateLikeCounter(itemId, likeCounter) {
 }
 
 /**
- * Makes the item submission button visible if the item is not a duplicate.
+ * Makes the item submission button visible if the item is not a duplicate; or
+ * else, adds a link to the item that already exists.
  *
  * @param { jQuery } submitButton - button used to submit omdb items
  * @param { jQuery } itemCard - card div that displays info about the item found
  * @param { JSON } omdbItem - the item found by omdb API
  */
-function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
+function updateItemSubmission(submitButton, itemCard, omdbItem) {
   fetch('/item-submission?imdbID=' + omdbItem.imdbID)
       .then((response) => response.json())
       .then((itemFound) => {
@@ -406,30 +507,6 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
 }
 
 /**
- * Enables access to the profile if the user is logged in by adding a "Profile"
- * link to the navbar, if the user is not logged in then it adds a link to
- * login.
- */
-function setupNavBarProfileSection() {
-  fetch('/login')
-      .then((response) => response.json())
-      .then((isUserLoggedIn) => {
-        const profileLinks = $('#profileLinks');
-
-        if (isUserLoggedIn) {
-          profileLinks.append($(
-              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
-        } else {
-          profileLinks.append($(
-              '<a class="nav-link text-light" href="/LoginPage.html">Login</a>'));
-        }
-      })
-      .catch((error) => {
-        console.log('failed to fetch login status: ' + error);
-      });
-}
-
-/**
  * Sends an omdbItem to the ItemSubmissionServlet using a Post request.
  *
  * @param { JSON } omdbItem - item that will be sent to the
@@ -451,15 +528,18 @@ function submitItem(omdbItem) {
  * Fetches for more entertainment items if the current page is fully scrolled
  * down.
  *
+ * @param { Array } favoriteItemIds - the list of entertainment item Ids that
+ *     have been liked by the logged in user
  * @param { string } pageCursor - opaque key representing the cursor for the
  *     next page
  */
-function updatePagination(pageCursor, favoriteItemIds) {
+function updatePagination(favoriteItemIds, pageCursor) {
   $(window).off().scroll(function() {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
       $(window).off('scroll');
 
-      getDashboardItems(/* clearItems */ false, favoriteItemIds, pageCursor);
+      getEntertainmentItems(
+          favoriteItemIds, pageCursor, /* Clear items */ false);
     }
   });
 }
