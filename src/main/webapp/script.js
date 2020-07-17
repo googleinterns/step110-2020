@@ -181,13 +181,7 @@ function createEntertainmentItemCard(entertainmentItem) {
   cardBody.append(
       $('<p class="card-text text-center">' + entertainmentItem.description +
         '</p>'));
-
-  const likeButton = $('<button class="btn btn-dark">Like</button>');
-  likeButton.click(function() {
-    addLikeToEntertainmentItem(entertainmentItem.uniqueId.value);
-  });
-
-  cardBody.append(likeButton);
+  cardBody.append(createLikeButton(entertainmentItem.uniqueId.value));
 
   card.append(cardBody);
 
@@ -218,6 +212,68 @@ function createOmdbItemCard(omdbItem) {
   card.append(cardBody);
 
   return card;
+}
+
+/**
+ * Creates the like button for a specific entertainment item and adds all its
+ * necessary callbacks.
+ *
+ * @param { number } itemId - the Id of the item that is going to be connected
+ *     to the like button
+ * @returns { jQuery } a new button ready to be displayed in the entertainment
+ *     item card
+ */
+function createLikeButton(itemId) {
+  const likeButton = $('<button class="btn btn-dark">Like</button>');
+  const likeCounter = $('<span class="badge badge-light ml-2"></span>');
+
+  likeButton.append(likeCounter);
+  likeButton.click(function() {
+    addLikeToEntertainmentItem(itemId, likeCounter);
+  });
+
+  updateLikeCounter(itemId, likeCounter);
+
+  return likeButton;
+}
+
+/**
+ * Fetches FavoriteItemServlet to add a like to a specific entertainment item.
+ *
+ * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { jQuery } likeCounter - span div that displays the number of likes an
+ *     item has
+ */
+function addLikeToEntertainmentItem(itemId, likeCounter) {
+  $.post('/favorite-item?favoriteItemId=' + itemId)
+      .done(function() {
+        updateLikeCounter(itemId, likeCounter);
+      })
+      .fail(function() {
+        console.log('Failed to add a like to the given entertainment item!');
+      });
+}
+
+/**
+ * Fetches for the amount of likes an entertainment item has and updates its
+ * counter with that value.
+ *
+ * @param { number } itemId - the Id of the item that is going to be connected
+ *     to the like counter
+ * @param { jQuery } likeCounter - span div that displays the number of likes an
+ *     item has
+ */
+function updateLikeCounter(itemId, likeCounter) {
+  fetch('/favorite-counter?itemId=' + itemId)
+      .then((response) => response.json())
+      .then((numberOfLikes) => {
+        likeCounter.text(numberOfLikes);
+      })
+      .catch((error) => {
+        console.log(
+            'Failed to fetch like counter for item: ' + itemId +
+            ' , with error: ' + error);
+      });
 }
 
 /**
@@ -312,17 +368,6 @@ function updatePagination(pageCursor) {
 
       getDashboardItems(/* clearItems */ false, pageCursor);
     }
-  });
-}
-
-/**
- * Fetches FavoriteItemServlet to add a like to a specific entertainment item.
- *
- * @param { number } itemId - the Id used to identify the entertainment item
- */
-function addLikeToEntertainmentItem(itemId) {
-  $.post('/favorite-item?favoriteItemId=' + itemId).fail(function() {
-    console.log('Failed to add a like to the given entertainment item!');
   });
 }
 
