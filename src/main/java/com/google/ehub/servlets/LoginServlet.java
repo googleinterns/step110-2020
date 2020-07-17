@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginServlet extends HttpServlet {
   private static final String LOGOUT_URL_KEY = "LogoutURL";
   private static final String LOGIN_URL_KEY = "LoginURL";
-  private static final String IS_USER_LOGGENIN_KEY = "isUserLoggedIn";
+  private static final String IS_USER_LOGGED_IN_KEY = "isUserLoggedIn";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet {
       loginJson.addProperty(LOGOUT_URL_KEY, "");
         
     }
-    loginJson.addProperty(IS_USER_LOGGENIN_KEY, userService.isUserLoggedIn());
+    loginJson.addProperty(IS_USER_LOGGED_IN_KEY, userService.isUserLoggedIn());
     response.setContentType("application/json");
     response.getWriter().println(loginJson.toString());
   }

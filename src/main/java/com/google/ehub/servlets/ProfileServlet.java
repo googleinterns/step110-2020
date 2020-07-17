@@ -34,7 +34,8 @@ public class ProfileServlet extends HttpServlet {
   private static final String USERNAME_PROPERTY_KEY = "username";
   private static final String BIO_PROPERTY_KEY = "bio";
   private static final String EDIT_PROPERTY_KEY = "edit";
-  
+  private static final String NEEDS_PROFILE = "NeedsProfile";
+
   private final UserService userService = UserServiceFactory.getUserService();
   private final ProfileDatastore profileData = new ProfileDatastore();
 
@@ -66,10 +67,10 @@ public class ProfileServlet extends HttpServlet {
     } else {
       String userEmail = userService.getCurrentUser().getEmail();
       UserProfile userProfile = profileData.getUserProfile(userEmail);
-      JsonObject profileJson = new JsonObject();
       
       if (userProfile == null) {
-        profileJson.addProperty("NeedsProfile", true);
+        JsonObject profileJson = new JsonObject();
+        profileJson.addProperty(NEEDS_PROFILE, true);
         response.setContentType("application/json");
         response.getWriter().println(profileJson);
       } 
