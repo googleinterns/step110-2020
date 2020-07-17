@@ -88,10 +88,7 @@ async function initializeDashboard() {
               dashboardResult.reason);
           return;
         }
-        if (favResult.status === 'fulfilled') {
-          console.log('hiiii');
-        }
-        console.log(favResult);
+      
         try {
           const entertainmentItems = await dashboardResult.value.json();
           const favoriteItemIds =
