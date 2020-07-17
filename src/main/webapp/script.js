@@ -26,15 +26,16 @@ function loadDashboardPage() {
 function initializeNavBarProfileSection() {
   fetch('/login')
       .then((response) => response.json())
-      .then((isUserLoggedIn) => {
+      .then((loginResponse) => {
         const profileLinks = $('#profileLinks');
 
-        if (isUserLoggedIn) {
+        if (loginResponse.isUserLoggedIn) {
           profileLinks.append($(
               '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
         } else {
-          profileLinks.append($(
-              '<a class="nav-link text-light" href="/LoginPage.html">Login</a>'));
+          profileLinks.append(
+              $('<a class="nav-link text-light" href="' +
+                loginResponse.LoginURL + '">Login</a>'));
         }
       })
       .catch((error) => {
