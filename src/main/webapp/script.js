@@ -64,26 +64,26 @@ function loadSortValue() {
  */
 function getDashboardItems(clearCurrentItems = true, cursor = '') {
   fetch(
-      '/dashboard?cursor=' + cursor + '&searchValue=' +
-      $('#searchValue').val() + '&sortType=' + $('#sortType').val())
-      .then((response) => response.json())
-      .then((entertainmentItemList) => {
-        const itemContainer = $('#entertainmentItemsContainer');
+    '/dashboard?cursor=' + cursor + '&searchValue=' +
+    $('#searchValue').val() + '&sortType=' + $('#sortType').val())
+    .then((response) => response.json())
+    .then((entertainmentItemList) => {
+      const itemContainer = $('#entertainmentItemsContainer');
 
-        // Pagination does not need to refresh dashboard items, but searching
-        // and sorting does.
-        if (clearCurrentItems) {
-          itemContainer.empty();
-        }
+      // Pagination does not need to refresh dashboard items, but searching
+      // and sorting does.
+      if (clearCurrentItems) {
+        itemContainer.empty();
+      }
 
-        populateItemGrid(itemContainer, entertainmentItemList.items);
-        updatePagination(entertainmentItemList.pageCursor);
-      })
-      .catch((error) => {
-        console.log(
-            'Failed to fetch entertainment items from DashboardServlet: ' +
-            error);
-      });
+      populateItemGrid(itemContainer, entertainmentItemList.items);
+      updatePagination(entertainmentItemList.pageCursor);
+    })
+    .catch((error) => {
+      console.log(
+        'Failed to fetch entertainment items from DashboardServlet: ' +
+        error);
+    });
 }
 
 /**
@@ -92,26 +92,26 @@ function getDashboardItems(clearCurrentItems = true, cursor = '') {
  */
 function getOmdbItem() {
   fetch('https://www.omdbapi.com/?apikey=a28d48cd&t=' + $('#itemTitle').val())
-      .then((response) => response.json())
-      .then((omdbItem) => {
-        const omdbItemEntry = $('#omdbItemEntry');
-        omdbItemEntry.empty();
+    .then((response) => response.json())
+    .then((omdbItem) => {
+      const omdbItemEntry = $('#omdbItemEntry');
+      omdbItemEntry.empty();
 
-        const submitButton = $('#submitButton');
+      const submitButton = $('#submitButton');
 
-        if (omdbItem.Response === 'False') {
-          omdbItemEntry.append($('<p>Item not found!</p>'));
-          submitButton.addClass('d-none');
-        } else {
-          const itemCard = createOmdbItemCard(omdbItem);
-          omdbItemEntry.append(itemCard);
+      if (omdbItem.Response === 'False') {
+        omdbItemEntry.append($('<p>Item not found!</p>'));
+        submitButton.addClass('d-none');
+      } else {
+        const itemCard = createOmdbItemCard(omdbItem);
+        omdbItemEntry.append(itemCard);
 
-          enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
-        }
-      })
-      .catch((error) => {
-        console.log('Failed to fetch movie from OMDb API: ' + error);
-      });
+        enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem);
+      }
+    })
+    .catch((error) => {
+      console.log('Failed to fetch movie from OMDb API: ' + error);
+    });
 }
 
 /**
@@ -137,8 +137,8 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
     // reaches the maximum limit of cells per row, or if all the items on the
     // list have been included.
     for (let cell = 0; cell < MAX_CELLS_PER_ROW &&
-         currItemIndex < entertainmentItemsList.length;
-         cell++, currItemIndex++) {
+      currItemIndex < entertainmentItemsList.length;
+      cell++, currItemIndex++) {
       const item = entertainmentItemsList[currItemIndex];
 
       // If uniqueId Optional is empty then the item should not be created.
@@ -169,10 +169,10 @@ function populateItemGrid(entertainmentItemsContainer, entertainmentItemsList) {
 function createEntertainmentItemCard(entertainmentItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-      $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
+    $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(
-      $('<a class="stretched-link" href="item-page.html?itemId=' +
-        entertainmentItem.uniqueId.value + '"></a>'))
+    $('<a class="stretched-link" href="item-page.html?itemId=' +
+      entertainmentItem.uniqueId.value + '"></a>'))
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -199,8 +199,8 @@ function createEntertainmentItemCard(entertainmentItem) {
 function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
-        '">'));
+    $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
+      '">'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -306,10 +306,16 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
               '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
               itemLink + '</p>'));
         }
-      })
-      .catch((error) => {
-        console.log('failed to check if omdb Item is duplicate: ' + error);
-      });
+
+        submitButton.addClass('d-none');
+        itemCard.append($(
+          '<p class="card-text">Item already exists on Entertainment Hub!' +
+          itemLink + '</p>'));
+      }
+    })
+    .catch((error) => {
+      console.log('failed to check if omdb Item is duplicate: ' + error);
+    });
 }
 
 /**
@@ -319,21 +325,21 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
  */
 function setupNavBarProfileSection() {
   fetch('/login')
-      .then((response) => response.json())
-      .then((isUserLoggedIn) => {
-        const profileLinks = $('#profileLinks');
+    .then((response) => response.json())
+    .then((loginResponse) => {
+      const profileLinks = $('#profileLinks');
 
-        if (isUserLoggedIn) {
-          profileLinks.append($(
-              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
-        } else {
-          profileLinks.append($(
-              '<a class="nav-link text-light" href="/profile-data">Login</a>'));
-        }
-      })
-      .catch((error) => {
-        console.log('failed to fetch login status: ' + error);
-      });
+      if (loginResponse.isUserLoggedIn) {
+        profileLinks.append($(
+          '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+      } else {
+        profileLinks.append($(
+        '<a class="nav-link text-light" href="'+ loginResponse.LoginURL + '">Login</a>'));
+      }
+    })
+    .catch((error) => {
+      console.log('failed to fetch login status: ' + error);
+    });
 }
 
 /**
@@ -344,14 +350,14 @@ function setupNavBarProfileSection() {
  */
 function submitItem(omdbItem) {
   $.post('/item-submission', omdbItem)
-      .done(function() {
-        // If the item gets added, the page needs to reload to see the
-        // changes.
-        window.location.reload();
-      })
-      .fail(function() {
-        console.log('Failed to submit entertainment item!');
-      });
+    .done(function() {
+      // If the item gets added, the page needs to reload to see the
+      // changes.
+      window.location.reload();
+    })
+    .fail(function() {
+      console.log('Failed to submit entertainment item!');
+    });
 }
 
 /**

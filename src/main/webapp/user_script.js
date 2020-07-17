@@ -6,6 +6,10 @@ function loadProfile() {
   fetch('/profile-data')
       .then((response) => response.json())
       .then((profile) => {
+        if(profile.NeedsProfile){
+          window.location.replace("/CreateProfilePage.html");
+          return;
+        }
         const nameSection = document.getElementById('name');
         nameSection.innerHTML = profile.name;
         nameSection.value = profile.name;
@@ -15,6 +19,8 @@ function loadProfile() {
         const bioSection = document.getElementById('bio');
         bioSection.innerHTML = profile.bio;
         bioSection.value = profile.bio;
+        const profileImage = document.getElementById("avatar");
+        profileImage.src = "https://icotar.com/initials/" + profile.username;
       })
       .catch((error) => {
         console.log('Fetching profile data servlet failed: ' + error);

@@ -23,16 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginServlet extends HttpServlet {
   private static final String LOGOUT_URL_KEY = "LogoutURL";
   private static final String LOGIN_URL_KEY = "LoginURL";
+  private static final String IS_USER_LOGGED_IN_KEY = "isUserLoggedIn";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json");
-    response.getWriter().println(
-        new Gson().toJson(UserServiceFactory.getUserService().isUserLoggedIn()));
-  }
-
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     JsonObject loginJson = new JsonObject();
 
@@ -44,8 +38,9 @@ public class LoginServlet extends HttpServlet {
       String loginUrl = userService.createLoginURL("/ProfilePage.html");
       loginJson.addProperty(LOGIN_URL_KEY, loginUrl);
       loginJson.addProperty(LOGOUT_URL_KEY, "");
+        
     }
-
+    loginJson.addProperty(IS_USER_LOGGED_IN_KEY, userService.isUserLoggedIn());
     response.setContentType("application/json");
     response.getWriter().println(loginJson.toString());
   }
