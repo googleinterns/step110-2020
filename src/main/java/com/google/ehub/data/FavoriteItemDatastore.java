@@ -58,6 +58,22 @@ public final class FavoriteItemDatastore {
   }
 
   /**
+   * Removes a favorite item Entity from Datastore if it exists.
+   *
+   * @param userEmail The email of the user that liked the item
+   * @param itemId the id of the item that was liked
+   */
+  public void removeFavoriteItem(String userEmail, Long itemId) {
+    Entity favoriteItemEntity = getFavoriteItemEntity(userEmail, itemId);
+
+    if (favoriteItemEntity == null) {
+      return;
+    }
+
+    datastoreService.delete(favoriteItemEntity.getKey());
+  }
+
+  /**
    * Queries the Ids that were liked by a given user email.
    *
    * @param userEmail the email used to search for the liked items
@@ -107,13 +123,16 @@ public final class FavoriteItemDatastore {
    * @return true if the favorite item exists in Datastore, otherwise false
    */
   private boolean doesFavoriteItemExist(String userEmail, Long itemId) {
+    return getFavoriteItemEntity(userEmail, itemId) != null;
+  }
+
+  private Entity getFavoriteItemEntity(String userEmail, Long itemId) {
     Query query =
         new Query(FAVORITE_ITEM_KIND)
             .setFilter(CompositeFilterOperator.and(
                 new FilterPredicate(USER_EMAIL_PROPERTY_KEY, FilterOperator.EQUAL, userEmail),
                 new FilterPredicate(ITEM_ID_PROPERTY_KEY, FilterOperator.EQUAL, itemId)));
-    PreparedQuery queryResults = datastoreService.prepare(query);
 
-    return queryResults.asSingleEntity() != null;
+    return datastoreService.prepare(query).asSingleEntity();
   }
 }

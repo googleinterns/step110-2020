@@ -72,6 +72,23 @@ public class FavoriteItemDatastoreTest {
   }
 
   @Test
+  public void removeFavoriteItemFromDatastore_entityGetsDeleted() {
+    Entity favoriteItemEntity = new Entity(FAVORITE_ITEM_KIND);
+    favoriteItemEntity.setProperty(USER_EMAIL_PROPERTY_KEY, USER_EMAIL);
+    favoriteItemEntity.setProperty(ITEM_ID_PROPERTY_KEY, ITEM_ID);
+
+    datastoreService.put(favoriteItemEntity);
+
+    favoriteItemDatastore.removeFavoriteItem(USER_EMAIL, ITEM_ID);
+
+    Query query = new Query(FAVORITE_ITEM_KIND);
+    PreparedQuery queryResults = datastoreService.prepare(query);
+    List<Entity> entityList = queryResults.asList(FetchOptions.Builder.withDefaults());
+
+    Assert.assertTrue(entityList.isEmpty());
+  }
+
+  @Test
   public void queryFavoriteIdsWithNonExistentEmail_listIsEmpty() {
     Assert.assertTrue(favoriteItemDatastore.queryFavoriteIds(USER_EMAIL).isEmpty());
   }

@@ -37,15 +37,15 @@ public class FavoriteItemServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String favoriteItemStringId = request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY);
+    String favoriteItemIdParameter = request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY);
 
-    if (!isPostRequestParameterValid(favoriteItemStringId)) {
+    if (!isPostRequestParameterValid(favoriteItemIdParameter)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST,
           "FavoriteItemServlet: Post request parameter not specified correctly!");
       return;
     }
 
-    Long itemId = Long.parseLong(favoriteItemStringId);
+    Long itemId = Long.parseLong(favoriteItemIdParameter);
 
     if (!doesItemExist(itemId)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST,
@@ -65,9 +65,32 @@ public class FavoriteItemServlet extends HttpServlet {
         userService.getCurrentUser().getEmail(), itemId);
   }
 
-  private static boolean isPostRequestParameterValid(String favoriteItemStringId) {
-    return favoriteItemStringId != null && !favoriteItemStringId.isEmpty()
-        && NumberUtils.isParsable(favoriteItemStringId);
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    String favoriteItemIdParameter = request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY);
+
+    if (!isPostRequestParameterValid(favoriteItemIdParameter)) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+          "FavoriteItemServlet: Post request parameter not specified correctly!");
+      return;
+    }
+
+    UserService userService = UserServiceFactory.getUserService();
+
+    if (!userService.isUserLoggedIn()) {
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "FavoriteItemServlet: User is not logged in!");
+      return;
+    }
+
+    FavoriteItemDatastore.getInstance().removeFavoriteItem(
+        userService.getCurrentUser().getEmail(), Long.parseLong(favoriteItemIdParameter));
+  }
+
+  private static boolean isPostRequestParameterValid(String favoriteItemIdParameter) {
+    return favoriteItemIdParameter != null && !favoriteItemIdParameter.isEmpty()
+        && NumberUtils.isParsable(favoriteItemIdParameter);
   }
 
   private static boolean doesItemExist(Long itemId) {
