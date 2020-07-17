@@ -327,10 +327,12 @@ function setupNavBarProfileSection() {
     .then((response) => response.json())
     .then((loginResponse) => {
       const profileLinks = $('#profileLinks');
-
+      const logLinks = $('#logLinks');
       if (loginResponse.isUserLoggedIn) {
         profileLinks.append($(
-          '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+        '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+        logLinks.append($(
+        '<a class="nav-link text-light" href="'+ loginResponse.LogoutURL + '">Logout</a>'));
       } else {
         profileLinks.append($(
         '<a class="nav-link text-light" href="'+ loginResponse.LoginURL + '">Login</a>'));
