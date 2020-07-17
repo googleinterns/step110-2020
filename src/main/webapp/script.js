@@ -311,7 +311,6 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
         itemCard.append($(
           '<p class="card-text">Item already exists on Entertainment Hub!' +
           itemLink + '</p>'));
-      }
     })
     .catch((error) => {
       console.log('failed to check if omdb Item is duplicate: ' + error);
