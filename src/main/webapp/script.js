@@ -306,17 +306,17 @@ function enableItemSubmissionIfUnique(submitButton, itemCard, omdbItem) {
               '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
               itemLink + '</p>'));
         }
-
+        
         submitButton.addClass('d-none');
         itemCard.append($(
           '<p class="card-text">Item already exists on Entertainment Hub!' +
           itemLink + '</p>'));
-      }
     })
     .catch((error) => {
       console.log('failed to check if omdb Item is duplicate: ' + error);
     });
 }
+
 
 /**
  * Enables access to the profile if the user is logged in by adding a "Profile"
@@ -331,7 +331,7 @@ function setupNavBarProfileSection() {
 
       if (loginResponse.isUserLoggedIn) {
         profileLinks.append($(
-          '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+          '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>')); 
       } else {
         profileLinks.append($(
         '<a class="nav-link text-light" href="'+ loginResponse.LoginURL + '">Login</a>'));
