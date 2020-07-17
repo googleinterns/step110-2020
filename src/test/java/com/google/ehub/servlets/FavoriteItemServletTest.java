@@ -209,6 +209,8 @@ public class FavoriteItemServletTest {
     when(request.getParameter(FAVORITE_ITEM_ID_PARAMETER_KEY))
         .thenReturn(String.valueOf(ITEM_IDS[0]));
 
+    Assert.assertEquals(1, favoriteItemDatastore.queryEmails(ITEM_IDS[0]).size());
+
     servlet.doDelete(request, response);
 
     Assert.assertTrue(favoriteItemDatastore.queryEmails(ITEM_IDS[0]).isEmpty());
