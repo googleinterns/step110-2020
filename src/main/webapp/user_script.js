@@ -22,7 +22,7 @@ function loadProfile() {
         const profileImage = document.getElementById("avatar");
         const username = profile.username;
         const avatarLetter = username.charAt(0);
-        profileImage.src = "https://icotar.com/initials/" + avatarLetter;
+        profileImage.src = "https://icotar.com/avatar/" + avatarLetter;
       })
       .catch((error) => {
         console.log('Fetching profile data servlet failed: ' + error);
@@ -32,4 +32,16 @@ function loadProfile() {
       $('#navbarProfileSection').addClass('d-none');
     });
   });
+}
+
+function loadFavItems(){
+  fetch('/favorite-item')
+     .then((response) => response.json())
+     .then((favorites) => {
+        const favor = document.getElementById("fav");
+        favor.innerHTML= favorites;
+      })
+      .catch((error) => {
+        console.log('Fetching favorite item data servlet failed: ' + error);
+      });
 }

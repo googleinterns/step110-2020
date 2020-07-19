@@ -17,7 +17,7 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
   </head>
-  <body onload="loadProfile()">
+  <body onload="loadProfile(); loadFavItems();">
     <div id="navbar"></div>
     
     <div class="container">
@@ -33,6 +33,10 @@
       <button id="edit" class="btn btn-info" onclick="location.href = '/EditProfilePage.html';">
         Edit Profile
       </button>
+      <div onload= "loadFavItems()">
+        <h2>Favorite Items</h2>
+        <p id="fav"> </p>
+      </div>
     </div>
   </body>
 </html>
