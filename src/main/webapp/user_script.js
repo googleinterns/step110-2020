@@ -20,7 +20,9 @@ function loadProfile() {
         bioSection.innerHTML = profile.bio;
         bioSection.value = profile.bio;
         const profileImage = document.getElementById("avatar");
-        profileImage.src = "https://icotar.com/initials/" + profile.username;
+        const username = profile.username;
+        const avatarLetter = username.charAt(0);
+        profileImage.src = "https://icotar.com/initials/" + avatarLetter;
       })
       .catch((error) => {
         console.log('Fetching profile data servlet failed: ' + error);
