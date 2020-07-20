@@ -55,18 +55,20 @@ function loadFavItems() {
  */
 function populateFavoriteItemGrid(favoriteItems) {
   const favItemContainer = $("#item-container");
-  const rowElem = $('<div class="row"></div>');
+  
   const MAX_CELLS_PER_ROW = 3;
   let currItemIndex = 0;
 
   while (currItemIndex < favoriteItems.length) {
+    const rowElem = $('<div class="row"></div>');
+
     for (
       let cell = 0;
       cell < MAX_CELLS_PER_ROW && currItemIndex < favoriteItems.length;
       cell++, currItemIndex++
     ) {
       const item = favoriteItems[currItemIndex];
-      const colElem = $('<div class="col-6 col-md-4"</div>');
+      const colElem = $('<div class="col-6 col-md-4"></div>');
 
       fetch(`/itempagedata?itemId=${item}`)
         .then((response) => response.json())
