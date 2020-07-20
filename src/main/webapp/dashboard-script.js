@@ -260,8 +260,7 @@ function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
   cardBody.append(
       $('<p class="card-text text-center">' + entertainmentItem.description +
         '</p>'));
-  cardBody.append(
-      createLikeButton(favoriteItemIds, entertainmentItem.uniqueId.value));
+  cardBody.append(createLikeButton(favoriteItemIds, entertainmentItem));
 
   card.append(cardBody);
 

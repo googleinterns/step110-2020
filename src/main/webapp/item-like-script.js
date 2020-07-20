@@ -4,24 +4,24 @@
  *
  * @param { Array } favoriteItemIds - the list of entertainment item Ids that
  *     have been liked by the logged in user
- * @param { number } itemId - the Id of the item that is going to be connected
+ * @param { JSON } item - the entertainment item that is going to be connected
  *     to the like button
  * @returns { jQuery } a new button ready to be displayed in the entertainment
  *     item card
  */
-function createLikeButton(favoriteItemIds, itemId) {
+function createLikeButton(favoriteItemIds, item) {
   const likeButton = $('<button class="btn">Like</button>');
 
   const likeCounter = $('<span class="badge badge-light ml-2"></span>');
   likeButton.append(likeCounter);
 
-  if (favoriteItemIds.includes(itemId)) {
-    switchToUndoLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
+  if (favoriteItemIds.includes(item.uniqueId.value)) {
+    switchToUndoLikeButton(favoriteItemIds, item, likeButton, likeCounter);
   } else {
-    switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
+    switchToLikeButton(favoriteItemIds, item, likeButton, likeCounter);
   }
 
-  updateLikeCounter(itemId, likeCounter);
+  likeCounter.text(item.numberOfLikes);
 
   return likeButton;
 }
@@ -31,19 +31,22 @@ function createLikeButton(favoriteItemIds, itemId) {
  *
  * @param { Array } favoriteItemIds - the list of entertainment item Ids that
  *     have been liked by the logged in user
- * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { JSON } item - the entertainment item associated with the button and
+ *     counter
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
 function addLikeToEntertainmentItem(
-    favoriteItemIds, itemId, likeButton, likeCounter) {
+    favoriteItemIds, item, likeButton, likeCounter) {
+  const itemId = item.uniqueId.value;
+
   $.post('/favorite-item?favoriteItemId=' + itemId)
       .done(function() {
-        switchToUndoLikeButton(
-            favoriteItemIds, itemId, likeButton, likeCounter);
-        updateLikeCounter(itemId, likeCounter);
+        switchToUndoLikeButton(favoriteItemIds, item, likeButton, likeCounter);
+
+        likeCounter.text(++item.numberOfLikes);
 
         // Add item to favorite list to avoid fetching for the list again.
         favoriteItemIds.push(itemId);
@@ -61,18 +64,22 @@ function addLikeToEntertainmentItem(
  *
  * @param { Array } favoriteItemIds - the list of entertainment item Ids that
  *     have been liked by the logged in user
- * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { JSON } item - the entertainment item associated with the button and
+ *     counter
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
 function removeLikeFromEntertainmentItem(
-    favoriteItemIds, itemId, likeButton, likeCounter) {
+    favoriteItemIds, item, likeButton, likeCounter) {
+  const itemId = item.uniqueId.value;
+
   fetch('/favorite-item?favoriteItemId=' + itemId, {method: 'DELETE'})
       .then(() => {
-        switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
-        updateLikeCounter(itemId, likeCounter);
+        switchToLikeButton(favoriteItemIds, item, likeButton, likeCounter);
+
+        likeCounter.text(--item.numberOfLikes);
 
         // Remove item from favorite list to avoid fetching for the list again.
         favoriteItemIds.splice(favoriteItemIds.indexOf(itemId, 1));
@@ -89,18 +96,18 @@ function removeLikeFromEntertainmentItem(
  *
  * @param { Array } favoriteItemIds - the list of entertainment item Ids that
  *     have been liked by the logged in user
- * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { JSON } item - the entertainment item associated with the button and
+ *     counter
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
-function switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter) {
+function switchToLikeButton(favoriteItemIds, item, likeButton, likeCounter) {
   likeButton.addClass('btn-secondary');
   likeButton.removeClass('btn-dark');
   likeButton.off().click(function() {
-    addLikeToEntertainmentItem(
-        favoriteItemIds, itemId, likeButton, likeCounter);
+    addLikeToEntertainmentItem(favoriteItemIds, item, likeButton, likeCounter);
   });
 }
 
@@ -109,40 +116,19 @@ function switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter) {
  *
  * @param { Array } favoriteItemIds - the list of entertainment item Ids that
  *     have been liked by the logged in user
- * @param { number } itemId - the Id used to identify the entertainment item
+ * @param { JSON } item - the entertainment item associated with the button and
+ *     counter
  * @param { jQuery } likeButton - the button that adds a like to the
  *     entertainment item
  * @param { jQuery } likeCounter - span div that displays the number of likes an
  *     item has
  */
 function switchToUndoLikeButton(
-    favoriteItemIds, itemId, likeButton, likeCounter) {
+    favoriteItemIds, item, likeButton, likeCounter) {
   likeButton.addClass('btn-dark');
   likeButton.removeClass('btn-secondary');
   likeButton.off().click(function() {
     removeLikeFromEntertainmentItem(
-        favoriteItemIds, itemId, likeButton, likeCounter);
+        favoriteItemIds, item, likeButton, likeCounter);
   });
-}
-
-/**
- * Fetches for the amount of likes an entertainment item has and updates its
- * counter with that value.
- *
- * @param { number } itemId - the Id of the item that is going to be connected
- *     to the like counter
- * @param { jQuery } likeCounter - span div that displays the number of likes an
- *     item has
- */
-function updateLikeCounter(itemId, likeCounter) {
-  fetch('/favorite-counter?itemId=' + itemId)
-      .then((response) => response.json())
-      .then((numberOfLikes) => {
-        likeCounter.text(numberOfLikes);
-      })
-      .catch((error) => {
-        console.log(
-            'Failed to fetch like counter for item: ' + itemId +
-            ' , with error: ' + error);
-      });
 }
