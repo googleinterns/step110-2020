@@ -26,6 +26,7 @@ public class DashboardServlet extends HttpServlet {
   private static final String ASCENDING_TITLE_SORT = "ASCENDING_TITLE";
   private static final String DESCENDING_TITLE_SORT = "DESCENDING_TITLE";
   private static final String RECENT_RELEASE_DATE_SORT = "RECENT_RELEASE_DATE";
+  private static final String HIGHEST_LIKES_SORT = "HIGHEST_LIKES";
 
   private static final int PAGE_SIZE = 18;
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
@@ -69,7 +70,8 @@ public class DashboardServlet extends HttpServlet {
     return (searchValue != null && searchValue.length() <= MAX_SEARCH_VALUE_CHARS)
         && (sortType != null
             && (sortType.equals(ASCENDING_TITLE_SORT) || sortType.equals(DESCENDING_TITLE_SORT)
-                || sortType.equals(RECENT_RELEASE_DATE_SORT)));
+                || sortType.equals(RECENT_RELEASE_DATE_SORT)
+                || sortType.equals(HIGHEST_LIKES_SORT)));
   }
 
   private static EntertainmentItemList getItemList(
@@ -82,8 +84,10 @@ public class DashboardServlet extends HttpServlet {
     } else if (sortType.equals(DESCENDING_TITLE_SORT)) {
       return itemDatastore.queryItemsByTitlePrefix(
           fetchOptions, searchValue, SortDirection.DESCENDING);
-    } else {
+    } else if (sortType.equals(RECENT_RELEASE_DATE_SORT)) {
       return itemDatastore.queryItemsByReleaseDate(fetchOptions, SortDirection.DESCENDING);
+    } else {
+      return itemDatastore.queryItemsByPopularity(fetchOptions, SortDirection.DESCENDING);
     }
   }
 }
