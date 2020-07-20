@@ -23,9 +23,11 @@ public final class EntertainmentItem {
   private final String actors;
   private final String omdbId;
 
+  private final Long numberOfLikes;
+
   private EntertainmentItem(Optional<Long> uniqueId, String title, String description,
       String imageUrl, String releaseDate, String runtime, String genre, String directors,
-      String writers, String actors, String omdbId) {
+      String writers, String actors, String omdbId, Long numberOfLikes) {
     this.uniqueId = uniqueId;
     this.title = title;
     this.description = description;
@@ -37,6 +39,7 @@ public final class EntertainmentItem {
     this.writers = writers;
     this.actors = actors;
     this.omdbId = omdbId;
+    this.numberOfLikes = numberOfLikes;
   }
 
   public Optional<Long> getUniqueId() {
@@ -83,8 +86,13 @@ public final class EntertainmentItem {
     return omdbId;
   }
 
+  public Long getNumberOfLikes() {
+    return numberOfLikes;
+  }
+
   public static final class Builder {
     private Long uniqueId;
+
     private String title = "";
     private String description = "";
     private String imageUrl = "";
@@ -96,9 +104,11 @@ public final class EntertainmentItem {
     private String actors = "";
     private String omdbId = "";
 
+    private Long numberOfLikes = 0L;
+
     public EntertainmentItem build() {
       return new EntertainmentItem(Optional.ofNullable(uniqueId), title, description, imageUrl,
-          releaseDate, runtime, genre, directors, writers, actors, omdbId);
+          releaseDate, runtime, genre, directors, writers, actors, omdbId, numberOfLikes);
     }
 
     public Builder setUniqueId(Long uniqueId) {
@@ -153,6 +163,11 @@ public final class EntertainmentItem {
 
     public Builder setOmdbId(String omdbId) {
       this.omdbId = omdbId;
+      return this;
+    }
+
+    public Builder setNumberOfLikes(Long numberOfLikes) {
+      this.numberOfLikes = numberOfLikes;
       return this;
     }
   }
