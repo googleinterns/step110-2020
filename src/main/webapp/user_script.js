@@ -34,34 +34,61 @@ function loadProfile() {
   });
 }
 
+/**Fetches the items that were liked by user and sends the array to 
+* populate the page with the item cards.
+*/
 function loadFavItems() {
   fetch('/favorite-item')
     .then((response) => response.json())
     .then((favorites) => {
       var itemIdArray = new Array();
-      const itemId = favorites;
-      itemIdArray.push(itemId);
-      itemIdArray.forEach(getItem);
+      itemIdArray = favorites;
+      populateFavoriteItemGrid(itemIdArray)
     })
     .catch((error) => {
-        console.log('Fetching favorite item data servlet failed: ' + error);
+      console.log('Fetching favorite item data servlet failed: ' + error);
     });
 }
 
-function getItem(item) {
-  if (item !== '') {
-    fetch(`/itempagedata?itemId=${item}`)
-      .then((response) => response.json())
-      .then((itemPageData) => {
-        createSelectedItemCard(itemPageData.item);
-      })
-      .catch((error) => {
-        console.log('Fetching favorite item data servlet failed: ' + error);
-      });
+/**
+ * Creates and populates a grid with item cards.
+ *
+ * @param { Array } favoriteItems - the array of item ids
+ */
+function populateFavoriteItemGrid(favoriteItems) {
+  const favItemContainer = $('#item-container');
+  let currItemIndex = 0;
+
+  while (currItemIndex < favoriteItems.length) {
+ 
+    const rowElem = $('<div class="row"></div>');
+
+    const MAX_CELLS_PER_ROW = 3;
+
+    for (let cell = 0;cell < MAX_CELLS_PER_ROW && currItemIndex < favoriteItems.length; cell++, currItemIndex++) {
+      const item = favoriteItems[currItemIndex];
+      const colElem = $('<div class="col-6 col-md-4"</div>');
+
+      fetch(`/itempagedata?itemId=${item}`)
+        .then((response) => response.json())
+        .then((itemPageData) => {
+          colElem.append(createFavoriteItemCard(itemPageData.item));
+          rowElem.append(colElem);
+        })
+    }
+
+    favItemContainer.append(rowElem);
   }
+
 }
 
-async function createSelectedItemCard(entertainmentItem) {
+/**
+ * Creates and populates a grid with item cards.
+ *
+ * @param entertainmentItem - the entertainment item object
+ * @returns card - bootstrap card with item information
+ */
+function createFavoriteItemCard(entertainmentItem) {
   const card = $('<div class="mt-2" class="card bg-light"></div>');
   card.append(
     $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
@@ -70,13 +97,7 @@ async function createSelectedItemCard(entertainmentItem) {
     $('<h5 class="card-title">' + entertainmentItem.title + '(' +
       entertainmentItem.releaseDate + ')' +
       '</h5>'));
-  cardBody.append(
-    $('<h5 class="card-title">' + entertainmentItem.genre + '</h5>'));
-  cardBody.append(
-    $('<p class="card-text"><b>Description: </b>' +
-      entertainmentItem.description + '</p>'));
-
   card.append(cardBody);
-  const itemContainer = $('#item-container');
-  itemContainer.append(card);
+
+  return card;
 }

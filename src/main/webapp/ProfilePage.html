@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <title>Profile Page</title> 
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
@@ -14,8 +15,7 @@
 	<div id="navbar"></div>
 
 	<div class="container">
-		<h1 style="text-align:center">My Profile Page</h1>
-<!--width: 22rem;-->
+		<h1 class="text-center">My Profile Page</h1>
 		<div class="card mb-3" style="max-width: 1000px; margin: 0 auto;">
       <div class="row no-gutters">
       <div class="col-md-4">
@@ -29,12 +29,20 @@
 			</div>
       </div>
 		</div>
+
 		<button id="edit" class="btn btn-info" onclick="location.href = '/EditProfilePage.html';">
         Edit Profile
       </button>
+
 		<div>
-			<h2 style="text-align:center">Favorite Items</h2>
+			<h2 class="text-center">Favorite Items</h2>
+       <div
+        class="card"
+        style="width: 45em; margin: 0 auto;"
+        style="height: 10rem;"
+      >
 			<div id="item-container"></div>
+      </div>
 		</div>
 	</div>
 </body>
