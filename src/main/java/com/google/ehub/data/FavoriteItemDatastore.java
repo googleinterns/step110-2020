@@ -3,6 +3,8 @@ package com.google.ehub.data;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
@@ -18,6 +20,9 @@ public final class FavoriteItemDatastore {
   private static final String FAVORITE_ITEM_KIND = "favoriteItem";
   private static final String USER_EMAIL_PROPERTY_KEY = "userEmail";
   private static final String ITEM_ID_PROPERTY_KEY = "itemId";
+
+  private static final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
+  private static final String NUMBER_OF_LIKES_PROPERTY_KEY = "numberOfLikes";
 
   private static FavoriteItemDatastore instance;
 
@@ -40,7 +45,8 @@ public final class FavoriteItemDatastore {
   }
 
   /**
-   * Adds a favorite item Entity to Datastore if it doesn't exist yet.
+   * Adds a favorite item Entity to Datastore if it doesn't exist yet. This method
+   * assumes that the entertainment item with the given itemId actually exists.
    *
    * @param userEmail The email of the user that liked the item
    * @param itemId the id of the item that was liked
@@ -55,6 +61,8 @@ public final class FavoriteItemDatastore {
     favoriteItemEntity.setProperty(ITEM_ID_PROPERTY_KEY, itemId);
 
     datastoreService.put(favoriteItemEntity);
+
+    addLikeToItem(itemId);
   }
 
   /**
@@ -71,6 +79,8 @@ public final class FavoriteItemDatastore {
     }
 
     datastoreService.delete(favoriteItemEntity.getKey());
+
+    removeLikeFromItem(itemId);
   }
 
   /**
@@ -113,6 +123,32 @@ public final class FavoriteItemDatastore {
     }
 
     return emails;
+  }
+
+  private void addLikeToItem(Long itemId) {
+    try {
+      Entity itemEntity =
+          datastoreService.get(KeyFactory.createKey(ENTERTAINMENT_ITEM_KIND, itemId));
+      itemEntity.setProperty(NUMBER_OF_LIKES_PROPERTY_KEY,
+          (Long) itemEntity.getProperty(NUMBER_OF_LIKES_PROPERTY_KEY) + 1L);
+
+      datastoreService.put(itemEntity);
+    } catch (EntityNotFoundException e) {
+      System.err.println("Entertainment item to add like to doesn't exist: " + e);
+    }
+  }
+
+  private void removeLikeFromItem(Long itemId) {
+    try {
+      Entity itemEntity =
+          datastoreService.get(KeyFactory.createKey(ENTERTAINMENT_ITEM_KIND, itemId));
+      itemEntity.setProperty(NUMBER_OF_LIKES_PROPERTY_KEY,
+          (Long) itemEntity.getProperty(NUMBER_OF_LIKES_PROPERTY_KEY) - 1L);
+
+      datastoreService.put(itemEntity);
+    } catch (EntityNotFoundException e) {
+      System.err.println("Entertainment item to remove like from doesn't exist: " + e);
+    }
   }
 
   /**
