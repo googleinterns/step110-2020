@@ -20,7 +20,7 @@ function loadDashboardPage() {
 
 /**
  * Enables access to the profile if the user is logged in by adding a "Profile"
- * link and a "Logout link to the navbar, if the user is not logged in then it
+ * link and a "Logout" link to the navbar, if the user is not logged in then it
  * adds a link to login.
  */
 function initializeNavBarProfileSection() {
