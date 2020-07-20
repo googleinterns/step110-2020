@@ -55,7 +55,6 @@ function loadFavItems() {
  */
 function populateFavoriteItemGrid(favoriteItems) {
   const favItemContainer = $("#item-container");
-  
   const MAX_CELLS_PER_ROW = 3;
   let currItemIndex = 0;
 
