@@ -34,12 +34,15 @@ public class EntertainmentItemDatastoreTest {
   private static final String WRITERS_PROPERTY_KEY = "writers";
   private static final String ACTORS_PROPERTY_KEY = "actors";
   private static final String OMDB_ID_PARAMETER_KEY = "omdbId";
+  private static final String NUMBER_OF_LIKES_PROPERTY_KEY = "numberOfLikes";
 
   private static final String[] TITLES_IN_ASCENDING_ORDER = {
       "Avengers", "Nemo", "Shrek", "Star Wars", "Transformers"};
 
   private static final String[] RELASE_DATE_IN_DESCENDING_ORDER = {
       "01 Jul 2020", "07 Dec 2018", "15 Jun 2015", "11 Jan 2001", "26 Feb 2000"};
+
+  private static final Long[] NUMBER_OF_LIKES_IN_DESCENDING_ORDER = {22L, 18L, 13L, 11L, 0L};
 
   private static final String DESCRIPTION = "Blah....";
   private static final String IMAGE_URL = "Image.png";
@@ -52,6 +55,7 @@ public class EntertainmentItemDatastoreTest {
   private static final String OMDB_ID = "tt23113212";
 
   private static final Long RELEASE_DATE_TIMESTAMP_MILLIS = 1356393600000L;
+  private static final Long NUMBER_OF_LIKES = 24L;
 
   private final EntertainmentItemDatastore entertainmentItemDatastore =
       EntertainmentItemDatastore.getInstance();
@@ -70,7 +74,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void addItemToDatastore_EntityGetsAddedWithValidKindAndProperties() {
+  public void addItemToDatastore_entityGetsAddedWithValidKindAndProperties() {
     entertainmentItemDatastore.addItemToDatastore(new EntertainmentItem.Builder()
                                                       .setTitle(TITLES_IN_ASCENDING_ORDER[0])
                                                       .setDescription(DESCRIPTION)
@@ -82,6 +86,7 @@ public class EntertainmentItemDatastoreTest {
                                                       .setWriters(WRITERS)
                                                       .setActors(ACTORS)
                                                       .setOmdbId(OMDB_ID)
+                                                      .setNumberOfLikes(NUMBER_OF_LIKES)
                                                       .build());
 
     Query query = new Query(ENTERTAINMENT_ITEM_KIND);
@@ -103,10 +108,12 @@ public class EntertainmentItemDatastoreTest {
     Assert.assertEquals(WRITERS, entityList.get(0).getProperty(WRITERS_PROPERTY_KEY));
     Assert.assertEquals(ACTORS, entityList.get(0).getProperty(ACTORS_PROPERTY_KEY));
     Assert.assertEquals(OMDB_ID, entityList.get(0).getProperty(OMDB_ID_PARAMETER_KEY));
+    Assert.assertEquals(
+        NUMBER_OF_LIKES, entityList.get(0).getProperty(NUMBER_OF_LIKES_PROPERTY_KEY));
   }
 
   @Test
-  public void queryForNonExistentItem_OptionalHasNoItem() {
+  public void queryForNonExistentItem_optionalHasNoItem() {
     Optional<EntertainmentItem> item =
         entertainmentItemDatastore.queryItem(/* Non-Existent Id */ 23114121);
 
@@ -114,7 +121,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryForExistentItem_OptionalHasItem() {
+  public void queryForExistentItem_optionalHasItem() {
     Entity itemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
 
     datastoreService.put(itemEntity);
@@ -126,7 +133,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryForNonExistentItems_ItemListIsEmpty() {
+  public void queryForNonExistentItems_itemListIsEmpty() {
     EntertainmentItemList itemList =
         entertainmentItemDatastore.queryAllItems(FetchOptions.Builder.withDefaults());
 
@@ -134,7 +141,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryForExistentItems_ItemListHasAllItems() {
+  public void queryForExistentItems_itemListHasAllItems() {
     final int itemsAdded = 15;
 
     for (int i = 0; i < itemsAdded; i++) {
@@ -148,7 +155,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryWithAscendingTitlePrefix_ItemListIsCorrectlyOrdered() {
+  public void queryWithAscendingTitlePrefix_itemListIsCorrectlyOrdered() {
     for (int i = 0; i < TITLES_IN_ASCENDING_ORDER.length; i++) {
       Entity entity = new Entity(ENTERTAINMENT_ITEM_KIND);
       entity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, TITLES_IN_ASCENDING_ORDER[i]);
@@ -169,7 +176,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryWithDescendingTitlePrefix_ItemListIsCorrectlySelected() {
+  public void queryWithDescendingTitlePrefix_itemListIsCorrectlyOrdered() {
     for (int i = 0; i < TITLES_IN_ASCENDING_ORDER.length; i++) {
       Entity entity = new Entity(ENTERTAINMENT_ITEM_KIND);
       entity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, TITLES_IN_ASCENDING_ORDER[i]);
@@ -191,7 +198,7 @@ public class EntertainmentItemDatastoreTest {
   }
 
   @Test
-  public void queryWithRecentReleaseDate_ItemListIsCorrectlyOrdered() {
+  public void queryWithRecentReleaseDate_itemListIsCorrectlyOrdered() {
     for (int i = 0; i < RELASE_DATE_IN_DESCENDING_ORDER.length; i++) {
       entertainmentItemDatastore.addItemToDatastore(
           new EntertainmentItem.Builder()
@@ -208,5 +215,25 @@ public class EntertainmentItemDatastoreTest {
     }
 
     Assert.assertArrayEquals(RELASE_DATE_IN_DESCENDING_ORDER, actual);
+  }
+
+  @Test
+  public void queryWithMostPopularItems_itemListIsCorrectlyOrdered() {
+    for (int i = 0; i < NUMBER_OF_LIKES_IN_DESCENDING_ORDER.length; i++) {
+      entertainmentItemDatastore.addItemToDatastore(
+          new EntertainmentItem.Builder()
+              .setNumberOfLikes(NUMBER_OF_LIKES_IN_DESCENDING_ORDER[i])
+              .build());
+    }
+
+    EntertainmentItemList itemList = entertainmentItemDatastore.queryItemsByPopularity(
+        FetchOptions.Builder.withDefaults(), SortDirection.DESCENDING);
+    Long[] actual = new Long[itemList.getItems().size()];
+
+    for (int i = 0; i < actual.length; i++) {
+      actual[i] = itemList.getItems().get(i).getNumberOfLikes();
+    }
+
+    Assert.assertArrayEquals(NUMBER_OF_LIKES_IN_DESCENDING_ORDER, actual);
   }
 }
