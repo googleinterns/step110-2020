@@ -12,14 +12,74 @@ async function loadItemPage() {
       fetch(`/itempagedata?itemId=${itemId}`)
           .then((response) => response.json())
           .then((itemPageData) => {
-            createSelectedItemCard(itemPageData.item);
-            getItemPageComments(itemPageData.comments);
+            fetch('/login')
+                .then((response) => response.json())
+                .then((loginResponse) => {
+                  if (loginResponse.isUserLoggedIn) {
+                    createSelectedItemCard(itemPageData.item);
+                    getItemPageComments(itemPageData.comments);
+                  } else {
+                    createSelectedItemCard(itemPageData.item);
+                    getItemPageComments(itemPageData.comments);
+                    hideCommentBox();
+                    const login = $('#login');
+                    login.append($(
+                        '<a href="' + loginResponse.LoginURL +
+                        '"><button type="button" class="btn btn-dark my-sm-0">Login to Comment</button></a>'));
+                  }
+                })
+                .catch((error) => {
+                  console.log('failed to fetch login status: ' + error);
+                });
           });
     } else {
       console.log('ItemId is empty!');
     }
   });
 }
+
+
+/**
+ * Enables access to the profile if the user is logged in by adding a "Profile"
+ * link and a "Logout" link to the navbar, if the user is not logged in then it
+ * adds a link to login.
+ */
+function initializeNavBarProfileSection() {
+  fetch('/login')
+      .then((response) => response.json())
+      .then((loginResponse) => {
+        const profileLinks = $('#profileLinks');
+        const logLinks = $('#logLinks');
+
+        if (loginResponse.isUserLoggedIn) {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+          logLinks.append(
+              $('<a class="nav-link text-light" href="' +
+                loginResponse.LogoutURL + '">Logout</a>'));
+        } else {
+          profileLinks.append(
+              $('<a class="nav-link text-light" href="' +
+                loginResponse.LoginURL + '">Login</a>'));
+        }
+      })
+      .catch((error) => {
+        console.log('failed to fetch login status: ' + error);
+      });
+}
+
+/**
+ * Hides input box when user is not logged in
+ */
+function hideCommentBox() {
+  var comment = document.getElementById('comment-box');
+  if (comment.style.display === 'none') {
+    comment.style.display = 'block';
+  } else {
+    comment.style.display = 'none';
+  }
+}
+
 
 /**
  * Makes Entertainment Item into card
@@ -68,10 +128,20 @@ function getItemPageComments(comments) {
   const commentContainer = $('#comment-container');
   comments.forEach((commentDataManager) => {
     const date = new Date(commentDataManager.timestampMillis);
-    commentContainer.append(createListElement(
-        commentDataManager.comment + ' - ' +
-        '(' + date.toLocaleString() + ')'));
+    commentContainer.append($(createListElement(
+        commentDataManager.email + ': ' + commentDataManager.comment + ' - ' +
+        '(' + date.toLocaleString() + ')')));
   });
+}
+
+/**
+ * Adds Login to comment button when is not logged in
+ */
+function showLoginLink(loginUrl) {
+  const commentContainer = $('#comment-box');
+  commentContainer.append($(
+      '<a href="' + loginUrl +
+      '"><button type="button" class="btn btn-dark my-sm-0"> Login </button></a>'));
 }
 
 /**

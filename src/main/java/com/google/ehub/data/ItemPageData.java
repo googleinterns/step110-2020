@@ -14,6 +14,7 @@ public class ItemPageData {
   public ItemPageData(EntertainmentItem item, List<CommentData> comments) {
     this.item = item;
     this.comments = comments;
+
   }
 
   public EntertainmentItem getItem() {

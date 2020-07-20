@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.data.CommentData;
 import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
@@ -38,10 +40,12 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that compiles the data for the item page*/
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
+  private final UserService userService = UserServiceFactory.getUserService();
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
-
+    
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
@@ -68,6 +72,10 @@ public class ItemPageServlet extends HttpServlet {
       System.err.println("Can't parse itemId to a long");
       return;
     }
+    if (!userService.isUserLoggedIn()) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
+    } else {
+    String email = userService.getCurrentUser().getEmail();
     String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
     if (comment == null) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
@@ -75,7 +83,8 @@ public class ItemPageServlet extends HttpServlet {
     } else {
       long timestampMillis = System.currentTimeMillis();
       CommentDataManager comments = new CommentDataManager();
-      comments.addItemComment(itemId, comment, timestampMillis);
+      comments.addItemComment(itemId, comment, timestampMillis, email);
     }
+   }
   }
 }
