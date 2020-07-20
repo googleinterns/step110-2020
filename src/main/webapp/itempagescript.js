@@ -83,3 +83,19 @@ function createListElement(comment) {
   liElement.append(comment);
   return liElement;
 }
+
+/**
+ * Finds a query string parameter in the current Url.
+ *
+ * @param { string } param - the parameter to look for in the window Url
+ * @returns { string } if the parameter exists it returns the value found,
+ *     otherwise an empty string
+ */
+function getUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has(param)) {
+    return urlParams.get(param);
+  }
+
+  return '';
+}
