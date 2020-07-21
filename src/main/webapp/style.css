@@ -13,7 +13,7 @@ hidden {
 }
 
 ul {
-    list-style-type: none;
+  list-style-type: none;
 }
 .selector-for-some-widget {
   box-sizing: content-box;
@@ -33,7 +33,7 @@ ul {
   -moz-border-radius: 10px;
   -o-border-radius: 10px;
   -ms-border-radius: 10px;
-  -khtml-border-radius: 10px;   
+  -khtml-border-radius: 10px;
   border-radius: 10px;
 
   line-height: 1.4em;
