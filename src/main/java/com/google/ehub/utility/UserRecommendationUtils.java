@@ -10,6 +10,7 @@ import java.util.List;
  */
 public final class UserRecommendationUtils {
   private static final int MAX_NUMBER_OF_RECOMMENDATIONS = 10;
+
   private static final FavoriteItemDatastore favoriteItemDatastore =
       FavoriteItemDatastore.getInstance();
 
@@ -17,7 +18,6 @@ public final class UserRecommendationUtils {
    * Finds the most recommended emails up to a given limit.
    *
    * @param userEmail the email of the user that wants to search for its recommended email list
-   * @param maxNumberOfRecommendations the maximum desired size for the recommendation list
    * @return list containing the most recommended emails
    */
   public List<String> getRecommendedEmails(
