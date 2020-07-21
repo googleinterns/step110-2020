@@ -15,8 +15,10 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.ehub.data.ProfileDatastore;
+import com.google.ehub.data.UserData;
 import com.google.ehub.data.UserProfile;
 import com.google.ehub.servlets.LoginServlet;
+import com.google.ehub.utility.UserRecommendationUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,7 +36,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 
 @RunWith(JUnit4.class)
 public class ProfileServletTest {
@@ -57,9 +58,9 @@ public class ProfileServletTest {
 
   private LocalServiceTestHelper helper = new LocalServiceTestHelper(
       new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig())
-          .setEnvEmail(EMAIL)
-          .setEnvIsLoggedIn(true)
-          .setEnvAuthDomain("gmail.com");
+                                              .setEnvEmail(EMAIL)
+                                              .setEnvIsLoggedIn(true)
+                                              .setEnvAuthDomain("gmail.com");
   private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
   @Mock HttpServletRequest request;
@@ -172,7 +173,9 @@ public class ProfileServletTest {
     servlet.doGet(request, response);
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
-    verify(printWriter).println(new Gson().toJson(new UserProfile(NAME, USERNAME, BIO, EMAIL)));
+    verify(printWriter)
+        .println(new Gson().toJson(new UserData(new UserProfile(NAME, USERNAME, BIO, EMAIL),
+            new UserRecommendationUtils().getRecommendedEmails(EMAIL))));
   }
 
   @Test
