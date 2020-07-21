@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public final class UserRecommendationUtils {
   private static final int MAX_NUMBER_OF_RECOMMENDATIONS = 10;
+
   private static final FavoriteItemDatastore favoriteItemDatastore =
       FavoriteItemDatastore.getInstance();
 
