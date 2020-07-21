@@ -82,7 +82,6 @@ public class ItemPageServlet extends HttpServlet {
       String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
       if (comment == null) {
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
-        return;
       } else {
         long timestampMillis = System.currentTimeMillis();
         CommentDataManager comments = new CommentDataManager();
