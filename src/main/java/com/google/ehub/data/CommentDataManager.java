@@ -65,7 +65,7 @@ public class CommentDataManager {
       UserProfile userProfile = profileData.getUserProfile(email);
       if(userProfile == null){
         continue;
-        }
+      }
       String comment = (String) entity.getProperty(COMMENT_PROPERTY_KEY);
       long timestampMillis = (Long) entity.getProperty(TIMESTAMP_PROPERTY_KEY);
       
