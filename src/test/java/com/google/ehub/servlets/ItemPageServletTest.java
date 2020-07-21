@@ -98,7 +98,7 @@ public class ItemPageServletTest {
     when(response.getWriter()).thenReturn(printWriter);
     commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP,EMAIL );
     servlet.doGet(request, response);
-    CommentData comment = new CommentData(itemId.getId(), COMMENT , TIMESTAMP, USERNAME);
+    CommentData comment = new CommentData(itemId.getId(), COMMENT, TIMESTAMP, USERNAME);
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
