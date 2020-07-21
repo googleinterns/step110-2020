@@ -16,10 +16,8 @@ async function loadItemPage() {
             .then((response) => response.json())
             .then((loginResponse) => {
               createSelectedItemCard(itemPageData.item);
-              if (loginResponse.isUserLoggedIn) {
-                getItemPageComments(itemPageData.comments);
-              } else {
-                getItemPageComments(itemPageData.comments);
+              getItemPageComments(itemPageData.comments);
+              if (!loginResponse.isUserLoggedIn) {
                 hideCommentBox();
                 const login = $("#login");
                 login.append(
@@ -73,7 +71,21 @@ async function createSelectedItemCard(entertainmentItem) {
     )
   );
   cardBody.append(
+    $(
+      '<h5 class="card-title"><b>Runtime: </b>' +
+        entertainmentItem.runtime +
+        "</h5>"
+    )
+  );
+  cardBody.append(
     $('<h5 class="card-title">' + entertainmentItem.genre + "</h5>")
+  );
+  cardBody.append(
+    $(
+      '<h5 class="card-title"><b>Cast: </b>' +
+        entertainmentItem.actors +
+        "</h5>"
+    )
   );
   cardBody.append(
     $(

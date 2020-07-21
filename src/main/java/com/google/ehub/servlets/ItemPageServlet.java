@@ -9,7 +9,7 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// See the License for the specific language governing permissions and      
 // limitations under the License.
 
 package com.google.ehub.servlets;
@@ -48,7 +48,7 @@ public class ItemPageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
-
+    System.out.println("doGet: WORKS");
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
@@ -79,8 +79,6 @@ public class ItemPageServlet extends HttpServlet {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
     } else {
       String email = userService.getCurrentUser().getEmail();
-      String username = profileData.getUserProfile(email).getUsername();
-
       String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
       if (comment == null) {
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
@@ -88,7 +86,7 @@ public class ItemPageServlet extends HttpServlet {
       } else {
         long timestampMillis = System.currentTimeMillis();
         CommentDataManager comments = new CommentDataManager();
-        comments.addItemComment(itemId, comment, timestampMillis, username);
+        comments.addItemComment(itemId, comment, timestampMillis, email);
       }
     }
   }

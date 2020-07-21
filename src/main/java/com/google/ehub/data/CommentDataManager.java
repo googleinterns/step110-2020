@@ -8,6 +8,10 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.ehub.data.ProfileDatastore;
+import com.google.ehub.data.UserProfile;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +23,9 @@ public class CommentDataManager {
   public static final String ITEM_ID_PROPERTY_KEY = "itemId";
   public static final String COMMENT_PROPERTY_KEY = "comment";
   private static final String TIMESTAMP_PROPERTY_KEY = "timestampMillis";
-  private static final String USERNAME_PROPERTY_KEY = "username";
+  private static final String EMAIL_PROPERTY_KEY = "email";
+  private final UserService userService = UserServiceFactory.getUserService();
+  private final ProfileDatastore profileData = new ProfileDatastore();
 
   /**
    * Method that adds comment information into Datastore by ItemId
@@ -29,12 +35,12 @@ public class CommentDataManager {
    * @param timestampMillis The exact timestamp in Milliseconds that the comment is posted
    * @param username The user's username
    */
-  public void addItemComment(long itemId, String comment, long timestampMillis, String username) {
+  public void addItemComment(long itemId, String comment, long timestampMillis, String email) {
     Entity commentEntity = new Entity(COMMENT_KIND_KEY);
     commentEntity.setProperty(ITEM_ID_PROPERTY_KEY, itemId);
     commentEntity.setProperty(COMMENT_PROPERTY_KEY, comment);
     commentEntity.setProperty(TIMESTAMP_PROPERTY_KEY, timestampMillis);
-    commentEntity.setProperty(USERNAME_PROPERTY_KEY, username);
+    commentEntity.setProperty(EMAIL_PROPERTY_KEY, email);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
@@ -55,11 +61,16 @@ public class CommentDataManager {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery comments = datastore.prepare(itemCommentQuery);
     for (Entity entity : comments.asIterable()) {
+      String email = (String) entity.getProperty(EMAIL_PROPERTY_KEY);
+      if(profileData.getUserProfile(email) == null){
+        continue;
+        }
       String comment = (String) entity.getProperty(COMMENT_PROPERTY_KEY);
       long timestampMillis = (Long) entity.getProperty(TIMESTAMP_PROPERTY_KEY);
-      String username = (String) entity.getProperty(USERNAME_PROPERTY_KEY);
+      
+      String username = profileData.getUserProfile(email).getUsername(); 
       results.add(new CommentData(itemId, comment, timestampMillis, username));
     }
-    return results;
-  }
+   return results;
+}
 }
