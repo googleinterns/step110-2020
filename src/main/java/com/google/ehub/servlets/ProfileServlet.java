@@ -12,7 +12,9 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.data.ProfileDatastore;
+import com.google.ehub.data.UserData;
 import com.google.ehub.data.UserProfile;
+import com.google.ehub.utility.UserRecommendationUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
@@ -38,6 +40,7 @@ public class ProfileServlet extends HttpServlet {
 
   private final UserService userService = UserServiceFactory.getUserService();
   private final ProfileDatastore profileData = new ProfileDatastore();
+  private final UserRecommendationUtils recommendationUtils = new UserRecommendationUtils();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -67,28 +70,18 @@ public class ProfileServlet extends HttpServlet {
     } else {
       String userEmail = userService.getCurrentUser().getEmail();
       UserProfile userProfile = profileData.getUserProfile(userEmail);
-      
+
       if (userProfile == null) {
         JsonObject profileJson = new JsonObject();
         profileJson.addProperty(NEEDS_PROFILE, true);
         response.setContentType("application/json");
         response.getWriter().println(profileJson);
-      } 
-      else {
+      } else {
         response.setContentType("application/json");
-        response.getWriter().println(convertToJson(userProfile));
+        response.getWriter().println(new Gson().toJson(
+            new UserData(userProfile, recommendationUtils.getRecommendedEmails(userEmail))));
       }
     }
-  }
-
-  /**
-   * Creates a json from the UserProfile object.
-   *
-   * @param profile the UserProfile object
-   * @return json file
-   */
-  private String convertToJson(UserProfile profile) {
-    return new Gson().toJson(profile);
   }
 
   /**
