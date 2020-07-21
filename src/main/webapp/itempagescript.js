@@ -70,6 +70,7 @@ async function createSelectedItemCard(entertainmentItem) {
         "</h5>"
     )
   );
+
   cardBody.append(
     $(
       '<h5 class="card-title"><b>Runtime: </b>' +

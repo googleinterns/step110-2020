@@ -96,9 +96,9 @@ public class ItemPageServletTest {
     Key itemId = EntertainmentItemDatastore.getInstance().addItemToDatastore(selectedItem);
     when(request.getParameter("itemId")).thenReturn(itemId.getId() + "");
     when(response.getWriter()).thenReturn(printWriter);
-    commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP,EMAIL );
+    commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     servlet.doGet(request, response);
-    CommentData comment = new CommentData(itemId.getId(), COMMENT , TIMESTAMP, USERNAME);
+    CommentData comment = new CommentData(itemId.getId(), COMMENT, TIMESTAMP, USERNAME);
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
@@ -117,7 +117,7 @@ public class ItemPageServletTest {
   @Test
   public void doPostAddsValidComment() throws IOException {
     when(request.getParameter("itemId")).thenReturn("12345");
-    commentDataManager.addItemComment(12345, COMMENT , TIMESTAMP, EMAIL);
+    commentDataManager.addItemComment(12345, COMMENT, TIMESTAMP, EMAIL);
     servlet.doPost(request, response);
     Assert.assertEquals(1, commentDataManager.retrieveComments(12345).size());
   }

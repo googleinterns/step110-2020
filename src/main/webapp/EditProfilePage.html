@@ -2,6 +2,7 @@
 
 <html>
   <head>
+    <title>Edit Profile Page</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -14,28 +15,56 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
   </head>
+
   <body onload="loadProfile()">
     <div id="navbar"></div>
-    <div class="container mx-auto m-5" id= "editprofile" >
-    <h1>Edit Your Profile Page</h1>
-    
-    <form action="/profile-data?edit=true" method="POST">
-      <div class="form-group col-md-5 px-auto">
-        <label for="name">Name:</label><br />
-        <input type="text" class="form-control" id="name" name="name" maxlength="160" value=""/><br />
-      </div>
-      <!--TODO(oyins): validate usernames to make sure there is a string-->
-      <div class="form-group col-md-2">
-        <label for="username">Username:</label><br />
-        <input type="text" class="form-control" id="username" name="username" maxlength="160" value=""/><br />
-      </div>
-      <div class="form-group col-md-5 px-auto">
-        <label for="bio">Bio:</label><br />
-        <input type="text" class="form-control" id="bio" name="bio" maxlength="160" value=""/><br />
-      </div>
-      <!--TODO(oyins): create an option for the users to choose a random number-->
-      <input type="submit" class="btn btn-success btn-lg" value="Update Profile"/>
-    </form>
+    <div class="container" id="editprofile">
+      <h1 class="text-center">Edit Your Profile Page</h1>
+      <form action="/profile-data?edit=true" method="POST">
+        <div class="form-group col-md-5" style="margin: 0 auto;">
+          <label for="name">Name:</label><br />
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            maxlength="160"
+            value=""
+          /><br />
+        </div>
+        <!--TODO(oyins): validate usernames to make sure there is a string-->
+        <!--TODO(oyins): validate usernames to make sure it is unique-->
+        <div class="form-group col-md-5" style="margin: 0 auto;">
+          <label for="username">Username:</label><br />
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            maxlength="160"
+            value=""
+          /><br />
+        </div>
+        <div class="form-group col-md-5 px-auto" style="margin: 0 auto;">
+          <label for="bio">Bio:</label><br />
+          <input
+            type="text"
+            class="form-control"
+            id="bio"
+            name="bio"
+            maxlength="250"
+            value=""
+          /><br />
+        </div>
+        <!--TODO(oyins): create an option for the users to choose a random number-->
+        <div class="text-center">
+          <input
+            type="submit"
+            class="btn btn-success btn-lg"
+            value="Update Profile"
+          />
+        </div>
+      </form>
     </div>
   </body>
 </html>
