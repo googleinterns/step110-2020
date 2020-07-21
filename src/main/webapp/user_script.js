@@ -34,7 +34,8 @@ function loadProfile() {
   });
 }
 
-/**Fetches the items that were liked by user and sends the array to
+/**
+ * Fetches the items that were liked by user and sends the array to
  * populate the page with the item cards.
  */
 function loadFavItems() {
