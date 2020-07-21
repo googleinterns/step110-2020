@@ -27,6 +27,8 @@ import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.ehub.data.ItemPageData;
+import com.google.ehub.data.ProfileDatastore;
+import com.google.ehub.data.UserProfile;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,11 +43,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
   private final UserService userService = UserServiceFactory.getUserService();
+  private final ProfileDatastore profileData = new ProfileDatastore();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
-    
+
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
@@ -75,16 +78,18 @@ public class ItemPageServlet extends HttpServlet {
     if (!userService.isUserLoggedIn()) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
     } else {
-    String email = userService.getCurrentUser().getEmail();
-    String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
-    if (comment == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
-      return;
-    } else {
-      long timestampMillis = System.currentTimeMillis();
-      CommentDataManager comments = new CommentDataManager();
-      comments.addItemComment(itemId, comment, timestampMillis, email);
+      String email = userService.getCurrentUser().getEmail();
+      String username = profileData.getUserProfile(email).getUsername();
+
+      String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
+      if (comment == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
+        return;
+      } else {
+        long timestampMillis = System.currentTimeMillis();
+        CommentDataManager comments = new CommentDataManager();
+        comments.addItemComment(itemId, comment, timestampMillis, username);
+      }
     }
-   }
   }
 }
