@@ -96,7 +96,7 @@ public class ItemPageServletTest {
     Key itemId = EntertainmentItemDatastore.getInstance().addItemToDatastore(selectedItem);
     when(request.getParameter("itemId")).thenReturn(itemId.getId() + "");
     when(response.getWriter()).thenReturn(printWriter);
-    commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP,EMAIL );
+    commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     servlet.doGet(request, response);
     CommentData comment = new CommentData(itemId.getId(), COMMENT, TIMESTAMP, USERNAME);
     Optional<EntertainmentItem> expectedItem =
