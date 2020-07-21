@@ -1,44 +1,60 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>My Profile Page</title>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="user_script.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
 
-<head>
-	<title>My Profile Page</title>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="user_script.js"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-</head>
+  <body onload="loadProfile(); loadFavItems();">
+    <div id="navbar"></div>
+    <div class="container">
+      <h1 class="text-center">My Profile Page</h1>
+      <div class="card mb-3" style="max-width: 1000px; margin: 0 auto;">
+        <div class="row no-gutters">
+          <div class="col-md-4">
+            <img id="avatar" src="" class="card-img-top" alt="profile avatar" />
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title" id="name"></h5>
+              <h6 class="card-subtitle mb-2" id="username"></h6>
+              <p class="card-text" id="bio"></p>
+            </div>
+          </div>
+        </div>
+        <button
+          id="edit"
+          class="btn btn-info"
+          onclick="location.href = '/EditProfilePage.html';"
+        >
+          Edit Profile
+        </button>
 
-<body onload="loadProfile(); loadFavItems();">
-	<div id="navbar"></div>
-	<div class="container">
-		<h1 class="text-center">My Profile Page</h1>
-		<div class="card mb-3" style="max-width: 1000px; margin: 0 auto;">
-			<div class="row no-gutters">
-				<div class="col-md-4">
-					<img id ="avatar" src="" class="card-img-top" alt="profile avatar">
+        <div>
+          <h2 class="text-center">Favorite Items</h2>
+          <div
+            class="card"
+            style="width: 45em; margin: 0 auto;"
+            style="height: 10rem;"
+          >
+            <div id="item-container"></div>
+          </div>
+        </div>
       </div>
-					<div class="col-md-8">
-						<div class="card-body">
-							<h5 class="card-title" id="name"> </h5>
-							<h6 class="card-subtitle mb-2 " id="username"> </h6>
-							<p class="card-text" id="bio"> </p>
-						</div>
-					</div>
-				</div>
-				<button id="edit" class="btn btn-info" onclick="location.href = '/EditProfilePage.html';">
-        Edit Profile
-      </button>
-
-				<div>
-					<h2 class="text-center">Favorite Items</h2>
-					<div class="card" style="width: 45em; margin: 0 auto;" style="height: 10rem;">
-						<div id="item-container"></div>
-					</div>
-				</div>
-			</div>
-</body>
-
+    </div>
+  </body>
 </html>
