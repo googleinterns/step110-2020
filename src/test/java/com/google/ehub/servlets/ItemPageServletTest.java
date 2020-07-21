@@ -117,7 +117,7 @@ public class ItemPageServletTest {
   @Test
   public void doPostAddsValidComment() throws IOException {
     when(request.getParameter("itemId")).thenReturn("12345");
-    commentDataManager.addItemComment(12345, COMMENT , TIMESTAMP, EMAIL);
+    commentDataManager.addItemComment(12345, COMMENT, TIMESTAMP, EMAIL);
     servlet.doPost(request, response);
     Assert.assertEquals(1, commentDataManager.retrieveComments(12345).size());
   }
