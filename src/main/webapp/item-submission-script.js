@@ -3,27 +3,27 @@
  * found.
  */
 function getOmdbItem() {
-  fetch("https://www.omdbapi.com/?apikey=a28d48cd&t=" + $("#itemTitle").val())
-    .then((response) => response.json())
-    .then((omdbItem) => {
-      const omdbItemEntry = $("#omdbItemEntry");
-      omdbItemEntry.empty();
+  fetch('https://www.omdbapi.com/?apikey=a28d48cd&t=' + $('#itemTitle').val())
+      .then((response) => response.json())
+      .then((omdbItem) => {
+        const omdbItemEntry = $('#omdbItemEntry');
+        omdbItemEntry.empty();
 
-      const submitButton = $("#submitButton");
+        const submitButton = $('#submitButton');
 
-      if (omdbItem.Response === "False") {
-        omdbItemEntry.append($("<p>Item not found!</p>"));
-        submitButton.addClass("d-none");
-      } else {
-        const itemCard = createOmdbItemCard(omdbItem);
-        omdbItemEntry.append(itemCard);
+        if (omdbItem.Response === 'False') {
+          omdbItemEntry.append($('<p>Item not found!</p>'));
+          submitButton.addClass('d-none');
+        } else {
+          const itemCard = createOmdbItemCard(omdbItem);
+          omdbItemEntry.append(itemCard);
 
-        updateItemSubmission(submitButton, itemCard, omdbItem);
-      }
-    })
-    .catch((error) => {
-      console.log("Failed to fetch movie from OMDb API: " + error);
-    });
+          updateItemSubmission(submitButton, itemCard, omdbItem);
+        }
+      })
+      .catch((error) => {
+        console.log('Failed to fetch movie from OMDb API: ' + error);
+      });
 }
 
 /**
@@ -37,22 +37,15 @@ function getOmdbItem() {
 function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-    $(
-      '<img class="card-img-top mx-auto item-image" src="' +
-        omdbItem.Poster +
-        '">'
-    )
-  );
+      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
+        '">'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-    $('<h5 class="card-title text-center">' + omdbItem.Title + "</h5>")
-  );
+      $('<h5 class="card-title text-center">' + omdbItem.Title + '</h5>'));
   cardBody.append(
-    $(
-      '<p class="card-text text-center">Released: ' + omdbItem.Released + "</p>"
-    )
-  );
+      $('<p class="card-text text-center">Released: ' + omdbItem.Released +
+        '</p>'));
 
   card.append(cardBody);
 
@@ -68,38 +61,32 @@ function createOmdbItemCard(omdbItem) {
  * @param { JSON } omdbItem - the item found by omdb API
  */
 function updateItemSubmission(submitButton, itemCard, omdbItem) {
-  fetch("/item-submission?imdbID=" + omdbItem.imdbID)
-    .then((response) => response.json())
-    .then((itemFound) => {
-      if (/* item is unique */ isOptionalEmpty(itemFound)) {
-        submitButton.removeClass("d-none");
-        submitButton.off().one("click", () => {
-          submitItem(omdbItem);
-        });
-      } else {
-        const itemId = itemFound.value.uniqueId;
-        let itemLink = "";
+  fetch('/item-submission?imdbID=' + omdbItem.imdbID)
+      .then((response) => response.json())
+      .then((itemFound) => {
+        if (/* item is unique */ isOptionalEmpty(itemFound)) {
+          submitButton.removeClass('d-none');
+          submitButton.off().one('click', () => {
+            submitItem(omdbItem);
+          });
+        } else {
+          const itemId = itemFound.value.uniqueId;
+          let itemLink = '';
 
-        if (!isOptionalEmpty(itemId)) {
-          itemLink =
-            ' <a href="item-page.html?itemId=' +
-            itemId.value +
-            '">Link to Item</a>';
+          if (!isOptionalEmpty(itemId)) {
+            itemLink = ' <a href="item-page.html?itemId=' + itemId.value +
+                '">Link to Item</a>';
+          }
+
+          submitButton.addClass('d-none');
+          itemCard.append($(
+              '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
+              itemLink + '</p>'));
         }
-
-        submitButton.addClass("d-none");
-        itemCard.append(
-          $(
-            '<p class="card-text text-center">Item already exists on Entertainment Hub!' +
-              itemLink +
-              "</p>"
-          )
-        );
-      }
-    })
-    .catch((error) => {
-      console.log("failed to check if omdb Item is duplicate: " + error);
-    });
+      })
+      .catch((error) => {
+        console.log('failed to check if omdb Item is duplicate: ' + error);
+      });
 }
 
 /**
@@ -109,13 +96,13 @@ function updateItemSubmission(submitButton, itemCard, omdbItem) {
  *     ItemSubmissionServlet through a Post request
  */
 function submitItem(omdbItem) {
-  $.post("/item-submission", omdbItem)
-    .done(function () {
-      // If the item gets added, the page needs to reload to see the
-      // changes.
-      window.location.reload();
-    })
-    .fail(function () {
-      console.log("Failed to submit entertainment item!");
-    });
+  $.post('/item-submission', omdbItem)
+      .done(function() {
+        // If the item gets added, the page needs to reload to see the
+        // changes.
+        window.location.reload();
+      })
+      .fail(function() {
+        console.log('Failed to submit entertainment item!');
+      });
 }
