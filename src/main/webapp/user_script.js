@@ -5,11 +5,14 @@
 function loadProfile() {
   fetch('/profile-data')
       .then((response) => response.json())
-      .then((profile) => {
-        if(profile.NeedsProfile){
+      .then((userData) => {
+        if(userData.NeedsProfile){
           window.location.replace("/CreateProfilePage.html");
           return;
         }
+
+        const profile = userData.profile;
+
         const nameSection = document.getElementById('name');
         nameSection.innerHTML = profile.name;
         nameSection.value = profile.name;
