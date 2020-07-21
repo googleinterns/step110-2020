@@ -38,21 +38,24 @@ function createLikeButton(favoriteItemIds, itemId) {
  *     item has
  */
 function addLikeToEntertainmentItem(
-    favoriteItemIds, itemId, likeButton, likeCounter) {
-  $.post('/favorite-item?favoriteItemId=' + itemId)
-      .done(function() {
-        switchToUndoLikeButton(
-            favoriteItemIds, itemId, likeButton, likeCounter);
-        updateLikeCounter(itemId, likeCounter);
+  favoriteItemIds,
+  itemId,
+  likeButton,
+  likeCounter
+) {
+  $.post("/favorite-item?favoriteItemId=" + itemId)
+    .done(function () {
+      switchToUndoLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
+      updateLikeCounter(itemId, likeCounter);
 
-        // Add item to favorite list to avoid fetching for the list again.
-        favoriteItemIds.push(itemId);
-      })
-      .fail(function() {
-        console.log(
-            'Failed to add a like to the entertainment item with Id: ' +
-            itemId);
-      });
+      // Add item to favorite list to avoid fetching for the list again.
+      favoriteItemIds.push(itemId);
+    })
+    .fail(function () {
+      console.log(
+        "Failed to add a like to the entertainment item with Id: " + itemId
+      );
+    });
 }
 
 /**
@@ -68,20 +71,24 @@ function addLikeToEntertainmentItem(
  *     item has
  */
 function removeLikeFromEntertainmentItem(
-    favoriteItemIds, itemId, likeButton, likeCounter) {
-  fetch('/favorite-item?favoriteItemId=' + itemId, {method: 'DELETE'})
-      .then(() => {
-        switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
-        updateLikeCounter(itemId, likeCounter);
+  favoriteItemIds,
+  itemId,
+  likeButton,
+  likeCounter
+) {
+  fetch("/favorite-item?favoriteItemId=" + itemId, { method: "DELETE" })
+    .then(() => {
+      switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter);
+      updateLikeCounter(itemId, likeCounter);
 
-        // Remove item from favorite list to avoid fetching for the list again.
-        favoriteItemIds.splice(favoriteItemIds.indexOf(itemId, 1));
-      })
-      .catch((error) => {
-        console.log(
-            'Failed to remove like from the entertainment item with Id: ' +
-            itemId);
-      });
+      // Remove item from favorite list to avoid fetching for the list again.
+      favoriteItemIds.splice(favoriteItemIds.indexOf(itemId, 1));
+    })
+    .catch((error) => {
+      console.log(
+        "Failed to remove like from the entertainment item with Id: " + itemId
+      );
+    });
 }
 
 /**
@@ -96,11 +103,15 @@ function removeLikeFromEntertainmentItem(
  *     item has
  */
 function switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter) {
-  likeButton.addClass('btn-secondary');
-  likeButton.removeClass('btn-dark');
-  likeButton.off().click(function() {
+  likeButton.addClass("btn-secondary");
+  likeButton.removeClass("btn-dark");
+  likeButton.off().click(function () {
     addLikeToEntertainmentItem(
-        favoriteItemIds, itemId, likeButton, likeCounter);
+      favoriteItemIds,
+      itemId,
+      likeButton,
+      likeCounter
+    );
   });
 }
 
@@ -116,12 +127,20 @@ function switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter) {
  *     item has
  */
 function switchToUndoLikeButton(
-    favoriteItemIds, itemId, likeButton, likeCounter) {
-  likeButton.addClass('btn-dark');
-  likeButton.removeClass('btn-secondary');
-  likeButton.off().click(function() {
+  favoriteItemIds,
+  itemId,
+  likeButton,
+  likeCounter
+) {
+  likeButton.addClass("btn-dark");
+  likeButton.removeClass("btn-secondary");
+  likeButton.off().click(function () {
     removeLikeFromEntertainmentItem(
-        favoriteItemIds, itemId, likeButton, likeCounter);
+      favoriteItemIds,
+      itemId,
+      likeButton,
+      likeCounter
+    );
   });
 }
 
@@ -135,14 +154,17 @@ function switchToUndoLikeButton(
  *     item has
  */
 function updateLikeCounter(itemId, likeCounter) {
-  fetch('/favorite-counter?itemId=' + itemId)
-      .then((response) => response.json())
-      .then((numberOfLikes) => {
-        likeCounter.text(numberOfLikes);
-      })
-      .catch((error) => {
-        console.log(
-            'Failed to fetch like counter for item: ' + itemId +
-            ' , with error: ' + error);
-      });
+  fetch("/favorite-counter?itemId=" + itemId)
+    .then((response) => response.json())
+    .then((numberOfLikes) => {
+      likeCounter.text(numberOfLikes);
+    })
+    .catch((error) => {
+      console.log(
+        "Failed to fetch like counter for item: " +
+          itemId +
+          " , with error: " +
+          error
+      );
+    });
 }
