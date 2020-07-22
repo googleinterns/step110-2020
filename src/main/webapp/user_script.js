@@ -93,6 +93,13 @@ function createFavoriteItemCard(entertainmentItem) {
   card.append(
     $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">')
   );
+  card.append(
+    $(
+      '<a class="stretched-link" href="item-page.html?itemId=' +
+        entertainmentItem.uniqueId.value +
+        '"></a>'
+    )
+  );
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
     $(
