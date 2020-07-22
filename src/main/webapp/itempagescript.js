@@ -86,13 +86,10 @@ async function createSelectedItemCard(entertainmentItem) {
         "</h5>"
     )
   );
+
   cardBody.append(
-    $(
-      '<p class="card-text"><b>Description: </b>' +
-        entertainmentItem.description +
-        "</p>"
-    )
-  );
+      $('<p class="card-text"><b>Description: </b>' +
+        entertainmentItem.description + '</p>'));
 
   card.append(cardBody);
   const itemContainer = $('#item-container');
