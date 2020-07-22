@@ -9,7 +9,12 @@
   <body>
     <div class="container">
       <h1 class="text-center">Create Your Profile Page</h1>
-      <form action="/profile-data" method="POST" novalidate>
+      <form
+        action="/profile-data"
+        method="POST"
+        class="needs-validation"
+        novalidate
+      >
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="name">Name:</label><br />
           <input
@@ -17,6 +22,7 @@
             class="form-control"
             name="name"
             maxlength="160"
+            pattern= "^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)*" 
             required
           /><br />
           <div class="invalid-feedback">
@@ -59,16 +65,15 @@
         </div>
       </form>
     </div>
-
     <script>
       (function () {
         "use strict";
         window.addEventListener(
           "load",
           function () {
-            var forms = document.getElementsByClassName("needs-validation");
+            const forms = document.getElementsByClassName("needs-validation");
 
-            var validation = Array.prototype.filter.call(forms, function (
+            const validation = Array.prototype.filter.call(forms, function (
               form
             ) {
               form.addEventListener(

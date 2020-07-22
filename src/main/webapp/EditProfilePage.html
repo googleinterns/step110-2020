@@ -28,15 +28,15 @@
       >
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="name">Name:</label><br />
-          <input
-            type="text"
-            class="form-control"
-            id="name"
-            name="name"
-            maxlength="160"
-            value=""
-            required
-          /><br />
+          <input 
+          type="text" 
+          class="form-control" 
+          id="name" 
+          name="name"
+          maxlength="160" 
+          value="" 
+          pattern= "^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)*" 
+          required /><br />
           <div class="invalid-feedback">
             Please provide a name.
           </div>
@@ -67,7 +67,7 @@
             id="bio"
             name="bio"
             maxlength="250"
-            value=""
+            value="" 
             required
           /><br />
           <div class="invalid-feedback">
@@ -84,16 +84,15 @@
         </div>
       </form>
     </div>
-
     <script>
       (function () {
         "use strict";
         window.addEventListener(
           "load",
           function () {
-            var forms = document.getElementsByClassName("needs-validation");
+            const forms = document.getElementsByClassName("needs-validation");
 
-            var validation = Array.prototype.filter.call(forms, function (
+            const validation = Array.prototype.filter.call(forms, function (
               form
             ) {
               form.addEventListener(
