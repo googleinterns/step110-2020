@@ -1,0 +1,6 @@
+indexes:
+
+- kind: comment
+  properties:
+  - name: itemId
+  - name: timestampMillis
