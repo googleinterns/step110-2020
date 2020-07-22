@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.ehub.data.FavoriteItemDatastore;
 import com.google.ehub.data.ProfileDatastore;
 import com.google.ehub.data.UserData;
 import com.google.ehub.data.UserProfile;
@@ -19,6 +20,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +45,7 @@ public class ProfileServlet extends HttpServlet {
 
   private final UserService userService = UserServiceFactory.getUserService();
   private final ProfileDatastore profileData = new ProfileDatastore();
+  private final FavoriteItemDatastore favoriteItemDatastore = FavoriteItemDatastore.getInstance();
   private final UserRecommendationUtils recommendationUtils = new UserRecommendationUtils();
 
   @Override
@@ -77,9 +83,13 @@ public class ProfileServlet extends HttpServlet {
         response.setContentType("application/json");
         response.getWriter().println(profileJson);
       } else {
+        Set<Long> itemIdsLikedByUser = favoriteItemDatastore.queryFavoriteIds(userEmail);
+        List<String> recommendedEmails = recommendationUtils.getRecommendedEmails(
+            getUsersWhoLikeLoggedInUserItems(userEmail, itemIdsLikedByUser));
+
         response.setContentType("application/json");
-        response.getWriter().println(new Gson().toJson(
-            new UserData(userProfile, recommendationUtils.getRecommendedEmails(userEmail))));
+        response.getWriter().println(
+            new Gson().toJson(new UserData(userProfile, recommendedEmails)));
       }
     }
   }
@@ -96,5 +106,21 @@ public class ProfileServlet extends HttpServlet {
   private boolean areValidParameters(String name, String username, String bio) {
     return (name != null && !name.isEmpty() && username != null && !username.isEmpty()
         && bio != null && !bio.isEmpty());
+  }
+
+  private Map<Long, Set<String>> getUsersWhoLikeLoggedInUserItems(
+      String userEmail, Set<Long> itemIds) {
+    Map<Long, Set<String>> itemLikes = new HashMap<>();
+
+    for (Long itemId : itemIds) {
+      Set<String> emails = favoriteItemDatastore.queryEmails(itemId);
+
+      // Remove the logged in user from the list to ignore it for recommendations.
+      emails.remove(userEmail);
+
+      itemLikes.put(itemId, emails);
+    }
+
+    return itemLikes;
   }
 }
