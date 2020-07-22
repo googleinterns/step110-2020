@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.EnumUtils;
 
 /*
  * Handles GET requests to retrieve EntertainmentItem entities
@@ -23,9 +24,8 @@ public class DashboardServlet extends HttpServlet {
   private static final String CURSOR_PARAMETER_KEY = "cursor";
   private static final String SEARCH_VALUE_PARAMETER_KEY = "searchValue";
   private static final String SORT_TYPE_PARAMETER_KEY = "sortType";
-  private static final String ASCENDING_TITLE_SORT = "ASCENDING_TITLE";
-  private static final String DESCENDING_TITLE_SORT = "DESCENDING_TITLE";
-  private static final String RECENT_RELEASE_DATE_SORT = "RECENT_RELEASE_DATE";
+
+  private enum SortType { ASCENDING_TITLE, DESCENDING_TITLE, RECENT_RELEASE_DATE };
 
   private static final int PAGE_SIZE = 18;
   private static final int MAX_SEARCH_VALUE_CHARS = 150;
@@ -54,7 +54,7 @@ public class DashboardServlet extends HttpServlet {
 
     response.setContentType("application/json");
     response.getWriter().println(
-        new Gson().toJson(getItemList(fetchOptions, searchValue, sortType)));
+        new Gson().toJson(getItemList(fetchOptions, searchValue, SortType.valueOf(sortType))));
   }
 
   /**
@@ -67,19 +67,17 @@ public class DashboardServlet extends HttpServlet {
    */
   private static boolean areGetRequestParametersValid(String searchValue, String sortType) {
     return (searchValue != null && searchValue.length() <= MAX_SEARCH_VALUE_CHARS)
-        && (sortType != null
-            && (sortType.equals(ASCENDING_TITLE_SORT) || sortType.equals(DESCENDING_TITLE_SORT)
-                || sortType.equals(RECENT_RELEASE_DATE_SORT)));
+        && (sortType != null && EnumUtils.isValidEnum(SortType.class, sortType));
   }
 
   private static EntertainmentItemList getItemList(
-      FetchOptions fetchOptions, String searchValue, String sortType) {
+      FetchOptions fetchOptions, String searchValue, SortType sortType) {
     EntertainmentItemDatastore itemDatastore = EntertainmentItemDatastore.getInstance();
 
-    if (sortType.equals(ASCENDING_TITLE_SORT)) {
+    if (sortType == SortType.ASCENDING_TITLE) {
       return itemDatastore.queryItemsByTitlePrefix(
           fetchOptions, searchValue, SortDirection.ASCENDING);
-    } else if (sortType.equals(DESCENDING_TITLE_SORT)) {
+    } else if (sortType == SortType.DESCENDING_TITLE) {
       return itemDatastore.queryItemsByTitlePrefix(
           fetchOptions, searchValue, SortDirection.DESCENDING);
     } else {
