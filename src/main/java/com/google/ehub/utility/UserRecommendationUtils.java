@@ -1,10 +1,10 @@
 package com.google.ehub.utility;
 
-import com.google.ehub.data.FavoriteItemDatastore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Utility class that implements the algorithm used to recommend the users that have the most common
@@ -12,23 +12,15 @@ import java.util.Map;
  */
 public final class UserRecommendationUtils {
   private static final int MAX_NUMBER_OF_RECOMMENDATIONS = 10;
-  private static final FavoriteItemDatastore favoriteItemDatastore =
-      FavoriteItemDatastore.getInstance();
 
   /**
-   * Finds the most recommended emails up to a given limit.
+   * Finds the most recommended emails up to a maximum of ten recommendations in descending order.
    *
-   * @param userEmail the email of the user that wants to search for its recommended email list
-   * @return list containing the most recommended emails
+   * @param itemLikes map with the key representing an itemId and the value representing the emails
+   *     that liked that item
+   * @return list containing the most recommended emails in descending order
    */
-  public List<String> getRecommendedEmails(String userEmail) {
-    List<Long> itemIdsLikedByUser = favoriteItemDatastore.queryFavoriteIds(userEmail);
-    Map<Long, List<String>> itemLikes = getUsersWhoLikeItems(itemIdsLikedByUser);
-
-    return getRecommendedEmailsFromItemLikes(itemLikes);
-  }
-
-  private List<String> getRecommendedEmailsFromItemLikes(Map<Long, List<String>> itemLikes) {
+  public List<String> getRecommendedEmails(Map<Long, Set<String>> itemLikes) {
     List<String> recommendedEmails = new ArrayList<String>();
 
     // TODO: Implement algorithm that finds the users that have the highest amount of common items,
@@ -37,15 +29,5 @@ public final class UserRecommendationUtils {
     // "maxNumberOfRecommendations"
 
     return recommendedEmails;
-  }
-
-  private Map<Long, List<String>> getUsersWhoLikeItems(List<Long> itemIds) {
-    Map<Long, List<String>> itemLikes = new HashMap<>();
-
-    for (Long itemId : itemIds) {
-      itemLikes.put(itemId, favoriteItemDatastore.queryEmails(itemId));
-    }
-
-    return itemLikes;
   }
 }

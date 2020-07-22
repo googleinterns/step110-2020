@@ -25,6 +25,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Set;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -175,7 +177,7 @@ public class ProfileServletTest {
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter)
         .println(new Gson().toJson(new UserData(new UserProfile(NAME, USERNAME, BIO, EMAIL),
-            new UserRecommendationUtils().getRecommendedEmails(EMAIL))));
+            new UserRecommendationUtils().getRecommendedEmails(new HashMap<Long, Set<String>>()))));
   }
 
   @Test
