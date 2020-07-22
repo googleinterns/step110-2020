@@ -2,7 +2,9 @@ package com.google.ehub.utility;
 
 import com.google.ehub.data.FavoriteItemDatastore;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class that implements the algorithm used to recommend the users that have the most common
@@ -19,17 +21,14 @@ public final class UserRecommendationUtils {
    * @param userEmail the email of the user that wants to search for its recommended email list
    * @return list containing the most recommended emails
    */
-  public List<String> getRecommendedEmails(
-      String userEmail) {
+  public List<String> getRecommendedEmails(String userEmail) {
     List<Long> itemIdsLikedByUser = favoriteItemDatastore.queryFavoriteIds(userEmail);
-    List<List<String>> emailsThatLikedSameItem =
-        getEmailsThatLikeSameItemsAsUser(itemIdsLikedByUser);
+    Map<Long, List<String>> itemLikes = getUsersWhoLikeItems(itemIdsLikedByUser);
 
-    return getRecommendedEmailsFromEmailList(emailsThatLikedSameItem);
+    return getRecommendedEmailsFromItemLikes(itemLikes);
   }
 
-  private List<String> getRecommendedEmailsFromEmailList(
-      List<List<String>> emailsThatLikedSameItem) {
+  private List<String> getRecommendedEmailsFromItemLikes(Map<Long, List<String>> itemLikes) {
     List<String> recommendedEmails = new ArrayList<String>();
 
     // TODO: Implement algorithm that finds the users that have the highest amount of common items,
@@ -40,14 +39,13 @@ public final class UserRecommendationUtils {
     return recommendedEmails;
   }
 
-  private List<List<String>> getEmailsThatLikeSameItemsAsUser(
-      List<Long> itemIdsLikedByUser) {
-    List<List<String>> emailsThatLikedSameItem = new ArrayList<>();
+  private Map<Long, List<String>> getUsersWhoLikeItems(List<Long> itemIds) {
+    Map<Long, List<String>> itemLikes = new HashMap<>();
 
-    for (Long itemId : itemIdsLikedByUser) {
-      emailsThatLikedSameItem.add(favoriteItemDatastore.queryEmails(itemId));
+    for (Long itemId : itemIds) {
+      itemLikes.put(itemId, favoriteItemDatastore.queryEmails(itemId));
     }
 
-    return emailsThatLikedSameItem;
+    return itemLikes;
   }
 }
