@@ -5,9 +5,9 @@ import java.util.List;
 /**
  * Holds user information used to create JSON object for Profile Servlet's Get request response.
  */
-public class UserData {
-  private UserProfile profile;
-  private List<String> recommendedUsers;
+public final class UserData {
+  private final UserProfile profile;
+  private final List<String> recommendedUsers;
 
   public UserData(UserProfile profile, List<String> recommendedUsers) {
     this.profile = profile;
