@@ -9,7 +9,7 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// See the License for the specific language governing permissions and      
 // limitations under the License.
 
 package com.google.ehub.servlets;
@@ -20,11 +20,15 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.data.CommentData;
 import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.ehub.data.ItemPageData;
+import com.google.ehub.data.ProfileDatastore;
+import com.google.ehub.data.UserProfile;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,10 +42,12 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that compiles the data for the item page*/
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
+  private final UserService userService = UserServiceFactory.getUserService();
+  private final ProfileDatastore profileData = new ProfileDatastore();
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long itemId = Long.parseLong(request.getParameter("itemId"));
-
     Optional<EntertainmentItem> optionalItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId);
 
@@ -68,14 +74,18 @@ public class ItemPageServlet extends HttpServlet {
       System.err.println("Can't parse itemId to a long");
       return;
     }
-    String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
-    if (comment == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
-      return;
+    if (!userService.isUserLoggedIn()) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
     } else {
-      long timestampMillis = System.currentTimeMillis();
-      CommentDataManager comments = new CommentDataManager();
-      comments.addItemComment(itemId, comment, timestampMillis);
+      String email = userService.getCurrentUser().getEmail();
+      String comment = request.getParameter(CommentDataManager.COMMENT_PROPERTY_KEY);
+      if (comment == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Comment was not entered.");
+      } else {
+        long timestampMillis = System.currentTimeMillis();
+        CommentDataManager comments = new CommentDataManager();
+        comments.addItemComment(itemId, comment, timestampMillis, email);
+      }
     }
   }
 }

@@ -12,13 +12,43 @@ async function loadItemPage() {
       fetch(`/itempagedata?itemId=${itemId}`)
         .then((response) => response.json())
         .then((itemPageData) => {
-          createSelectedItemCard(itemPageData.item);
-          getItemPageComments(itemPageData.comments);
+          fetch("/login")
+            .then((response) => response.json())
+            .then((loginResponse) => {
+              createSelectedItemCard(itemPageData.item);
+              getItemPageComments(itemPageData.comments);
+              if (!loginResponse.isUserLoggedIn) {
+                hideCommentBox();
+                const login = $("#login");
+                login.append(
+                  $(
+                    '<a href="' +
+                      loginResponse.LoginURL +
+                      '"><button type="button" class="btn btn-dark my-sm-0">Login to Comment</button></a>'
+                  )
+                );
+              }
+            })
+            .catch((error) => {
+              console.log("failed to fetch login status: " + error);
+            });
         });
     } else {
       console.log("ItemId is empty!");
     }
   });
+}
+
+/**
+ * Hides input box when user is not logged in
+ */
+function hideCommentBox() {
+  const comment = document.getElementById("comment-box");
+  if (comment.style.display === "none") {
+    comment.style.display = "block";
+  } else {
+    comment.style.display = "none";
+  }
 }
 
 /**
@@ -40,8 +70,23 @@ async function createSelectedItemCard(entertainmentItem) {
         "</h5>"
     )
   );
+
+  cardBody.append(
+    $(
+      '<h5 class="card-title"><b>Runtime: </b>' +
+        entertainmentItem.runtime +
+        "</h5>"
+    )
+  );
   cardBody.append(
     $('<h5 class="card-title">' + entertainmentItem.genre + "</h5>")
+  );
+  cardBody.append(
+    $(
+      '<h5 class="card-title"><b>Cast: </b>' +
+        entertainmentItem.actors +
+        "</h5>"
+    )
   );
   cardBody.append(
     $(
@@ -82,7 +127,13 @@ function getItemPageComments(comments) {
     const date = new Date(commentDataManager.timestampMillis);
     commentContainer.append(
       createListElement(
-        commentDataManager.comment + " - " + "(" + date.toLocaleString() + ")"
+        commentDataManager.username +
+          ": " +
+          commentDataManager.comment +
+          " - " +
+          "(" +
+          date.toLocaleString() +
+          ")"
       )
     );
   });

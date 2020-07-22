@@ -20,6 +20,7 @@ import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.ehub.data.ItemPageData;
+import com.google.ehub.data.ProfileDatastore;
 import com.google.ehub.servlets.ItemPageServlet;
 import com.google.gson.Gson;
 import java.lang.Object.*;
@@ -52,6 +53,8 @@ public class ItemPageServletTest {
   private static final String OMDB_ID = "tt23113212";
   private static final String COMMENT = "Nice";
   private static final Long TIMESTAMP = 1093923L;
+  private static final String EMAIL = "eeirikannu@gmail.com";
+  private static final String USERNAME = "AirwreckEye";
 
   private final ItemPageServlet servlet = new ItemPageServlet();
   private final CommentDataManager commentDataManager = new CommentDataManager();
@@ -67,6 +70,8 @@ public class ItemPageServletTest {
   public void init() {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
+    ProfileDatastore profile = new ProfileDatastore();
+    profile.addUserProfileToDatastore("Eric", EMAIL, USERNAME, "Hey");
   }
 
   @After
@@ -91,9 +96,9 @@ public class ItemPageServletTest {
     Key itemId = EntertainmentItemDatastore.getInstance().addItemToDatastore(selectedItem);
     when(request.getParameter("itemId")).thenReturn(itemId.getId() + "");
     when(response.getWriter()).thenReturn(printWriter);
-    commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP );
+    commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     servlet.doGet(request, response);
-    CommentData comment = new CommentData(itemId.getId(), COMMENT , TIMESTAMP);
+    CommentData comment = new CommentData(itemId.getId(), COMMENT, TIMESTAMP, USERNAME);
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
@@ -112,7 +117,7 @@ public class ItemPageServletTest {
   @Test
   public void doPostAddsValidComment() throws IOException {
     when(request.getParameter("itemId")).thenReturn("12345");
-    commentDataManager.addItemComment(12345, COMMENT , TIMESTAMP);
+    commentDataManager.addItemComment(12345, COMMENT, TIMESTAMP, EMAIL);
     servlet.doPost(request, response);
     Assert.assertEquals(1, commentDataManager.retrieveComments(12345).size());
   }

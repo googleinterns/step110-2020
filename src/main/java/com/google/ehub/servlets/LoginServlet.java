@@ -38,7 +38,6 @@ public class LoginServlet extends HttpServlet {
       String loginUrl = userService.createLoginURL("/ProfilePage.html");
       loginJson.addProperty(LOGIN_URL_KEY, loginUrl);
       loginJson.addProperty(LOGOUT_URL_KEY, "");
-        
     }
     loginJson.addProperty(IS_USER_LOGGED_IN_KEY, userService.isUserLoggedIn());
     response.setContentType("application/json");

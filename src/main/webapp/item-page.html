@@ -14,7 +14,7 @@
     />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="script.js"></script>
+    <script src="dashboard-script.js"></script>
     <script src="itempagescript.js"></script>
   </head>
 
@@ -34,15 +34,18 @@
         <ul class="list-group" id="comment-container"></ul>
         <div id="comments" class="p-1">
           <form>
-            <h4>Enter a comment below</h4>
-            <textarea id="comment"></textarea>
-            <button
-              type="button"
-              class="btn btn-dark my-sm-0"
-              onclick="sendFormData()"
-            >
-              Submit
-            </button>
+            <div id="comment-box">
+              <h4>Enter a comment below</h4>
+              <textarea id="comment"></textarea>
+              <button
+                type="button"
+                class="btn btn-dark my-sm-0"
+                onclick="sendFormData()"
+              >
+                Submit
+              </button>
+            </div>
+            <div id="login"></div>
           </form>
         </div>
       </footer>
