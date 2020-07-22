@@ -43,7 +43,7 @@ async function loadItemPage() {
  * Hides input box when user is not logged in
  */
 function hideCommentBox() {
-  var comment = document.getElementById("comment-box");
+  const comment = document.getElementById("comment-box");
   if (comment.style.display === "none") {
     comment.style.display = "block";
   } else {
