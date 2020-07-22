@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 /**
  * Utility class that implements the algorithm used to recommend the users that have the most common
@@ -17,21 +17,20 @@ public final class UserRecommendationUtils {
 
   /**
    * Finds the most recommended emails up to a maximum of ten recommendations in descending order.
+   * In the case of a tie, the order will use increasing lexicographical order.
    *
    * @param itemLikes map with the key representing an itemId and the value representing the emails
    *     that liked that item
    * @return list containing the most recommended emails in descending order
    */
   public List<String> getRecommendedEmails(Map<Long, Set<String>> itemLikes) {
-    List<String> recommendedEmails = new ArrayList<String>();
-
-    return recommendedEmails;
+    return getRecommendedEmailsInDescendingOrder(getEmailMinHeap(getEmailFreqs(itemLikes)));
   }
 
-  private Map<String, Integer> getEmailFreqs(Map<Long, List<String>> itemLikes, String userEmail) {
+  private Map<String, Integer> getEmailFreqs(Map<Long, Set<String>> itemLikes) {
     Map<String, Integer> emailFreqs = new HashMap<String, Integer>();
 
-    for (Map.Entry<Long, List<String>> emailGroup : itemLikes.entrySet()) {
+    for (Map.Entry<Long, Set<String>> emailGroup : itemLikes.entrySet()) {
       for (String email : emailGroup.getValue()) {
         emailFreqs.merge(email, 1, (oldFreq, deltaFreq) -> oldFreq + deltaFreq);
       }
@@ -42,8 +41,14 @@ public final class UserRecommendationUtils {
 
   private PriorityQueue<Map.Entry<String, Integer>> getEmailMinHeap(
       Map<String, Integer> emailFreqs) {
-    PriorityQueue<Map.Entry<String, Integer>> emailMinHeap =
-        new PriorityQueue<>((a, b) -> Integer.compare(a.getValue(), b.getValue()));
+    PriorityQueue<Map.Entry<String, Integer>> emailMinHeap = new PriorityQueue<>((a, b) -> {
+      // If the counts are tied, then compare emails lexicographically.
+      if (a.getValue() == b.getValue()) {
+        return b.getKey().compareTo(a.getKey());
+      }
+
+      return Integer.compare(a.getValue(), b.getValue());
+    });
 
     for (Map.Entry<String, Integer> entry : emailFreqs.entrySet()) {
       emailMinHeap.offer(entry);
