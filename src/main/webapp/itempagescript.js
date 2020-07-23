@@ -2,8 +2,8 @@
  * Retrieves ItemPageData and forms page using other functions.
  */
 async function loadItemPage() {
-  $(document).ready(function () {
-    $("#navbar").load("navbar.html", function () {
+  $(document).ready(function() {
+    $("#navbar").load("navbar.html", function() {
       initializeNavBarProfileSection();
     });
     const itemId = getUrlParam("itemId");
@@ -23,8 +23,8 @@ async function loadItemPage() {
                 login.append(
                   $(
                     '<a href="' +
-                      loginResponse.LoginURL +
-                      '"><button type="button" class="btn btn-dark my-sm-0">Login to Comment</button></a>'
+                    loginResponse.LoginURL +
+                    '"><button type="button" class="btn btn-dark my-sm-0">Login to Comment</button></a>'
                   )
                 );
               }
@@ -63,19 +63,19 @@ async function createSelectedItemCard(entertainmentItem) {
   cardBody.append(
     $(
       '<h5 class="card-title">' +
-        entertainmentItem.title +
-        "(" +
-        entertainmentItem.releaseDate +
-        ")" +
-        "</h5>"
+      entertainmentItem.title +
+      "(" +
+      entertainmentItem.releaseDate +
+      ")" +
+      "</h5>"
     )
   );
 
   cardBody.append(
     $(
       '<h5 class="card-title"><b>Runtime: </b>' +
-        entertainmentItem.runtime +
-        "</h5>"
+      entertainmentItem.runtime +
+      "</h5>"
     )
   );
   cardBody.append(
@@ -84,15 +84,15 @@ async function createSelectedItemCard(entertainmentItem) {
   cardBody.append(
     $(
       '<h5 class="card-title"><b>Cast: </b>' +
-        entertainmentItem.actors +
-        "</h5>"
+      entertainmentItem.actors +
+      "</h5>"
     )
   );
   cardBody.append(
     $(
       '<p class="card-text"><b>Description: </b>' +
-        entertainmentItem.description +
-        "</p>"
+      entertainmentItem.description +
+      "</p>"
     )
   );
 
@@ -109,10 +109,10 @@ async function sendFormData() {
   const itemId = getUrlParam("itemId");
   if (comment != "" && itemId != null) {
     $.post("/itempagedata", { comment: comment, itemId: itemId })
-      .done(function () {
+      .done(function() {
         window.location.reload();
       })
-      .fail(function () {
+      .fail(function() {
         console.log("Failed to send form data");
       });
   }
@@ -125,27 +125,36 @@ function getItemPageComments(comments) {
   const commentContainer = $("#comment-container");
   comments.forEach((commentDataManager) => {
     const date = new Date(commentDataManager.timestampMillis);
+    const commentId = commentDataManager.commentId;
+    const commentKind = commentDataManager.commentKind;
     commentContainer.append(
       createListElement(
         commentDataManager.username +
-          ": " +
-          commentDataManager.comment +
-          " - " +
-          "(" +
-          date.toLocaleString() +
-          ")"
+        ": " +
+        commentDataManager.comment +
+        " - " +
+        "(" +
+        date.toLocaleString() +
+        ")", commentDataManager.belongsToUser,
+        commentId, commentKind
       )
     );
   });
 }
 
 /**
- * Creates list element which houses comments.
+ * Finds a query string parameter in the current Url.
+ *
+ * @param { string } comment - the comment including the username, message, and timestamp
+ * @param { boolean } belongsToUser - boolean that shows whether or not the current user has posted a comment
+ * @returns { html element }  returns a list element
  */
-function createListElement(comment) {
-  const liElement = document.createElement("li");
-  liElement.className = "list-group-item";
-  liElement.append(comment);
+function createListElement(comment, belongsToUser) {
+  const liElement = $('<li class="list-group-item"></li>');
+  liElement.text(comment);
+  if (belongsToUser) {
+    liElement.append($('<i class="fa fa-trash" style="float:right;"></i>'));
+  }
   return liElement;
 }
 
