@@ -3,12 +3,12 @@
  */
 async function loadItemPage() {
   $(document).ready(function() {
-    $("#navbar").load("navbar.html", function() {
+    $('#navbar').load('navbar.html', function() {
       initializeNavBarProfileSection();
     });
-    const itemId = getUrlParam("itemId");
+    const itemId = getUrlParam('itemId');
 
-    if (itemId !== "") {
+    if (itemId !== '') {
       fetch(`/itempagedata?itemId=${itemId}`)
         .then((response) => response.json())
         .then((itemPageData) => {
@@ -34,7 +34,7 @@ async function loadItemPage() {
             });
         });
     } else {
-      console.log("ItemId is empty!");
+      console.log('ItemId is empty!');
     }
   });
 }
@@ -57,8 +57,7 @@ function hideCommentBox() {
 async function createSelectedItemCard(entertainmentItem) {
   const card = $('<div class="mt-2" class="card bg-light"></div>');
   card.append(
-    $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">')
-  );
+      $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
     $(
@@ -79,8 +78,7 @@ async function createSelectedItemCard(entertainmentItem) {
     )
   );
   cardBody.append(
-    $('<h5 class="card-title">' + entertainmentItem.genre + "</h5>")
-  );
+      $('<h5 class="card-title">' + entertainmentItem.genre + '</h5>'));
   cardBody.append(
     $(
       '<h5 class="card-title"><b>Cast: </b>' +
@@ -88,6 +86,7 @@ async function createSelectedItemCard(entertainmentItem) {
       "</h5>"
     )
   );
+
   cardBody.append(
     $(
       '<p class="card-text"><b>Description: </b>' +
@@ -95,9 +94,8 @@ async function createSelectedItemCard(entertainmentItem) {
       "</p>"
     )
   );
-
   card.append(cardBody);
-  const itemContainer = $("#item-container");
+  const itemContainer = $('#item-container');
   itemContainer.append(card);
 }
 
@@ -122,7 +120,7 @@ async function sendFormData() {
  * Function which builds the comment element from the ItemPageData object
  */
 function getItemPageComments(comments) {
-  const commentContainer = $("#comment-container");
+  const commentContainer = $('#comment-container');
   comments.forEach((commentDataManager) => {
     const date = new Date(commentDataManager.timestampMillis);
     const commentId = commentDataManager.commentId;
@@ -143,7 +141,7 @@ function getItemPageComments(comments) {
 }
 
 /**
- * Finds a query string parameter in the current Url.
+ * Creates list element from given comment
  *
  * @param { string } comment - the comment including the username, message, and timestamp
  * @param { boolean } belongsToUser - boolean that shows whether or not the current user has posted a comment
@@ -155,6 +153,7 @@ function createListElement(comment, belongsToUser) {
   if (belongsToUser) {
     liElement.append($('<i class="fa fa-trash" style="float:right;"></i>'));
   }
+
   return liElement;
 }
 
@@ -171,5 +170,5 @@ function getUrlParam(param) {
     return urlParams.get(param);
   }
 
-  return "";
+  return '';
 }

@@ -4,11 +4,11 @@
  * dashboard page.
  */
 function loadDashboardPage() {
-  $(document).ready(function () {
-    $("#itemSubmissionDiv").load("item-submission-dialog.html");
+  $(document).ready(function() {
+    $('#itemSubmissionDiv').load('item-submission-dialog.html');
 
-    $("#navbar").load("navbar.html", function () {
-      $("#navbarDashboardSection").removeClass("d-none");
+    $('#navbar').load('navbar.html', function() {
+      $('#navbarDashboardSection').removeClass('d-none');
 
       initializeNavBarProfileSection();
       initializeSearchInput();
@@ -24,48 +24,37 @@ function loadDashboardPage() {
  * adds a link to login.
  */
 function initializeNavBarProfileSection() {
-  fetch("/login")
-    .then((response) => response.json())
-    .then((loginResponse) => {
-      const profileLinks = $("#profileLinks");
-      const logLinks = $("#logLinks");
+  fetch('/login')
+      .then((response) => response.json())
+      .then((loginResponse) => {
+        const profileLinks = $('#profileLinks');
+        const logLinks = $('#logLinks');
 
-      if (loginResponse.isUserLoggedIn) {
-        profileLinks.append(
-          $(
-            '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'
-          )
-        );
-        logLinks.append(
-          $(
-            '<a class="nav-link text-light" href="' +
-              loginResponse.LogoutURL +
-              '">Logout</a>'
-          )
-        );
-      } else {
-        profileLinks.append(
-          $(
-            '<a class="nav-link text-light" href="' +
-              loginResponse.LoginURL +
-              '">Login</a>'
-          )
-        );
-      }
-    })
-    .catch((error) => {
-      console.log("failed to fetch login status: " + error);
-    });
+        if (loginResponse.isUserLoggedIn) {
+          profileLinks.append($(
+              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+          logLinks.append(
+              $('<a class="nav-link text-light" href="' +
+                loginResponse.LogoutURL + '">Logout</a>'));
+        } else {
+          profileLinks.append(
+              $('<a class="nav-link text-light" href="' +
+                loginResponse.LoginURL + '">Login</a>'));
+        }
+      })
+      .catch((error) => {
+        console.log('failed to fetch login status: ' + error);
+      });
 }
 
 /**
  * Loads the stored value used for the search input from sessionStorage
  */
 function initializeSearchInput() {
-  const searchVal = sessionStorage.getItem("searchVal");
+  const searchVal = sessionStorage.getItem('searchVal');
 
   if (searchVal !== null) {
-    $("#searchValue").val(searchVal);
+    $('#searchValue').val(searchVal);
   }
 }
 
@@ -74,10 +63,10 @@ function initializeSearchInput() {
  * sessionStorage
  */
 function initializeSortSelector() {
-  const sortVal = sessionStorage.getItem("sortVal");
+  const sortVal = sessionStorage.getItem('sortVal');
 
   if (sortVal !== null) {
-    $("#sortType").val(sortVal);
+    $('#sortType').val(sortVal);
   }
 }
 
@@ -87,39 +76,36 @@ function initializeSortSelector() {
  * have correct like button state.
  */
 async function initializeDashboard() {
-  Promise.allSettled([
-    fetch(
-      "/dashboard?searchValue=" +
-        $("#searchValue").val() +
-        "&sortType=" +
-        $("#sortType").val()
-    ),
-    fetch("/favorite-item"),
-  ]).then(async (results) => {
-    dashboardResult = results[0];
-    favResult = results[1];
+  Promise
+      .allSettled([
+        fetch(
+            '/dashboard?searchValue=' + $('#searchValue').val() +
+            '&sortType=' + $('#sortType').val()),
+        fetch('/favorite-item'),
+      ])
+      .then(async (results) => {
+        dashboardResult = results[0];
+        favResult = results[1];
 
-    if (!dashboardResult.value.ok) {
-      console.log(
-        "Failed to fetch Entertainment Items from DashboardServlet: " +
-          dashboardResult.reason
-      );
-      return;
-    }
+        if (!dashboardResult.value.ok) {
+          console.log(
+              'Failed to fetch Entertainment Items from DashboardServlet: ' +
+              dashboardResult.reason);
+          return;
+        }
 
-    try {
-      const entertainmentItems = await dashboardResult.value.json();
-      const favoriteItemIds = favResult.value.ok
-        ? await favResult.value.json()
-        : [];
+        try {
+          const entertainmentItems = await dashboardResult.value.json();
+          const favoriteItemIds =
+              favResult.value.ok ? await favResult.value.json() : [];
 
-      setupSeachInputCallback(favoriteItemIds);
-      setupSortSelectorCallback(favoriteItemIds);
-      updateDashboardItems(entertainmentItems, favoriteItemIds);
-    } catch (error) {
-      console.log("Failed to populate dashboard: " + error);
-    }
-  });
+          setupSeachInputCallback(favoriteItemIds);
+          setupSortSelectorCallback(favoriteItemIds);
+          updateDashboardItems(entertainmentItems, favoriteItemIds);
+        } catch (error) {
+          console.log('Failed to populate dashboard: ' + error);
+        }
+      });
 }
 
 /**
@@ -130,8 +116,8 @@ async function initializeDashboard() {
  *     have been liked by the logged in user
  */
 function setupSeachInputCallback(favoriteItemIds) {
-  $("#searchValue").on("input", function () {
-    sessionStorage.setItem("searchVal", $(this).val());
+  $('#searchValue').on('input', function() {
+    sessionStorage.setItem('searchVal', $(this).val());
     getEntertainmentItems(favoriteItemIds);
   });
 }
@@ -144,8 +130,8 @@ function setupSeachInputCallback(favoriteItemIds) {
  *     have been liked by the logged in user
  */
 function setupSortSelectorCallback(favoriteItemIds) {
-  $("#sortType").change(function () {
-    sessionStorage.setItem("sortVal", $(this).val());
+  $('#sortType').change(function() {
+    sessionStorage.setItem('sortVal', $(this).val());
     getEntertainmentItems(favoriteItemIds);
   });
 }
@@ -161,11 +147,8 @@ function setupSortSelectorCallback(favoriteItemIds) {
  *     items again if true
  */
 function updateDashboardItems(
-  entertainmentItems,
-  favoriteItemIds,
-  clearCurrentItems = true
-) {
-  const itemContainer = $("#entertainmentItemsContainer");
+    entertainmentItems, favoriteItemIds, clearCurrentItems = true) {
+  const itemContainer = $('#entertainmentItemsContainer');
 
   // Pagination does not need to refresh dashboard items, but searching
   // and sorting does.
@@ -189,34 +172,20 @@ function updateDashboardItems(
  *     items again if true
  */
 function getEntertainmentItems(
-  favoriteItemIds,
-  pageCursor = "",
-  clearCurrentItems = true
-) {
+    favoriteItemIds, pageCursor = '', clearCurrentItems = true) {
   fetch(
-    "/dashboard?cursor=" +
-      pageCursor +
-      "&searchValue=" +
-      $("#searchValue").val() +
-      "&sortType=" +
-      $("#sortType").val()
-  )
-    .then((response) => response.json())
-    .then((entertainmentItems) => {
-      updateDashboardItems(
-        entertainmentItems,
-        favoriteItemIds,
-        clearCurrentItems
-      );
-    })
-    .catch((error) => {
-      console.log(
-        "Failed to fetch Entertainment Items on page with cursor: " +
-          pageCursor +
-          ", and error: " +
-          error
-      );
-    });
+      '/dashboard?cursor=' + pageCursor + '&searchValue=' +
+      $('#searchValue').val() + '&sortType=' + $('#sortType').val())
+      .then((response) => response.json())
+      .then((entertainmentItems) => {
+        updateDashboardItems(
+            entertainmentItems, favoriteItemIds, clearCurrentItems);
+      })
+      .catch((error) => {
+        console.log(
+            'Failed to fetch Entertainment Items on page with cursor: ' +
+            pageCursor + ', and error: ' + error);
+      });
 }
 
 /**
@@ -231,10 +200,7 @@ function getEntertainmentItems(
  *     have been liked by the logged in user
  */
 function populateItemGrid(
-  entertainmentItemsContainer,
-  entertainmentItems,
-  favoriteItemIds
-) {
+    entertainmentItemsContainer, entertainmentItems, favoriteItemIds) {
   let currItemIndex = 0;
 
   while (currItemIndex < entertainmentItems.length) {
@@ -247,11 +213,9 @@ function populateItemGrid(
     // The loop adds cells containing cards to the current row element until it
     // reaches the maximum limit of cells per row, or if all the items on the
     // list have been included.
-    for (
-      let cell = 0;
-      cell < MAX_CELLS_PER_ROW && currItemIndex < entertainmentItems.length;
-      cell++, currItemIndex++
-    ) {
+    for (let cell = 0;
+         cell < MAX_CELLS_PER_ROW && currItemIndex < entertainmentItems.length;
+         cell++, currItemIndex++) {
       const item = entertainmentItems[currItemIndex];
 
       // If uniqueId Optional is empty then the item should not be created.
@@ -284,30 +248,20 @@ function populateItemGrid(
 function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-    $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">')
-  );
+      $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(
-    $(
-      '<a class="stretched-link" href="item-page.html?itemId=' +
-        entertainmentItem.uniqueId.value +
-        '"></a>'
-    )
-  );
+      $('<a class="stretched-link" href="item-page.html?itemId=' +
+        entertainmentItem.uniqueId.value + '"></a>'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-    $('<h5 class="card-title text-center">' + entertainmentItem.title + "</h5>")
-  );
+      $('<h5 class="card-title text-center">' + entertainmentItem.title +
+        '</h5>'));
   cardBody.append(
-    $(
-      '<p class="card-text text-center">' +
-        entertainmentItem.description +
-        "</p>"
-    )
-  );
+      $('<p class="card-text text-center">' + entertainmentItem.description +
+        '</p>'));
   cardBody.append(
-    createLikeButton(favoriteItemIds, entertainmentItem.uniqueId.value)
-  );
+      createLikeButton(favoriteItemIds, entertainmentItem.uniqueId.value));
 
   card.append(cardBody);
 
@@ -324,19 +278,15 @@ function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
  *     next page
  */
 function updatePagination(favoriteItemIds, pageCursor) {
-  $(window)
-    .off()
-    .scroll(function () {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        $(window).off("scroll");
+  $(window).off().scroll(function() {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      $(window).off('scroll');
 
-        getEntertainmentItems(
-          favoriteItemIds,
-          pageCursor,
-          /* Clear items */ false
-        );
-      }
-    });
+      getEntertainmentItems(
+          favoriteItemIds, pageCursor,
+          /* Clear items */ false);
+    }
+  });
 }
 
 /**
@@ -347,5 +297,5 @@ function updatePagination(favoriteItemIds, pageCursor) {
  *     false
  */
 function isOptionalEmpty(optional) {
-  return $.isEmptyObject(optional) || !optional.hasOwnProperty("value");
+  return $.isEmptyObject(optional) || !optional.hasOwnProperty('value');
 }
