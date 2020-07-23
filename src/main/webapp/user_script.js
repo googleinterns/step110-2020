@@ -26,9 +26,7 @@ function loadProfile() {
         bioSection.value = profile.bio;
 
         const profileImage = document.getElementById('avatar');
-        const username = profile.username;
-        const avatarLetter = username.charAt(0);
-        profileImage.src = 'https://icotar.com/avatar/' + avatarLetter;
+        profileImage.src = getProfileImageUrl(profile.username);
 
         loadRecommendedUsers(userData.recommendedUsers);
       })
@@ -120,6 +118,14 @@ function createFavoriteItemCard(entertainmentItem) {
  */
 function loadRecommendedUsers(recommendedUsers) {
   const usersContainer = $('#recommendedUsersContainer');
+
+  if (recommendedUsers.length === 0) {
+    usersContainer.append(
+        $('<p class="lead text-center">Like some items to see if there are' +
+          ' other users with similar preferences.</p>'));
+    return;
+  }
+
   const usersRow = $('<div class="row"></div>');
   usersContainer.append(usersRow);
 
@@ -147,8 +153,8 @@ function loadRecommendedUsers(recommendedUsers) {
 function createProfileCard(profile) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-      $('<img class="card-img-top" src="https://icotar.com/avatar/' +
-        profile.username.charAt(0) + '">'));
+      $('<img class="card-img-top" src="' +
+        getProfileImageUrl(profile.username) + '">'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -157,4 +163,15 @@ function createProfileCard(profile) {
   card.append(cardBody);
 
   return card;
+}
+
+/**
+ * Returns the profile image Url from a custom avatar website.
+ *
+ * @param { string } username - the username that is used to generate the avatar
+ *     picture, this function assumes that the username is not an empty string
+ * @returns { string } Url to the image used as the avatar.
+ */
+function getProfileImageUrl(username) {
+  return 'https://icotar.com/avatar/' + username.charAt(0);
 }
