@@ -126,7 +126,6 @@ function getItemPageComments(comments) {
   comments.forEach((commentDataManager) => {
     const date = new Date(commentDataManager.timestampMillis);
     const commentId = commentDataManager.commentId;
-    const commentKind = commentDataManager.commentKind;
     commentContainer.append(
       createListElement(
         commentDataManager.username +
@@ -135,8 +134,7 @@ function getItemPageComments(comments) {
         " - " +
         "(" +
         date.toLocaleString() +
-        ")", commentDataManager.belongsToUser,
-        commentId, commentKind
+        ")", commentDataManager.belongsToUser
       )
     );
   });

@@ -64,7 +64,7 @@ public class CommentDataManager {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery comments = datastore.prepare(itemCommentQuery);
     for (Entity entity : comments.asIterable()) {
-      String storedEmail= (String) entity.getProperty(EMAIL_PROPERTY_KEY);
+      String storedEmail = (String) entity.getProperty(EMAIL_PROPERTY_KEY);
       UserProfile userProfile = profileData.getUserProfile(storedEmail);
       if(userProfile == null){
         continue;
@@ -74,24 +74,16 @@ public class CommentDataManager {
       
       String username = userProfile.getUsername(); 
       long commentId = entity.getKey().getId();
-      String commentKind = entity.getKey().getKind();
       String currentEmail = userService.getCurrentUser().getEmail();
       Boolean belongsToUser;
-
-      if(!storedEmail.equals(currentEmail)){
-        belongsToUser = false;
-      }
-      else{
-        belongsToUser = true;
-        }
-      results.add(new CommentData(itemId, comment, timestampMillis, username, commentId, commentKind, belongsToUser));
+      boolean belongsToUser = storedEmail.equals(currentEmail);
+      results.add(new CommentData(itemId, comment, timestampMillis, username, commentId, COMMENT_KIND_KEY, belongsToUser));
     }
    return results;
 }
 
-  public void deleteComment (long commentId, String commentKind) {
+  public void deleteComment (long commentId, String COMMENT_KIND_KEY) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.delete(KeyFactory.createKey(commentKind, commentId));
-
+    datastore.delete(KeyFactory.createKey(COMMENT_KIND_KEY, commentId));
   }
 }
