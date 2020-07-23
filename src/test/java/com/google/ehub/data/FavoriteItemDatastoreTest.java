@@ -8,8 +8,9 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import java.util.ArrayList;
+import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -89,33 +90,32 @@ public class FavoriteItemDatastoreTest {
   }
 
   @Test
-  public void queryFavoriteIdsWithNonExistentEmail_listIsEmpty() {
+  public void queryFavoriteIdsWithNonExistentEmail_setIsEmpty() {
     Assert.assertTrue(favoriteItemDatastore.queryFavoriteIds(USER_EMAIL).isEmpty());
   }
 
   @Test
-  public void queryFavoriteIdsWithEmailThatHasLikes_listContainsLikedIds() {
-    List<Long> favoriteIds = new ArrayList<>();
+  public void queryFavoriteIdsWithEmailThatHasLikes_setContainsLikedIds() {
+    Set<Long> favoriteIds = new HashSet<>();
 
     for (Long Id = 0L; Id < 5; Id++) {
       favoriteItemDatastore.addFavoriteItem(USER_EMAIL, Id);
       favoriteIds.add(Id);
     }
 
-    List<Long> actualIds = favoriteItemDatastore.queryFavoriteIds(USER_EMAIL);
+    Set<Long> actualIds = favoriteItemDatastore.queryFavoriteIds(USER_EMAIL);
 
-    Assert.assertEquals(favoriteIds.size(), actualIds.size());
-    Assert.assertTrue(actualIds.containsAll(favoriteIds));
+    Assert.assertTrue(actualIds.equals(favoriteIds));
   }
 
   @Test
-  public void queryEmailsWithNonExistemItemId_listIsEmpty() {
+  public void queryEmailsWithNonExistemItemId_setIsEmpty() {
     Assert.assertTrue(favoriteItemDatastore.queryEmails(ITEM_ID).isEmpty());
   }
 
   @Test
-  public void queryEmailsWithItemWithLikes_listContainsEmailsThatLiked() {
-    List<String> emails = new ArrayList<>();
+  public void queryEmailsWithItemWithLikes_setContainsEmailsThatLiked() {
+    Set<String> emails = new HashSet<>();
 
     String email = "a";
 
@@ -125,9 +125,8 @@ public class FavoriteItemDatastoreTest {
       email += "a";
     }
 
-    List<String> actualEmails = favoriteItemDatastore.queryEmails(ITEM_ID);
+    Set<String> actualEmails = favoriteItemDatastore.queryEmails(ITEM_ID);
 
-    Assert.assertEquals(emails.size(), actualEmails.size());
-    Assert.assertTrue(actualEmails.containsAll(emails));
+    Assert.assertTrue(actualEmails.equals(emails));
   }
 }
