@@ -1,11 +1,10 @@
 package com.google.ehub.utility;
 
+import com.google.common.collect.MinMaxPriorityQueue;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 /**
@@ -24,7 +23,7 @@ public final class UserRecommendationUtils {
    * @return list containing the most recommended emails in descending order
    */
   public List<String> getRecommendedEmails(Map<Long, Set<String>> itemLikes) {
-    return getRecommendedEmailsInDescendingOrder(getEmailMinHeap(getEmailFreqs(itemLikes)));
+    return getRecommendedEmailsInDescendingOrder(getEmailPriorityQueue(getEmailFreqs(itemLikes)));
   }
 
   private Map<String, Integer> getEmailFreqs(Map<Long, Set<String>> itemLikes) {
@@ -39,38 +38,33 @@ public final class UserRecommendationUtils {
     return emailFreqs;
   }
 
-  private PriorityQueue<Map.Entry<String, Integer>> getEmailMinHeap(
+  private MinMaxPriorityQueue<Map.Entry<String, Integer>> getEmailPriorityQueue(
       Map<String, Integer> emailFreqs) {
-    PriorityQueue<Map.Entry<String, Integer>> emailMinHeap = new PriorityQueue<>((a, b) -> {
-      // If the counts are tied, then compare emails lexicographically.
-      if (a.getValue() == b.getValue()) {
-        return b.getKey().compareTo(a.getKey());
-      }
+    MinMaxPriorityQueue<Map.Entry<String, Integer>> emailPriorityQueue =
+        MinMaxPriorityQueue
+            .orderedBy((Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) -> {
+              // If the counts are tied, then compare emails lexicographically.
+              if (a.getValue() == b.getValue()) {
+                return a.getKey().compareTo(b.getKey());
+              }
 
-      return Integer.compare(a.getValue(), b.getValue());
-    });
+              return Integer.compare(b.getValue(), a.getValue());
+            })
+            .maximumSize(MAX_NUMBER_OF_RECOMMENDATIONS)
+            .create();
 
-    for (Map.Entry<String, Integer> entry : emailFreqs.entrySet()) {
-      emailMinHeap.offer(entry);
+    emailPriorityQueue.addAll(emailFreqs.entrySet());
 
-      if (emailMinHeap.size() > MAX_NUMBER_OF_RECOMMENDATIONS) {
-        emailMinHeap.poll();
-      }
-    }
-
-    return emailMinHeap;
+    return emailPriorityQueue;
   }
 
   private List<String> getRecommendedEmailsInDescendingOrder(
-      PriorityQueue<Map.Entry<String, Integer>> emailMinHeap) {
+      MinMaxPriorityQueue<Map.Entry<String, Integer>> emailPriorityQueue) {
     List<String> recommendedEmails = new ArrayList<String>();
 
-    while (!emailMinHeap.isEmpty()) {
-      recommendedEmails.add(emailMinHeap.poll().getKey());
+    while (!emailPriorityQueue.isEmpty()) {
+      recommendedEmails.add(emailPriorityQueue.poll().getKey());
     }
-
-    // The most recommended emails should come first.
-    Collections.reverse(recommendedEmails);
 
     return recommendedEmails;
   }
