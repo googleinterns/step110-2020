@@ -29,6 +29,7 @@ function loadSelfProfilePage() {
         const profileImage = document.getElementById('avatar');
         profileImage.src = getProfileImageUrl(profile.username);
 
+        loadFavItems(profile.email);
         loadRecommendedUsers(userData.recommendedUsers);
       })
       .catch((error) => {
@@ -57,6 +58,7 @@ function loadUserProfilePage() {
           $('#username').text(profile.username);
           $('#bio').text(profile.bio);
           $('#avatar').attr('src', getProfileImageUrl(profile.username));
+          loadFavItems(profile.email);
         })
         .catch((error) => {
           console.log('Failed to fetch user profile: ' + error);
@@ -67,9 +69,11 @@ function loadUserProfilePage() {
 /**
  * Fetches the items that were liked by user and sends the array to
  * populate the page with the item cards.
+ *
+ * @param { string } userEmail - the email linked to the favorite items to display
  */
-function loadFavItems() {
-  fetch('/favorite-item')
+function loadFavItems(userEmail) {
+  fetch('/favorite-item?email=' + userEmail)
       .then((response) => response.json())
       .then((favorites) => {
         populateFavoriteItemGrid(favorites);
