@@ -93,13 +93,13 @@ public class ItemPageServlet extends HttpServlet {
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
     long commentId;
-    CommentDataManager comment = new CommentDataManager();
     try {
       commentId = Long.parseLong(request.getParameter("commentId"));
     } catch (NumberFormatException e) {
       System.err.println("Can't parse itemId to a long");
       return;
     }
+    CommentDataManager comment = new CommentDataManager();
     comment.deleteComment(commentId);
   }
 }
