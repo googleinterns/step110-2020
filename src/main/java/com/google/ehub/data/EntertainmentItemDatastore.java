@@ -158,6 +158,7 @@ public final class EntertainmentItemDatastore {
       FetchOptions fetchOptions, String titlePrefix, SortDirection sortDirection) {
     Query query = new Query(ENTERTAINMENT_ITEM_KIND);
 
+    // Filtering by title is allowed, but will override the release date sort (Datastore limitation)
     if (!titlePrefix.isEmpty()) {
       query = query
                   .setFilter(Utils.getPrefixFilter(
