@@ -74,7 +74,7 @@ public class CommentDataManager {
 
       String username = userProfile.getUsername();
       long commentId = entity.getKey().getId();
-      String currentEmail = userService.getCurrentUser().getEmail();
+      String currentEmail = userService.isUserLoggedIn() ? userService.getCurrentUser().getEmail() : null;
       boolean belongsToUser = storedEmail.equals(currentEmail);
       results.add(
           new CommentData(itemId, comment, timestampMillis, username, commentId, belongsToUser));
