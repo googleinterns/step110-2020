@@ -74,7 +74,8 @@ public class CommentDataManager {
 
       String username = userProfile.getUsername();
       long commentId = entity.getKey().getId();
-      String currentEmail = userService.getCurrentUser().getEmail();
+      String currentEmail =
+          userService.isUserLoggedIn() ? userService.getCurrentUser().getEmail() : null;
       boolean belongsToUser = storedEmail.equals(currentEmail);
       results.add(
           new CommentData(itemId, comment, timestampMillis, username, commentId, belongsToUser));
@@ -82,7 +83,7 @@ public class CommentDataManager {
     return results;
   }
 
-  public void deleteComment(long commentId, String COMMENT_KIND_KEY) {
+  public void deleteComment(long commentId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.delete(KeyFactory.createKey(COMMENT_KIND_KEY, commentId));
   }

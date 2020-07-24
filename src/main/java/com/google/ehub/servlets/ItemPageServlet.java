@@ -9,7 +9,7 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and      
+// See the License for the specific language governing permissions and
 // limitations under the License.
 
 package com.google.ehub.servlets;
@@ -87,5 +87,19 @@ public class ItemPageServlet extends HttpServlet {
         comments.addItemComment(itemId, comment, timestampMillis, email);
       }
     }
+  }
+
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    long commentId;
+    CommentDataManager comment = new CommentDataManager();
+    try {
+      commentId = Long.parseLong(request.getParameter("commentId"));
+    } catch (NumberFormatException e) {
+      System.err.println("Can't parse itemId to a long");
+      return;
+    }
+    comment.deleteComment(commentId);
   }
 }

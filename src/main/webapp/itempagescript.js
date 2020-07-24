@@ -10,29 +10,25 @@ async function loadItemPage() {
 
     if (itemId !== '') {
       fetch(`/itempagedata?itemId=${itemId}`)
-        .then((response) => response.json())
-        .then((itemPageData) => {
-          fetch("/login")
-            .then((response) => response.json())
-            .then((loginResponse) => {
-              createSelectedItemCard(itemPageData.item);
-              getItemPageComments(itemPageData.comments);
-              if (!loginResponse.isUserLoggedIn) {
-                hideCommentBox();
-                const login = $("#login");
-                login.append(
-                  $(
-                    '<a href="' +
-                    loginResponse.LoginURL +
-                    '"><button type="button" class="btn btn-dark my-sm-0">Login to Comment</button></a>'
-                  )
-                );
-              }
-            })
-            .catch((error) => {
-              console.log("failed to fetch login status: " + error);
-            });
-        });
+          .then((response) => response.json())
+          .then((itemPageData) => {
+            fetch('/login')
+                .then((response) => response.json())
+                .then((loginResponse) => {
+                  createSelectedItemCard(itemPageData.item);
+                  getItemPageComments(itemPageData.comments);
+                  if (!loginResponse.isUserLoggedIn) {
+                    hideCommentBox();
+                    const login = $('#login');
+                    login.append($(
+                        '<a href="' + loginResponse.LoginURL +
+                        '"><button type="button" class="btn btn-dark my-sm-0">Login to Comment</button></a>'));
+                  }
+                })
+                .catch((error) => {
+                  console.log('failed to fetch login status: ' + error);
+                });
+          });
     } else {
       console.log('ItemId is empty!');
     }
@@ -43,11 +39,11 @@ async function loadItemPage() {
  * Hides input box when user is not logged in
  */
 function hideCommentBox() {
-  const comment = document.getElementById("comment-box");
-  if (comment.style.display === "none") {
-    comment.style.display = "block";
+  const comment = document.getElementById('comment-box');
+  if (comment.style.display === 'none') {
+    comment.style.display = 'block';
   } else {
-    comment.style.display = "none";
+    comment.style.display = 'none';
   }
 }
 
@@ -60,40 +56,21 @@ async function createSelectedItemCard(entertainmentItem) {
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-    $(
-      '<h5 class="card-title">' +
-      entertainmentItem.title +
-      "(" +
-      entertainmentItem.releaseDate +
-      ")" +
-      "</h5>"
-    )
-  );
+      $('<h5 class="card-title">' + entertainmentItem.title + '(' +
+        entertainmentItem.releaseDate + ')' +
+        '</h5>'));
 
   cardBody.append(
-    $(
-      '<h5 class="card-title"><b>Runtime: </b>' +
-      entertainmentItem.runtime +
-      "</h5>"
-    )
-  );
+      $('<h5 class="card-title"><b>Runtime: </b>' + entertainmentItem.runtime +
+        '</h5>'));
   cardBody.append(
       $('<h5 class="card-title">' + entertainmentItem.genre + '</h5>'));
   cardBody.append(
-    $(
-      '<h5 class="card-title"><b>Cast: </b>' +
-      entertainmentItem.actors +
-      "</h5>"
-    )
-  );
-
+      $('<h5 class="card-title"><b>Cast: </b>' + entertainmentItem.actors +
+        '</h5>'));
   cardBody.append(
-    $(
-      '<p class="card-text"><b>Description: </b>' +
-      entertainmentItem.description +
-      "</p>"
-    )
-  );
+      $('<p class="card-text"><b>Description: </b>' +
+        entertainmentItem.description + '</p>'));
   card.append(cardBody);
   const itemContainer = $('#item-container');
   itemContainer.append(card);
@@ -103,16 +80,16 @@ async function createSelectedItemCard(entertainmentItem) {
  * Sends comment data and ItemId to Servlet
  */
 async function sendFormData() {
-  const comment = $("#comment").val();
-  const itemId = getUrlParam("itemId");
-  if (comment != "" && itemId != null) {
-    $.post("/itempagedata", { comment: comment, itemId: itemId })
-      .done(function() {
-        window.location.reload();
-      })
-      .fail(function() {
-        console.log("Failed to send form data");
-      });
+  const comment = $('#comment').val();
+  const itemId = getUrlParam('itemId');
+  if (comment != '' && itemId != null) {
+    $.post('/itempagedata', {comment: comment, itemId: itemId})
+        .done(function() {
+          window.location.reload();
+        })
+        .fail(function() {
+          console.log('Failed to send form data');
+        });
   }
 }
 
@@ -124,32 +101,46 @@ function getItemPageComments(comments) {
   comments.forEach((commentDataManager) => {
     const date = new Date(commentDataManager.timestampMillis);
     const commentId = commentDataManager.commentId;
-    commentContainer.append(
-      createListElement(
-        commentDataManager.username +
-        ": " +
-        commentDataManager.comment +
-        " - " +
-        "(" +
-        date.toLocaleString() +
-        ")", commentDataManager.belongsToUser
-      )
-    );
+    commentContainer.append(createListElement(
+        commentDataManager.username + ': ' + commentDataManager.comment +
+            ' - ' +
+            '(' + date.toLocaleString() + ')',
+        commentDataManager.belongsToUser, commentDataManager.commentId));
   });
 }
 
 /**
+ * Sends delete request to servlet for a specific comment.
+ *
+ * @param { string } commentId - the commentId for the given comment
+ */
+function deleteComment(commentId) {
+  fetch('/itempagedata?commentId=' + commentId, {method: 'DELETE'})
+      .then(() => {
+        location.reload();
+      })
+      .catch((error) => {
+        console.log('Failed to delete comment');
+      });
+}
+
+
+/**
  * Creates list element from given comment
  *
- * @param { string } comment - the comment including the username, message, and timestamp
- * @param { boolean } belongsToUser - boolean that shows whether or not the current user has posted a comment
+ * @param { string } comment - the comment including the username, message, and
+ *     timestamp
+ * @param { boolean } belongsToUser - boolean that shows whether or not the
+ *     current user has posted a comment
  * @returns { html element }  returns a list element
  */
-function createListElement(comment, belongsToUser) {
+function createListElement(comment, belongsToUser, commentId) {
   const liElement = $('<li class="list-group-item"></li>');
   liElement.text(comment);
   if (belongsToUser) {
-    liElement.append($('<i class="fa fa-trash" style="float:right;"></i>'));
+    liElement.append(
+        $('<div onclick="deleteComment(' + commentId +
+          ')"><i class="fa fa-trash" style="float:right;"></i></div>'));
   }
 
   return liElement;
