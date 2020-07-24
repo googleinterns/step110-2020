@@ -83,6 +83,28 @@ public final class ProfileDatastore {
     return createUserProfileFromEntity(userEntity);
   }
 
+ /**
+   * Determines if a username already exists in the datastore.
+   *
+   * @param username the username of the User being added to Datastore
+   * @return true if a username is already taken
+   */
+  public boolean doesUsernameExist(String username) {
+    
+    Filter propertyFilter = new FilterPredicate(USERNAME_PROPERTY_KEY, FilterOperator.EQUAL, username);
+    Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
+
+    PreparedQuery queryResults = datastore.prepare(query);
+    Entity userEntity = queryResults.asSingleEntity();
+
+    if (userEntity == null){
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
   /**
    * Changes the property of the User entity with the new edited values and updates the datastore.
    *

@@ -55,18 +55,27 @@ public class ProfileServlet extends HttpServlet {
     String username = request.getParameter(USERNAME_PROPERTY_KEY);
     String bio = request.getParameter(BIO_PROPERTY_KEY);
     boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PROPERTY_KEY));
-
+    
+    
     if (!areValidParameters(name, username, bio)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Post Request parameters empty");
       return;
     }
     if (edit) {
-      profileData.editProfile(name, username, bio);
+      if (profileData.doesUsernameExist(username)) {
+        PrintWriter out = response.getWriter();  
+        response.sendRedirect("/EditProfilePage.html");
+      }
+      else{
+        profileData.editProfile(name, username, bio);
+        response.sendRedirect("/ProfilePage.html");
+      } 
     } else {
       profileData.addUserProfileToDatastore(name, email, username, bio);
+      response.sendRedirect("/ProfilePage.html");
     }
 
-    response.sendRedirect("/ProfilePage.html");
+    
   }
 
   @Override

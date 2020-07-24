@@ -26,8 +26,8 @@ function loadProfile() {
         bioSection.value = profile.bio;
 
         const profileImage = document.getElementById('avatar');
-        const username = profile.username;
-        const avatarLetter = username.charAt(0);
+        const email = profile.email;
+        const avatarLetter = email.charAt(0);
         profileImage.src = 'https://icotar.com/avatar/' + avatarLetter;
       })
       .catch((error) => {
