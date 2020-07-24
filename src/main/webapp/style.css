@@ -12,6 +12,17 @@ hidden {
   position: relative;
 }
 
+.horizontal-scrollable > .row {
+  overflow-x: auto; 
+  flex-wrap: nowrap;
+  white-space: nowrap; 
+}
+
+.horizontal-scrollable > .row > .col-md-3 { 
+  display: inline-block; 
+  float: none; 
+} 
+
 ul {
   list-style-type: none;
 }
