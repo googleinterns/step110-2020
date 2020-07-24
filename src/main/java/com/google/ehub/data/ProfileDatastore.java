@@ -100,11 +100,7 @@ public final class ProfileDatastore {
 
     Entity userEntity = queryResults.asSingleEntity();
 
-    if (userEntity == null) {
-      return Optional.empty();
-    }
-
-    return Optional.of(createUserProfileFromEntity(userEntity));
+    return Optional.ofNullable(createUserProfileFromEntity(userEntity));
   }
 
   /**
