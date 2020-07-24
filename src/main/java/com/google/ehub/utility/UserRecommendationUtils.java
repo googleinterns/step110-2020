@@ -23,7 +23,11 @@ public final class UserRecommendationUtils {
    * @return list containing the most recommended emails in descending order
    */
   public List<String> getRecommendedEmails(Map<Long, Set<String>> itemLikes) {
-    return getRecommendedEmailsInDescendingOrder(getEmailPriorityQueue(getEmailFreqs(itemLikes)));
+    Map<String, Integer> emailFreqs = getEmailFreqs(itemLikes);
+    MinMaxPriorityQueue<Map.Entry<String, Integer>> emailPriorityQueue =
+        getEmailPriorityQueue(emailFreqs);
+
+    return getRecommendedEmailsInDescendingOrder(emailPriorityQueue);
   }
 
   private Map<String, Integer> getEmailFreqs(Map<Long, Set<String>> itemLikes) {
