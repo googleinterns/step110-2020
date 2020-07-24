@@ -96,7 +96,7 @@ public class ItemPageServlet extends HttpServlet {
     try {
       commentId = Long.parseLong(request.getParameter("commentId"));
     } catch (NumberFormatException e) {
-      System.err.println("Can't parse itemId to a long");
+      System.err.println("Can't parse commentId to a long:" + e);
       return;
     }
     CommentDataManager comment = new CommentDataManager();
