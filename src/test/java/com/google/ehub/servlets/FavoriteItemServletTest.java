@@ -28,10 +28,12 @@ import org.mockito.MockitoAnnotations;
 @RunWith(JUnit4.class)
 public class FavoriteItemServletTest {
   private static final String FAVORITE_ITEM_ID_PARAMETER_KEY = "favoriteItemId";
+  private static final String EMAIL_PARAMETER_KEY = "email";
   private static final String ENTERTAINMENT_ITEM_KIND = "entertainmentItem";
   private static final String JSON_CONTENT_TYPE = "application/json";
 
   private static final String EMAIL = "Bryan@gmail.com";
+  private static final String SECONDARY_EMAIL = "Test@yahoo.com";
   private static final String VALID_ITEM_ID_PARAMETER = "123";
   private static final String INVALID_ITEM_ID_PARAMETER = "wjnrwwoiofwij";
 
@@ -94,6 +96,23 @@ public class FavoriteItemServletTest {
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter).println(new Gson().toJson(favoriteItemDatastore.queryFavoriteIds(EMAIL)));
+  }
+
+  @Test
+  public void getRequestWithEmailParam_responseSendsListWithFavoriteItemsOfSpecifiedEmail()
+      throws IOException {
+    for (Long itemId : ITEM_IDS) {
+      favoriteItemDatastore.addFavoriteItem(SECONDARY_EMAIL, itemId);
+    }
+
+    when(request.getParameter(EMAIL_PARAMETER_KEY)).thenReturn(SECONDARY_EMAIL);
+    when(response.getWriter()).thenReturn(printWriter);
+
+    servlet.doGet(request, response);
+
+    verify(response).setContentType(JSON_CONTENT_TYPE);
+    verify(printWriter)
+        .println(new Gson().toJson(favoriteItemDatastore.queryFavoriteIds(SECONDARY_EMAIL)));
   }
 
   @Test

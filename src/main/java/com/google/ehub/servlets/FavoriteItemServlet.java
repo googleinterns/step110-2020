@@ -18,9 +18,21 @@ import org.apache.commons.lang3.math.NumberUtils;
 @WebServlet("/favorite-item")
 public class FavoriteItemServlet extends HttpServlet {
   private static final String FAVORITE_ITEM_ID_PARAMETER_KEY = "favoriteItemId";
+  private static final String EMAIL_PARAMETER_KEY = "email";
+
+  private final FavoriteItemDatastore favoriteItemDatastore = FavoriteItemDatastore.getInstance();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Email is an optional parameter used to query the favoriteIds of an email that is separate from the email that
+    // is logged in.
+    String email = request.getParameter(EMAIL_PARAMETER_KEY);
+    if (email != null) {
+      response.setContentType("application/json");
+      response.getWriter().println(new Gson().toJson(favoriteItemDatastore.queryFavoriteIds(email)));
+      return;
+    }
+
     UserService userService = UserServiceFactory.getUserService();
 
     if (!userService.isUserLoggedIn()) {
@@ -31,7 +43,7 @@ public class FavoriteItemServlet extends HttpServlet {
 
     response.setContentType("application/json");
     response.getWriter().println(
-        new Gson().toJson(FavoriteItemDatastore.getInstance().queryFavoriteIds(
+        new Gson().toJson(favoriteItemDatastore.queryFavoriteIds(
             userService.getCurrentUser().getEmail())));
   }
 
@@ -61,7 +73,7 @@ public class FavoriteItemServlet extends HttpServlet {
       return;
     }
 
-    FavoriteItemDatastore.getInstance().addFavoriteItem(
+    favoriteItemDatastore.addFavoriteItem(
         userService.getCurrentUser().getEmail(), itemId);
   }
 
