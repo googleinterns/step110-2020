@@ -26,9 +26,9 @@ function loadProfile() {
         bioSection.value = profile.bio;
 
         const profileImage = document.getElementById('avatar');
-        const username = profile.username;
-        const avatarLetter = username.charAt(0);
-        profileImage.src = 'https://icotar.com/avatar/' + avatarLetter;
+        profileImage.src = getProfileImageUrl(profile.username);
+
+        loadRecommendedUsers(userData.recommendedUsers);
       })
       .catch((error) => {
         console.log('Fetching profile data servlet failed: ' + error);
@@ -93,17 +93,12 @@ function populateFavoriteItemGrid(favoriteItems) {
  * @returns card - bootstrap card with item information
  */
 function createFavoriteItemCard(entertainmentItem) {
-  const card = $('<div class="mt-2" class="card bg-light"></div>');
+  const card = $('<div class="mt-2 card bg-light"></div>');
   card.append(
-    $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">')
-  );
+      $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(
-    $(
-      '<a class="stretched-link" href="item-page.html?itemId=' +
-        entertainmentItem.uniqueId.value +
-        '"></a>'
-    )
-  );
+      $('<a class="stretched-link" href="item-page.html?itemId=' +
+        entertainmentItem.uniqueId.value + '"></a>'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
@@ -113,4 +108,70 @@ function createFavoriteItemCard(entertainmentItem) {
   card.append(cardBody);
 
   return card;
+}
+
+/**
+ * Loads the recommended users and displays them in a scrollable div.
+ *
+ * @param { Array } recommendedUsers - list with the recommended users in
+ *     descending order.
+ */
+function loadRecommendedUsers(recommendedUsers) {
+  const usersContainer = $('#recommendedUsersContainer');
+
+  if (recommendedUsers.length === 0) {
+    usersContainer.append(
+        $('<p class="lead text-center">Like some items to see if there are' +
+          ' other users with similar preferences.</p>'));
+    return;
+  }
+
+  const usersRow = $('<div class="row"></div>');
+  usersContainer.append(usersRow);
+
+  recommendedUsers.forEach((email) => {
+    fetch('/profile-data?email=' + email)
+        .then((response) => response.json())
+        .then((profile) => {
+          const userCol = $('<div class="col col-md-3"></div>');
+          userCol.append(createProfileCard(profile));
+
+          usersRow.append(userCol);
+        })
+        .catch((error) => {
+          console.log('Failed to fetch data for profile: ' + email);
+        });
+  });
+}
+
+/**
+ * Creates a card div that displays the user avatar and the username.
+ *
+ * @param { JSON } profile - the JSON object holding data about a user profile
+ * @returns { jQuery } card element representing the user
+ */
+function createProfileCard(profile) {
+  const card = $('<div class="card bg-light"></div>');
+  card.append(
+      $('<img class="card-img-top" src="' +
+        getProfileImageUrl(profile.username) + '">'));
+
+  const cardBody = $('<div class="card-body"></div>');
+  cardBody.append(
+      $('<h5 class="card-title text-center">' + profile.username + '</h5>'));
+
+  card.append(cardBody);
+
+  return card;
+}
+
+/**
+ * Returns the profile image Url from a custom avatar website.
+ *
+ * @param { string } username - the username that is used to generate the avatar
+ *     picture, this function assumes that the username is not an empty string
+ * @returns { string } Url to the image used as the avatar.
+ */
+function getProfileImageUrl(username) {
+  return 'https://icotar.com/avatar/' + username.charAt(0);
 }

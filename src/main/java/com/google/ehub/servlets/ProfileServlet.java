@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/profile-data")
 public class ProfileServlet extends HttpServlet {
   private static final String NAME_PROPERTY_KEY = "name";
-  private static final String EMAIL_PROPERTY_KEY = "email";
+  private static final String EMAIL_PARAMETER_KEY = "email";
   private static final String USERNAME_PROPERTY_KEY = "username";
   private static final String BIO_PROPERTY_KEY = "bio";
   private static final String EDIT_PROPERTY_KEY = "edit";
@@ -71,7 +71,11 @@ public class ProfileServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    if (!userService.isUserLoggedIn()) {
+    String email = request.getParameter(EMAIL_PARAMETER_KEY);
+
+    if (email != null) {
+      sendUserProfile(response, email);
+    } else if (!userService.isUserLoggedIn()) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
     } else {
       String userEmail = userService.getCurrentUser().getEmail();
@@ -122,5 +126,18 @@ public class ProfileServlet extends HttpServlet {
     }
 
     return itemLikes;
+  }
+
+  private void sendUserProfile(HttpServletResponse response, String email) throws IOException {
+    UserProfile userProfile = profileData.getUserProfile(email);
+
+    if (userProfile == null) {
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "Email specified doesn't have a profile!");
+      return;
+    }
+
+    response.setContentType("application/json");
+    response.getWriter().println(new Gson().toJson(userProfile));
   }
 }
