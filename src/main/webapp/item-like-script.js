@@ -98,7 +98,7 @@ function removeLikeFromEntertainmentItem(
 function switchToLikeButton(favoriteItemIds, itemId, likeButton, likeCounter) {
   likeButton.addClass('btn-secondary');
   likeButton.removeClass('btn-dark');
-  likeButton.off().click(function() {
+  likeButton.off().one('click', function() {
     addLikeToEntertainmentItem(
         favoriteItemIds, itemId, likeButton, likeCounter);
   });
@@ -119,7 +119,7 @@ function switchToUndoLikeButton(
     favoriteItemIds, itemId, likeButton, likeCounter) {
   likeButton.addClass('btn-dark');
   likeButton.removeClass('btn-secondary');
-  likeButton.off().click(function() {
+  likeButton.off().one('click', function() {
     removeLikeFromEntertainmentItem(
         favoriteItemIds, itemId, likeButton, likeCounter);
   });
