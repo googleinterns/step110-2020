@@ -3,6 +3,7 @@ package com.google.ehub.data;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -37,7 +38,7 @@ public class CommentDataManager {
    * @param timestampMillis The exact timestamp in Milliseconds that the comment is posted
    * @param email The user's email
    */
-  public void addItemComment(long itemId, String comment, long timestampMillis, String email) {
+  public Key addItemComment(long itemId, String comment, long timestampMillis, String email) {
     Entity commentEntity = new Entity(COMMENT_KIND_KEY);
     Long commentId = commentEntity.getKey().getId();
     commentEntity.setProperty(ITEM_ID_PROPERTY_KEY, itemId);
@@ -45,9 +46,8 @@ public class CommentDataManager {
     commentEntity.setProperty(TIMESTAMP_PROPERTY_KEY, timestampMillis);
     commentEntity.setProperty(EMAIL_PROPERTY_KEY, email);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(commentEntity);
-    
-    }
+    return datastore.put(commentEntity);
+  }
 
   /**
    * Method that retrieves comment information from Datastore by ItemId
@@ -66,23 +66,23 @@ public class CommentDataManager {
     for (Entity entity : comments.asIterable()) {
       String storedEmail = (String) entity.getProperty(EMAIL_PROPERTY_KEY);
       UserProfile userProfile = profileData.getUserProfile(storedEmail);
-      if(userProfile == null){
+      if (userProfile == null) {
         continue;
       }
       String comment = (String) entity.getProperty(COMMENT_PROPERTY_KEY);
       long timestampMillis = (Long) entity.getProperty(TIMESTAMP_PROPERTY_KEY);
-      
-      String username = userProfile.getUsername(); 
+
+      String username = userProfile.getUsername();
       long commentId = entity.getKey().getId();
       String currentEmail = userService.getCurrentUser().getEmail();
-      Boolean belongsToUser;
       boolean belongsToUser = storedEmail.equals(currentEmail);
-      results.add(new CommentData(itemId, comment, timestampMillis, username, commentId, COMMENT_KIND_KEY, belongsToUser));
+      results.add(
+          new CommentData(itemId, comment, timestampMillis, username, commentId, belongsToUser));
     }
-   return results;
-}
+    return results;
+  }
 
-  public void deleteComment (long commentId, String COMMENT_KIND_KEY) {
+  public void deleteComment(long commentId, String COMMENT_KIND_KEY) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.delete(KeyFactory.createKey(COMMENT_KIND_KEY, commentId));
   }

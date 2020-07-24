@@ -6,15 +6,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.Lists;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.common.collect.Lists;
 import com.google.ehub.data.CommentData;
 import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
@@ -23,9 +26,9 @@ import com.google.ehub.data.ItemPageData;
 import com.google.ehub.data.ProfileDatastore;
 import com.google.ehub.servlets.ItemPageServlet;
 import com.google.gson.Gson;
-import java.lang.Object.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.Object.*;
 import java.util.*;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -55,12 +58,17 @@ public class ItemPageServletTest {
   private static final Long TIMESTAMP = 1093923L;
   private static final String EMAIL = "eeirikannu@gmail.com";
   private static final String USERNAME = "AirwreckEye";
+  private static final Boolean belongsToUser = true;
 
   private final ItemPageServlet servlet = new ItemPageServlet();
   private final CommentDataManager commentDataManager = new CommentDataManager();
-  private final LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private static final String JSON_CONTENT_TYPE = "application/json";
+
+  private LocalServiceTestHelper helper = new LocalServiceTestHelper(
+      new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig())
+                                              .setEnvEmail(EMAIL)
+                                              .setEnvIsLoggedIn(true)
+                                              .setEnvAuthDomain("gmail.com");
 
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
@@ -96,9 +104,10 @@ public class ItemPageServletTest {
     Key itemId = EntertainmentItemDatastore.getInstance().addItemToDatastore(selectedItem);
     when(request.getParameter("itemId")).thenReturn(itemId.getId() + "");
     when(response.getWriter()).thenReturn(printWriter);
-    commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
+    Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     servlet.doGet(request, response);
-    CommentData comment = new CommentData(itemId.getId(), COMMENT, TIMESTAMP, USERNAME);
+    CommentData comment = new CommentData(
+        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), belongsToUser);
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
