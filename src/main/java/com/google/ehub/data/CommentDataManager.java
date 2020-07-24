@@ -82,7 +82,7 @@ public class CommentDataManager {
     return results;
   }
 
-  public void deleteComment(long commentId, String COMMENT_KIND_KEY) {
+  public void deleteComment(long commentId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.delete(KeyFactory.createKey(COMMENT_KIND_KEY, commentId));
   }
