@@ -1,8 +1,9 @@
 /**
- * Fetches the json from ProfileServlet and displays the values on the Profile
- * Page. Also prepopulates the values on the Edit Profile Page.
+ * Fetches the json from ProfileServlet for the user that is logged in and
+ * displays the values on the Profile Page. Also prepopulates the values on the
+ * Edit Profile Page.
  */
-function loadProfile() {
+function loadSelfProfilePage() {
   fetch('/profile-data')
       .then((response) => response.json())
       .then((userData) => {
@@ -35,8 +36,31 @@ function loadProfile() {
       });
   $(document).ready(function() {
     $('#navbar').load('navbar.html', function() {
-      $('#navbarProfileSection').addClass('d-none');
+      initializeNavBarProfileSection();
     });
+  });
+}
+
+/**
+ * Fetches the profile page of the user from the query string parameter for
+ * username and loads the page with all the relevant information.
+ */
+function loadUserProfilePage() {
+  $(document).ready(function() {
+    $('#navbar').load('navbar.html', function() {
+      initializeNavBarProfileSection();
+    });
+
+    fetch('/profile-data?username=' + getUrlParam('username'))
+        .then((response) => response.json())
+        .then((profile) => {
+          $('#username').text(profile.username);
+          $('#bio').text(profile.bio);
+          $('#avatar').attr('src', getProfileImageUrl(profile.username));
+        })
+        .catch((error) => {
+          console.log('Failed to fetch user profile: ' + error);
+        });
   });
 }
 
@@ -155,6 +179,9 @@ function createProfileCard(profile) {
   card.append(
       $('<img class="card-img-top" src="' +
         getProfileImageUrl(profile.username) + '">'));
+  card.append(
+      $('<a class="stretched-link" href="user-profile-page.html?username=' +
+        profile.username + '"></a>'));
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(

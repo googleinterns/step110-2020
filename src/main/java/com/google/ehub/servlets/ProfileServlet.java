@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,11 +37,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/profile-data")
 public class ProfileServlet extends HttpServlet {
-  private static final String NAME_PROPERTY_KEY = "name";
+  private static final String NAME_PARAMETER_KEY = "name";
   private static final String EMAIL_PARAMETER_KEY = "email";
-  private static final String USERNAME_PROPERTY_KEY = "username";
-  private static final String BIO_PROPERTY_KEY = "bio";
-  private static final String EDIT_PROPERTY_KEY = "edit";
+  private static final String USERNAME_PARAMETER_KEY = "username";
+  private static final String BIO_PARAMETER_KEY = "bio";
+  private static final String EDIT_PARAMETER_KEY = "edit";
   private static final String NEEDS_PROFILE = "NeedsProfile";
 
   private final UserService userService = UserServiceFactory.getUserService();
@@ -51,10 +52,10 @@ public class ProfileServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String email = userService.getCurrentUser().getEmail();
-    String name = request.getParameter(NAME_PROPERTY_KEY);
-    String username = request.getParameter(USERNAME_PROPERTY_KEY);
-    String bio = request.getParameter(BIO_PROPERTY_KEY);
-    boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PROPERTY_KEY));
+    String name = request.getParameter(NAME_PARAMETER_KEY);
+    String username = request.getParameter(USERNAME_PARAMETER_KEY);
+    String bio = request.getParameter(BIO_PARAMETER_KEY);
+    boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PARAMETER_KEY));
 
     if (!areValidParameters(name, username, bio)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Post Request parameters empty");
@@ -71,30 +72,43 @@ public class ProfileServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Email is an optional parameter used to query a profile that is separate from the email that
+    // is logged in.
     String email = request.getParameter(EMAIL_PARAMETER_KEY);
-
     if (email != null) {
-      sendUserProfile(response, email);
-    } else if (!userService.isUserLoggedIn()) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User must logged in");
+      sendUserProfileWithEmail(response, email);
+      return;
+    }
+
+    // Username is an optional parameter used to query a profile that is separate from the username
+    // that is currently active.
+    String username = request.getParameter(USERNAME_PARAMETER_KEY);
+    if (username != null) {
+      sendUserProfileWithUsername(response, username);
+      return;
+    }
+
+    if (!userService.isUserLoggedIn()) {
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "User must be logged in to retrieve profile!");
+      return;
+    }
+
+    String userEmail = userService.getCurrentUser().getEmail();
+    UserProfile userProfile = profileData.getUserProfile(userEmail);
+
+    if (userProfile == null) {
+      JsonObject profileJson = new JsonObject();
+      profileJson.addProperty(NEEDS_PROFILE, true);
+      response.setContentType("application/json");
+      response.getWriter().println(profileJson);
     } else {
-      String userEmail = userService.getCurrentUser().getEmail();
-      UserProfile userProfile = profileData.getUserProfile(userEmail);
+      Set<Long> itemIdsLikedByUser = favoriteItemDatastore.queryFavoriteIds(userEmail);
+      List<String> recommendedEmails = recommendationUtils.getRecommendedEmails(
+          getUsersWhoLikeLoggedInUserItems(userEmail, itemIdsLikedByUser));
 
-      if (userProfile == null) {
-        JsonObject profileJson = new JsonObject();
-        profileJson.addProperty(NEEDS_PROFILE, true);
-        response.setContentType("application/json");
-        response.getWriter().println(profileJson);
-      } else {
-        Set<Long> itemIdsLikedByUser = favoriteItemDatastore.queryFavoriteIds(userEmail);
-        List<String> recommendedEmails = recommendationUtils.getRecommendedEmails(
-            getUsersWhoLikeLoggedInUserItems(userEmail, itemIdsLikedByUser));
-
-        response.setContentType("application/json");
-        response.getWriter().println(
-            new Gson().toJson(new UserData(userProfile, recommendedEmails)));
-      }
+      response.setContentType("application/json");
+      response.getWriter().println(new Gson().toJson(new UserData(userProfile, recommendedEmails)));
     }
   }
 
@@ -128,7 +142,8 @@ public class ProfileServlet extends HttpServlet {
     return itemLikes;
   }
 
-  private void sendUserProfile(HttpServletResponse response, String email) throws IOException {
+  private void sendUserProfileWithEmail(HttpServletResponse response, String email)
+      throws IOException {
     UserProfile userProfile = profileData.getUserProfile(email);
 
     if (userProfile == null) {
@@ -139,5 +154,19 @@ public class ProfileServlet extends HttpServlet {
 
     response.setContentType("application/json");
     response.getWriter().println(new Gson().toJson(userProfile));
+  }
+
+  private void sendUserProfileWithUsername(HttpServletResponse response, String username)
+      throws IOException {
+    Optional<UserProfile> userProfile = profileData.queryProfileByUsername(username);
+
+    if (!userProfile.isPresent()) {
+      response.sendError(
+          HttpServletResponse.SC_BAD_REQUEST, "Username specified doesn't have a profile!");
+      return;
+    }
+
+    response.setContentType("application/json");
+    response.getWriter().println(new Gson().toJson(userProfile.get()));
   }
 }
