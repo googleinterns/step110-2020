@@ -90,19 +90,13 @@ public final class ProfileDatastore {
    * @return true if a username is already taken
    */
   public boolean doesUsernameExist(String username) {
-    
     Filter propertyFilter = new FilterPredicate(USERNAME_PROPERTY_KEY, FilterOperator.EQUAL, username);
     Query query = new Query(PROFILE_ITEM_KIND).setFilter(propertyFilter);
 
     PreparedQuery queryResults = datastore.prepare(query);
     Entity userEntity = queryResults.asSingleEntity();
 
-    if (userEntity == null){
-      return false;
-    }
-    else {
-      return true;
-    }
+    return userEntity !=null;
   }
 
   /**

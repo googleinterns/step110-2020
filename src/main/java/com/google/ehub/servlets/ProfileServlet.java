@@ -55,27 +55,33 @@ public class ProfileServlet extends HttpServlet {
     String username = request.getParameter(USERNAME_PROPERTY_KEY);
     String bio = request.getParameter(BIO_PROPERTY_KEY);
     boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PROPERTY_KEY));
-    
-    
+    boolean isSameUsername = true;
+    UserProfile createdProfile = profileData.getUserProfile(email);
+
     if (!areValidParameters(name, username, bio)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Post Request parameters empty");
       return;
     }
     if (edit) {
-      if (profileData.doesUsernameExist(username)) {
-        PrintWriter out = response.getWriter();  
-        response.sendRedirect("/EditProfilePage.html");
+      if (createdProfile.getUsername().equals(username)){
+          isSameUsername = false;
+      }
+      if (isSameUsername && profileData.doesUsernameExist(username)) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username taken, please go back and pick a new username");
+        return;
       }
       else{
         profileData.editProfile(name, username, bio);
-        response.sendRedirect("/ProfilePage.html");
+        response.sendRedirect("/profile-page.html");
       } 
     } else {
+      if (profileData.doesUsernameExist(username)) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username taken, please go back and pick a new username");
+        return;
+      }
       profileData.addUserProfileToDatastore(name, email, username, bio);
-      response.sendRedirect("/ProfilePage.html");
+      response.sendRedirect("/profile-page.html");
     }
-
-    
   }
 
   @Override
