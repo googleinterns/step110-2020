@@ -14,6 +14,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.ehub.servlets.LoginServlet;
 import java.io.IOException;
+import java.util.Optional;
 
 /** Manages the User Profiles stored in Datastore. **/
 public final class ProfileDatastore {
@@ -81,6 +82,29 @@ public final class ProfileDatastore {
     Entity userEntity = queryResults.asSingleEntity();
 
     return createUserProfileFromEntity(userEntity);
+  }
+
+  /**
+   * Finds a user profile based on unique username.
+   *
+   * @param username the value of the username property to search for
+   * @return the UserProfile found in Datastore wrapped in an {@link
+   *     Optional}, the
+   * optional object will be empty if the user Entity was not found
+   */
+  public Optional<UserProfile> queryProfileByUsername(String username) {
+    Query query =
+        new Query(PROFILE_ITEM_KIND)
+            .setFilter(new FilterPredicate(USERNAME_PROPERTY_KEY, FilterOperator.EQUAL, username));
+    PreparedQuery queryResults = datastore.prepare(query);
+
+    Entity userEntity = queryResults.asSingleEntity();
+
+    if (userEntity == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(createUserProfileFromEntity(userEntity));
   }
 
   /**
