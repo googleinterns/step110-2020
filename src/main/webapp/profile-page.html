@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>EH-My Profile Page</title>
+    <title>E.Hub - My Profile Page</title>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -11,6 +11,7 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="user_script.js"></script>
     <script src="dashboard-script.js"></script>
@@ -36,7 +37,7 @@
               <p class="card-text" id="bio"></p>
               <button
                 id="edit"
-                class="btn btn-info"
+                class="btn btn-success"
                 onclick="location.href = '/edit-profile-page.html';"
               >
                 Edit Profile
@@ -44,17 +45,17 @@
             </div>
           </div>
         </div>
-        <div>
-          <h2 class="text-center">Favorite Items</h2>
-          <div
-            class="card"
-            style="width: 45em; margin: 0 auto;"
-            style="height: 10rem;"
-          >
-            <div id="item-container"></div>
-          </div>
-        </div>
       </div>
+      <h2 class="text-center mt-3">Favorite Items</h2>
+      <div id="item-container"></div>
+      <h2 class="text-center mt-3">Recommended Users</h2>
+      <h5 class="text-center text-secondary">
+        (Based on shared amount of likes)
+      </h5>
+      <div
+        class="horizontal-scrollable my-3"
+        id="recommendedUsersContainer"
+      ></div>
     </div>
   </body>
 </html>
