@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>Edit Profile Page</title>
+    <title>Edit My Profile</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -16,7 +16,7 @@
     />
   </head>
 
-  <body onload="loadProfile()">
+  <body onload="loadSelfProfilePage()">
     <div id="navbar"></div>
     <div class="container" id="editprofile">
       <h1 class="text-center">Edit Your Profile Page</h1>
@@ -28,20 +28,20 @@
       >
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="name">Name:</label><br />
-          <input 
-          type="text" 
-          class="form-control" 
-          id="name" 
-          name="name"
-          maxlength="160" 
-          value="" 
-          pattern= "^[\.a-zA-Z0-9_-]+( [\.a-zA-Z0-9_-]+)*" 
-          required /><br />
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            maxlength="160"
+            value=""
+            pattern="^[\.a-zA-Z0-9_-]+( [\.a-zA-Z0-9_-]+)*"
+            required
+          /><br />
           <div class="invalid-feedback">
             Please provide a name.
           </div>
         </div>
-        <!--TODO(oyins): validate usernames to make sure it is unique-->
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="username">Username:</label><br />
           <p>*Must contain letters or numbers</p>
@@ -67,14 +67,13 @@
             id="bio"
             name="bio"
             maxlength="250"
-            value="" 
+            value=""
             required
           /><br />
           <div class="invalid-feedback">
             Please provide a bio.
           </div>
         </div>
-        <!--TODO(oyins): create an option for the users to choose a random number-->
         <div class="text-center">
           <input
             type="submit"

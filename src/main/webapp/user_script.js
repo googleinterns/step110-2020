@@ -27,7 +27,7 @@ function loadSelfProfilePage() {
         bioSection.value = profile.bio;
 
         const profileImage = document.getElementById('avatar');
-        profileImage.src = getProfileImageUrl(profile.username);
+        profileImage.src = getProfileImageUrl(profile.email);
 
         loadFavItems(profile.email);
         loadRecommendedUsers(userData.recommendedUsers);
@@ -57,7 +57,7 @@ function loadUserProfilePage() {
         .then((profile) => {
           $('#username').text(profile.username);
           $('#bio').text(profile.bio);
-          $('#avatar').attr('src', getProfileImageUrl(profile.username));
+          $('#avatar').attr('src', getProfileImageUrl(profile.email));
           loadFavItems(profile.email);
         })
         .catch((error) => {
@@ -183,7 +183,7 @@ function createProfileCard(profile) {
   const card = $('<div class="card bg-light" id="user-card"></div>');
   card.append(
       $('<img class="card-img-top" src="' +
-        getProfileImageUrl(profile.username) + '">'));
+        getProfileImageUrl(profile.email) + '">'));
   card.append(
       $('<a class="stretched-link" href="user-profile-page.html?username=' +
         profile.username + '"></a>'));
@@ -201,10 +201,10 @@ function createProfileCard(profile) {
 /**
  * Returns the profile image Url from a custom avatar website.
  *
- * @param { string } username - the username that is used to generate the avatar
+ * @param { string } email - the username that is used to generate the avatar
  *     picture, this function assumes that the username is not an empty string
  * @returns { string } Url to the image used as the avatar.
  */
-function getProfileImageUrl(username) {
-  return 'https://icotar.com/avatar/' + username.charAt(0);
+function getProfileImageUrl(email) {
+  return 'https://icotar.com/avatar/' + email.charAt(0);
 }

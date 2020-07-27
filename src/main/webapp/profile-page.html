@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Profile Page</title>
+    <title>EH-My Profile Page</title>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -13,17 +13,18 @@
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="user_script.js"></script>
+    <script src="dashboard-script.js"></script>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
   </head>
 
-  <body onload="loadProfile(); loadFavItems();">
+  <body onload="loadSelfProfilePage()">
     <div id="navbar"></div>
     <div class="container">
       <h1 class="text-center">My Profile Page</h1>
-      <div class="card mb-3" style="max-width: 1000px; margin: 0 auto;">
+      <div class="card bg-light mb-3 w-100">
         <div class="row no-gutters">
           <div class="col-md-4">
             <img id="avatar" src="" class="card-img-top" alt="profile avatar" />
@@ -33,16 +34,16 @@
               <h5 class="card-title" id="name"></h5>
               <h6 class="card-subtitle mb-2" id="username"></h6>
               <p class="card-text" id="bio"></p>
+              <button
+                id="edit"
+                class="btn btn-info"
+                onclick="location.href = '/edit-profile-page.html';"
+              >
+                Edit Profile
+              </button>
             </div>
           </div>
         </div>
-        <button
-          id="edit"
-          class="btn btn-info"
-          onclick="location.href = '/EditProfilePage.html';"
-        >
-          Edit Profile
-        </button>
         <div>
           <h2 class="text-center">Favorite Items</h2>
           <div
@@ -56,4 +57,4 @@
       </div>
     </div>
   </body>
-</html>                      
+</html>
