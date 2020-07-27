@@ -27,4 +27,8 @@ public class UserProfile {
   public String getBio() {
     return bio;
   }
+
+  public String getEmail() {
+    return email;
+  }
 }
