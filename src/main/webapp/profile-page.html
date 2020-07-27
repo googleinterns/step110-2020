@@ -1,60 +1,119 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!DOCTYPE html>
 <html>
-  <head>
-    <title>My Profile Page</title>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="user_script.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-  </head>
+  <html>
+    <head>
+      <head>
+        <title>EH-My Profile Page</title>
+        <title>My Profile Page</title>
+        <meta charset="UTF-8" />
+        <meta charset="UTF-8" />
+        <meta
+          <meta
+          name="viewport"
+          name="viewport"
+          @@
+          -11,21
+          +11,19
+          @@
+          rel="stylesheet"
+          rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        />
+        />
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="user_script.js"></script>
+        <script src="user_script.js"></script>
+        <script src="dashboard-script.js"></script>
+        <link
+          <link
+          rel="stylesheet"
+          rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        />
+        />
+      </head>
+    </head>
 
-  <body onload="loadProfile(); loadFavItems();">
-    <div id="navbar"></div>
-    <div class="container">
-      <h1 class="text-center">My Profile Page</h1>
-      <div class="card mb-3" style="max-width: 1000px; margin: 0 auto;">
-        <div class="row no-gutters">
-          <div class="col-md-4">
-            <img id="avatar" src="" class="card-img-top" alt="profile avatar" />
-          </div>
-          <div class="col-md-8">
-            <div class="card-body">
-              <h5 class="card-title" id="name"></h5>
-              <h6 class="card-subtitle mb-2" id="username"></h6>
-              <p class="card-text" id="bio"></p>
+    <body onload="loadSelfProfilePage()">
+      <body onload="loadProfile(); loadFavItems();">
+        <div id="navbar"></div>
+        <div id="navbar"></div>
+        <div class="container">
+          <div class="container">
+            <h1 class="text-center">My Profile Page</h1>
+            <h1 class="text-center">My Profile Page</h1>
+            <div class="card bg-light mb-3 w-100">
+              <div class="card mb-3" style="max-width: 1000px; margin: 0 auto;">
+                <div class="row no-gutters">
+                  <div class="row no-gutters">
+                    <div class="col-md-4">
+                      <div class="col-md-4">
+                        <img
+                          id="avatar"
+                          src=""
+                          class="card-img-top"
+                          alt="profile avatar"
+                        />
+                        <img
+                          id="avatar"
+                          src=""
+                          class="card-img-top"
+                          alt="profile avatar"
+                        />
+                        @@ -35,27 +33,28 @@
+                        <h1 class="text-center">My Profile Page</h1>
+                        <h5 class="card-title" id="name"></h5>
+                        <h5 class="card-title" id="name"></h5>
+                        <h6 class="card-subtitle mb-2" id="username"></h6>
+                        <h6 class="card-subtitle mb-2" id="username"></h6>
+                        <p class="card-text" id="bio"></p>
+                        <p class="card-text" id="bio"></p>
+                        <button
+                          id="edit"
+                          class="btn btn-success"
+                          onclick="location.href = '/EditProfilePage.html';"
+                        >
+                          Edit Profile
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              id="edit"
+              class="btn btn-info"
+              onclick="location.href = '/edit-profile-page.html';"
+            >
+              Edit Profile
+            </button>
+
+            <div>
+              <h2 class="text-center">Favorite Items</h2>
+              <div
+                class="card"
+                style="width: 45em; margin: 0 auto;"
+                style="height: 10rem;"
+              >
+                <div id="item-container"></div>
+              </div>
             </div>
           </div>
         </div>
-        <button
-          id="edit"
-          class="btn btn-info"
-          onclick="location.href = '/EditProfilePage.html';"
-        >
-          Edit Profile
-        </button>
-
-        <div>
-          <h2 class="text-center">Favorite Items</h2>
-          <div
-            class="card"
-            style="width: 45em; margin: 0 auto;"
-            style="height: 10rem;"
-          >
-            <div id="item-container"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
+        <h2 class="text-center mt-3">Favorite Items</h2>
+        <div id="item-container"></div>
+        <h2 class="text-center mt-3">Recommended Users</h2>
+        <h5 class="text-center text-secondary">
+          (Based on shared amount of likes)
+        </h5>
+        <div
+          class="horizontal-scrollable my-3"
+          id="recommendedUsersContainer"
+        ></div>
+    </body>
 </html>
