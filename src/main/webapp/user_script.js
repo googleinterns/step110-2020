@@ -201,7 +201,7 @@ function createProfileCard(profile) {
 /**
  * Returns the profile image Url from a custom avatar website.
  *
- * @param { string } email - the username that is used to generate the avatar
+ * @param { string } email - the email that is used to generate the avatar
  *     picture, this function assumes that the username is not an empty string
  * @returns { string } Url to the image used as the avatar.
  */
