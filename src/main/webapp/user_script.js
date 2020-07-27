@@ -8,7 +8,7 @@ function loadSelfProfilePage() {
       .then((response) => response.json())
       .then((userData) => {
         if (userData.NeedsProfile) {
-          window.location.replace('/CreateProfilePage.html');
+          window.location.replace('/create-profile-page.html');
           return;
         }
 

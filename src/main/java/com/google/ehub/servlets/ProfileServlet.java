@@ -69,10 +69,10 @@ public class ProfileServlet extends HttpServlet {
     }
     if (edit) {
         profileData.editProfile(name, username, bio);
-        response.sendRedirect("/ProfilePage.html"); 
+        response.sendRedirect("/profile-page.html"); 
     } else {
       profileData.addUserProfileToDatastore(name, email, username, bio);
-      response.sendRedirect("/ProfilePage.html");
+      response.sendRedirect("/profile-page.html");
     }
   }
 

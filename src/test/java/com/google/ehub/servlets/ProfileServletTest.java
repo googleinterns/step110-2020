@@ -53,8 +53,8 @@ public class ProfileServletTest {
   private static final String EMAIL = "honey7100@gmail.com";
   private static final String USERNAME = "honey7100";
   private static final String BIO = "My name means honey!";
-  private static final String REDIRECT = "/ProfilePage.html";
-  private static final String REDIRECT_GET = "/CreateProfilePage.html";
+  private static final String REDIRECT = "/profile-page.html";
+  private static final String REDIRECT_GET = "/create-profile-page.html";
   private final ProfileServlet servlet = new ProfileServlet();
   private final ProfileDatastore profileData = new ProfileDatastore();
 
