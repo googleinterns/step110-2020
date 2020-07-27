@@ -27,16 +27,10 @@ function loadSelfProfilePage() {
         bioSection.value = profile.bio;
 
         const profileImage = document.getElementById('avatar');
-<<<<<<< HEAD
         profileImage.src = getProfileImageUrl(profile.username);
 
         loadFavItems(profile.email);
         loadRecommendedUsers(userData.recommendedUsers);
-=======
-        const email = profile.email;
-        const avatarLetter = email.charAt(0);
-        profileImage.src = 'https://icotar.com/avatar/' + avatarLetter;
->>>>>>> bef5317499ec75e4056f5ff4d7715892d45ac35d
       })
       .catch((error) => {
         console.log('Fetching profile data servlet failed: ' + error);
