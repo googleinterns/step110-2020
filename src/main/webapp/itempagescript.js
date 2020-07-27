@@ -133,7 +133,7 @@ function getItemPageComments(comments) {
         "(" +
         date.toLocaleString() +
         ")", commentDataManager.belongsToUser
-      )
+      ,commentDataManager.currentEmail)
     );
   });
 }
@@ -145,11 +145,12 @@ function getItemPageComments(comments) {
  * @param { boolean } belongsToUser - boolean that shows whether or not the current user has posted a comment
  * @returns { html element }  returns a list element
  */
-function createListElement(comment, belongsToUser) {
+function createListElement(comment, belongsToUser, email) {
   const liElement = $('<li class="list-group-item"></li>');
   liElement.text(comment);
   if (belongsToUser) {
     liElement.append($('<i class="fa fa-trash" style="float:right;"></i>'));
+    liElement.append($('<img src="'+ "https://icotar.com/avatar/"+ email.charAt(0) +".png?s=23" + '"style=float:left;"></i>'));
   }
 
   return liElement;
