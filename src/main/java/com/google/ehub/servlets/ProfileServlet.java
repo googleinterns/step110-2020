@@ -55,26 +55,22 @@ public class ProfileServlet extends HttpServlet {
     String name = request.getParameter(NAME_PARAMETER_KEY);
     String username = request.getParameter(USERNAME_PARAMETER_KEY);
     String bio = request.getParameter(BIO_PARAMETER_KEY);
+    boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PARAMETER_KEY));
     Optional<UserProfile> userProfile = profileData.queryProfileByUsername(username);
     boolean isUserNameTaken = userProfile.isPresent() && !email.equals(userProfile.get().getEmail());
 
     if (!areValidParameters(name, username, bio)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Post Request parameters empty");
       return;
+    } 
+    if (isUserNameTaken) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username taken, please go back and pick a new username");
+        return;
     }
     if (edit) {
-       if (isUserNameTaken) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username taken, please go back and pick a new username");
-        return;
-      }
         profileData.editProfile(name, username, bio);
-        response.sendRedirect("/ProfilePage.html");
-      
+        response.sendRedirect("/ProfilePage.html"); 
     } else {
-      if (isUserNameTaken) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username taken, please go back and pick a new username");
-        return;
-      }
       profileData.addUserProfileToDatastore(name, email, username, bio);
       response.sendRedirect("/ProfilePage.html");
     }

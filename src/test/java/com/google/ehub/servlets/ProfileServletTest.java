@@ -150,6 +150,57 @@ public class ProfileServletTest {
   }
 
   @Test
+  public void postResquestWithTrueEditParam_SendsRedirect() throws IOException {
+    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
+
+    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
+    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
+    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
+    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
+
+    datastoreService.put(userEntity);
+
+    when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
+    when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
+    when(request.getParameter(BIO_PROPERTY_KEY)).thenReturn(BIO);
+    when(request.getParameter(USERNAME_PROPERTY_KEY)).thenReturn(USERNAME);
+    when(request.getParameter(EDIT_PROPERTY_KEY)).thenReturn("true");
+
+    servlet.doPost(request, response);
+
+    verify(response).sendRedirect(REDIRECT);
+  }
+
+  @Test
+  public void postResquestWithSameUsername_ErrorGetsSent() throws IOException {
+    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
+    Entity sameEntity = new Entity(PROFILE_ITEM_KIND);
+
+    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
+    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
+    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
+    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
+
+    sameEntity.setProperty(NAME_PROPERTY_KEY, NAME);
+    sameEntity.setProperty(EMAIL_PROPERTY_KEY,"os@gmail.com");
+    sameEntity.setProperty(USERNAME_PROPERTY_KEY, "os");
+    sameEntity.setProperty(BIO_PROPERTY_KEY, BIO);
+
+    datastoreService.put(userEntity);
+    datastoreService.put(sameEntity);
+
+    when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
+    when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
+    when(request.getParameter(BIO_PROPERTY_KEY)).thenReturn(BIO);
+    when(request.getParameter(USERNAME_PROPERTY_KEY)).thenReturn("os");
+    when(request.getParameter(EDIT_PROPERTY_KEY)).thenReturn(FALSE_EDIT_VALUE);
+
+    servlet.doPost(request, response);
+
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
+  }
+
+  @Test
   public void getRequestWithLoggedOutUser_ErrorGetsSent() throws IOException {
     helper.setEnvIsLoggedIn(false);
 
