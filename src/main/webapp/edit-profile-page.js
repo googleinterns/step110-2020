@@ -24,9 +24,9 @@ function loadNavBar() {
 function addProfileFormValidation() {
   const forms = document.getElementsByClassName('needs-validation');
 
-  const validation = Array.prototype.filter.call(forms, (form) => {
+  Array.prototype.filter.call(forms, (form) => {
     form.addEventListener('submit', function(event) {
-      if (form.checkValidity() === false) {
+      if (!form.checkValidity()) {
         event.preventDefault();
         event.stopPropagation();
       }
