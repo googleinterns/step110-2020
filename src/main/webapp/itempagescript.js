@@ -132,8 +132,9 @@ function deleteComment(commentId) {
  *     timestamp
  * @param { boolean } belongsToUser - boolean that shows whether or not the
  *     current user has posted a comment
+ @param { string } commentId - unique Id which references the specific comment.
  * @returns { html element }  returns a list element
- */
+ */ 
 function createListElement(comment, belongsToUser, commentId) {
   const liElement = $('<li class="list-group-item"></li>');
   liElement.text(comment);

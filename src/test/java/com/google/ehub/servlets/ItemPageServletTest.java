@@ -60,6 +60,7 @@ public class ItemPageServletTest {
   private static final String ALT_EMAIL = "airwreckeye@gmail.com";
   private static final String USERNAME = "AirwreckEye";
   private static final Boolean BELONGS_TO_USER = true;
+  private static final Boolean DOES_NOT_BELONG_TO_USER = false;
 
   private final ItemPageServlet servlet = new ItemPageServlet();
   private final CommentDataManager commentDataManager = new CommentDataManager();
@@ -78,10 +79,9 @@ public class ItemPageServletTest {
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
+    helper.setUp();	
     ProfileDatastore profile = new ProfileDatastore();
     profile.addUserProfileToDatastore("Eric", EMAIL, USERNAME, "Hey");
-    helper.setUp();
-
   }
 
   @After
@@ -106,10 +106,13 @@ public class ItemPageServletTest {
     Key itemId = EntertainmentItemDatastore.getInstance().addItemToDatastore(selectedItem);
     when(request.getParameter("itemId")).thenReturn(itemId.getId() + "");
     when(response.getWriter()).thenReturn(printWriter);
+
     Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     servlet.doGet(request, response);
+
     CommentData comment = new CommentData(
         itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), BELONGS_TO_USER);
+
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
@@ -120,6 +123,7 @@ public class ItemPageServletTest {
 
   @Test
   public void doGetReturnsItemPageData_differentUser() throws IOException {
+    helper.setEnvEmail(ALT_EMAIL);
     EntertainmentItem selectedItem = new EntertainmentItem.Builder()
                                          .setTitle(TITLE)
                                          .setDescription(DESCRIPTION)
@@ -135,17 +139,19 @@ public class ItemPageServletTest {
     Key itemId = EntertainmentItemDatastore.getInstance().addItemToDatastore(selectedItem);
     when(request.getParameter("itemId")).thenReturn(itemId.getId() + "");
     when(response.getWriter()).thenReturn(printWriter);
-    Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, ALT_EMAIL);
-    servlet.doGet(request, response);
+
+    Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     CommentData comment = new CommentData(
-        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), belongsToUser);
+        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), DOES_NOT_BELONG_TO_USER);
+
+    servlet.doGet(request, response);
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
-    CommentData test_comment = commentDataManager.retrieveComments(12345).get(0);
+
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter).println(new Gson().toJson(itemData));
-    Assert.assertEquals(false, test_comment.belongsToUser);
+    Assert.assertEquals(false, comment.belongsToUser);
   }
   @Test
   public void doGetReturnsItemPageData_userNotLoggedIn() throws IOException {
@@ -165,12 +171,14 @@ public class ItemPageServletTest {
     Key itemId = EntertainmentItemDatastore.getInstance().addItemToDatastore(selectedItem);
     when(request.getParameter("itemId")).thenReturn(itemId.getId() + "");
     when(response.getWriter()).thenReturn(printWriter);
+
     Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
-    servlet.doGet(request, response);
     CommentData comment = new CommentData(
-        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), belongsToUser);
+      itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), DOES_NOT_BELONG_TO_USER);
+    servlet.doGet(request, response);
+
     Optional<EntertainmentItem> expectedItem =
-        EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
+      EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
@@ -189,6 +197,7 @@ public class ItemPageServletTest {
     helper.setEnvIsLoggedIn(false);
     when(request.getParameter("itemId")).thenReturn("12345");
     commentDataManager.addItemComment(12345, COMMENT, TIMESTAMP, EMAIL);
+    
     servlet.doGet(request, response);
     Assert.assertEquals(1, commentDataManager.retrieveComments(12345).size());
   }
