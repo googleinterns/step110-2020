@@ -70,7 +70,8 @@ function loadUserProfilePage() {
  * Fetches the items that were liked by user and sends the array to
  * populate the page with the item cards.
  *
- * @param { string } userEmail - the email linked to the favorite items to display
+ * @param { string } userEmail - the email linked to the favorite items to
+ *     display
  */
 function loadFavItems(userEmail) {
   fetch('/favorite-item?email=' + userEmail)
@@ -94,13 +95,13 @@ function populateFavoriteItemGrid(favoriteItems) {
   let currItemIndex = 0;
 
   while (currItemIndex < favoriteItems.length) {
-    const rowElem = $('<div class="row"></div>');
+    const rowElem = $('<div class="row mb-3"></div>');
 
     for (let cell = 0;
          cell < MAX_CELLS_PER_ROW && currItemIndex < favoriteItems.length;
          cell++, currItemIndex++) {
       const item = favoriteItems[currItemIndex];
-      const colElem = $('<div class="col-6 col-md-4"></div>');
+      const colElem = $('<div class="col-md-4"></div>');
 
       fetch(`/itempagedata?itemId=${item}`)
           .then((response) => response.json())
@@ -130,7 +131,7 @@ function createFavoriteItemCard(entertainmentItem) {
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-      $('<h5 class="card-title">' + entertainmentItem.title + '(' +
+      $('<h5 class="card-title">' + entertainmentItem.title + ' (' +
         entertainmentItem.releaseDate + ')' +
         '</h5>'));
   card.append(cardBody);
@@ -154,7 +155,7 @@ function loadRecommendedUsers(recommendedUsers) {
     return;
   }
 
-  const usersRow = $('<div class="row"></div>');
+  const usersRow = $('<div class="row"</div>')
   usersContainer.append(usersRow);
 
   recommendedUsers.forEach((email) => {
@@ -179,7 +180,7 @@ function loadRecommendedUsers(recommendedUsers) {
  * @returns { jQuery } card element representing the user
  */
 function createProfileCard(profile) {
-  const card = $('<div class="card bg-light"></div>');
+  const card = $('<div class="card bg-light" id="user-card"></div>');
   card.append(
       $('<img class="card-img-top" src="' +
         getProfileImageUrl(profile.username) + '">'));
@@ -189,7 +190,8 @@ function createProfileCard(profile) {
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-      $('<h5 class="card-title text-center">' + profile.username + '</h5>'));
+      $('<h5 class="card-title text-center text-wrap">' + profile.username +
+        '</h5>'));
 
   card.append(cardBody);
 

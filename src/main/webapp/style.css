@@ -23,6 +23,11 @@ hidden {
   float: none; 
 } 
 
+#user-card {
+  width: 250px;
+  max-width: 250px;
+}
+
 ul {
   list-style-type: none;
 }
