@@ -200,7 +200,7 @@ public class EntertainmentItemDatastoreTest {
     }
 
     EntertainmentItemList itemList = entertainmentItemDatastore.queryItemsByReleaseDate(
-        FetchOptions.Builder.withDefaults(), SortDirection.DESCENDING);
+        FetchOptions.Builder.withDefaults(), "", SortDirection.DESCENDING);
     String[] actual = new String[itemList.getItems().size()];
 
     for (int i = 0; i < actual.length; i++) {

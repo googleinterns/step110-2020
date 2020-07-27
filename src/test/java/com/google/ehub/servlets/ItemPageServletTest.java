@@ -59,7 +59,7 @@ public class ItemPageServletTest {
   private static final String EMAIL = "eeirikannu@gmail.com";
   private static final String ALT_EMAIL = "airwreckeye@gmail.com";
   private static final String USERNAME = "AirwreckEye";
-  private static final Boolean belongsToUser = true;
+  private static final Boolean BELONGS_TO_USER = true;
 
   private final ItemPageServlet servlet = new ItemPageServlet();
   private final CommentDataManager commentDataManager = new CommentDataManager();
@@ -109,7 +109,7 @@ public class ItemPageServletTest {
     Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     servlet.doGet(request, response);
     CommentData comment = new CommentData(
-        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), belongsToUser);
+        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), BELONGS_TO_USER);
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));

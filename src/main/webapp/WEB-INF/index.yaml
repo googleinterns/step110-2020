@@ -4,3 +4,9 @@ indexes:
   properties:
   - name: itemId
   - name: timestampMillis
+
+- kind: entertainmentItem
+  properties:
+  - name: normalizedTitle
+  - name: releaseDateTimestampMillis
+    direction: desc

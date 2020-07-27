@@ -81,7 +81,7 @@ public class DashboardServlet extends HttpServlet {
       return itemDatastore.queryItemsByTitlePrefix(
           fetchOptions, searchValue, SortDirection.DESCENDING);
     } else {
-      return itemDatastore.queryItemsByReleaseDate(fetchOptions, SortDirection.DESCENDING);
+      return itemDatastore.queryItemsByReleaseDate(fetchOptions, searchValue, SortDirection.DESCENDING);
     }
   }
 }
