@@ -158,19 +158,27 @@ function loadRecommendedUsers(recommendedUsers) {
   const usersRow = $('<div class="row"</div>')
   usersContainer.append(usersRow);
 
-  recommendedUsers.forEach((email) => {
-    fetch('/profile-data?email=' + email)
-        .then((response) => response.json())
-        .then((profile) => {
-          const userCol = $('<div class="col col-md-3"></div>');
-          userCol.append(createProfileCard(profile));
+  const profilePromises = [];
 
-          usersRow.append(userCol);
-        })
-        .catch((error) => {
-          console.log('Failed to fetch data for profile: ' + email);
-        });
+  recommendedUsers.forEach((email) => {
+    profilePromises.push(fetch('/profile-data?email=' + email)
+                             .then((response) => response.json()));
   });
+
+  Promise.allSettled(profilePromises)
+      .then((results) => results.forEach((result) => {
+        if (result.rejected) {
+          console.log('Failed to fetch recommended user: ' + result.reason);
+          return;
+        }
+
+        const profile = result.value;
+
+        const userCol = $('<div class="col col-md-3"></div>');
+        userCol.append(createProfileCard(profile));
+
+        usersRow.append(userCol);
+      }));
 }
 
 /**
