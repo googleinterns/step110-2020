@@ -80,6 +80,17 @@ public class ProfileServletTest {
     helper.tearDown();
   }
 
+  private void createUserEntity(){
+    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
+
+    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
+    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
+    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
+    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
+
+    datastoreService.put(userEntity);
+  }
+
   @Test
   public void postRequestWithNullParams_ErrorGetsSent() throws IOException {
     when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(null);
@@ -108,14 +119,7 @@ public class ProfileServletTest {
 
   @Test
   public void postRequestWithValidParams_SendsRedirect() throws IOException {
-    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
-
-    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
-    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
-    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
-    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
-
-    datastoreService.put(userEntity);
+    createUserEntity();
 
     when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
     when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
@@ -129,14 +133,7 @@ public class ProfileServletTest {
 
   @Test
   public void postResquestWithFalseEditParam_SendsRedirect() throws IOException {
-    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
-
-    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
-    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
-    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
-    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
-
-    datastoreService.put(userEntity);
+    createUserEntity();
 
     when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
     when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
@@ -151,14 +148,7 @@ public class ProfileServletTest {
 
   @Test
   public void postResquestWithTrueEditParam_SendsRedirect() throws IOException {
-    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
-
-    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
-    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
-    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
-    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
-
-    datastoreService.put(userEntity);
+    createUserEntity();
 
     when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
     when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
@@ -173,20 +163,14 @@ public class ProfileServletTest {
 
   @Test
   public void postResquestWithSameUsername_ErrorGetsSent() throws IOException {
-    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
     Entity sameEntity = new Entity(PROFILE_ITEM_KIND);
-
-    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
-    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
-    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
-    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
-
+    createUserEntity();
+    
     sameEntity.setProperty(NAME_PROPERTY_KEY, NAME);
     sameEntity.setProperty(EMAIL_PROPERTY_KEY,"os@gmail.com");
     sameEntity.setProperty(USERNAME_PROPERTY_KEY, "os");
     sameEntity.setProperty(BIO_PROPERTY_KEY, BIO);
 
-    datastoreService.put(userEntity);
     datastoreService.put(sameEntity);
 
     when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
