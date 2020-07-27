@@ -8,7 +8,6 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <script src="user_script.js"></script>
-    <script src="dashboard-script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link
@@ -17,7 +16,7 @@
     />
   </head>
 
-  <body onload="loadSelfProfilePage()">
+  <body onload="loadProfile()">
     <div id="navbar"></div>
     <div class="container" id="editprofile">
       <h1 class="text-center">Edit Your Profile Page</h1>
@@ -42,10 +41,10 @@
             Please provide a name.
           </div>
         </div>
+        <!--TODO(oyins): validate usernames to make sure it is unique-->
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="username">Username:</label><br />
           <p>*Must contain letters or numbers</p>
-          <p>*No submission if username has been taken</p>
           <input
             type="text"
             class="form-control"

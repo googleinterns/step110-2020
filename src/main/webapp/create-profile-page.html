@@ -1,86 +1,66 @@
 <!DOCTYPE html>
-
 <html>
   <head>
-    <title>Edit Profile Page</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <script src="user_script.js"></script>
-    <script src="dashboard-script.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
   </head>
-
-  <body onload="loadSelfProfilePage()">
-    <div id="navbar"></div>
-    <div class="container" id="editprofile">
-      <h1 class="text-center">Edit Your Profile Page</h1>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Create Your Profile Page</h1>
       <form
-        action="/profile-data?edit=true"
+        action="/profile-data"
         method="POST"
         class="needs-validation"
         novalidate
       >
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="name">Name:</label><br />
-          <input 
-          type="text" 
-          class="form-control" 
-          id="name" 
-          name="name"
-          maxlength="160" 
-          value="" 
-          pattern= "^[\.a-zA-Z0-9_-]+( [\.a-zA-Z0-9_-]+)*" 
-          required /><br />
+          <input
+            type="text"
+            class="form-control"
+            name="name"
+            maxlength="160"
+            pattern= "^[\.a-zA-Z0-9_-]+( [\.a-zA-Z0-9_-]+)*" 
+            required
+          /><br />
           <div class="invalid-feedback">
             Please provide a name.
           </div>
         </div>
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="username">Username:</label><br />
-          <p>*Must contain letters or numbers</p>
-          <p>*No submission if username has been taken</p>
           <input
             type="text"
             class="form-control"
-            id="username"
             name="username"
             maxlength="160"
             pattern="[a-zA-Z0-9]+"
-            value=""
             required
           /><br />
           <div class="invalid-feedback">
-            Please provide a valid username.
+            Please provide a username.
           </div>
         </div>
-        <div class="form-group col-md-5 px-auto" style="margin: 0 auto;">
+        <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="bio">Bio:</label><br />
           <input
             type="text"
             class="form-control"
-            id="bio"
             name="bio"
             maxlength="250"
-            value="" 
             required
           /><br />
           <div class="invalid-feedback">
             Please provide a bio.
           </div>
         </div>
-        <!--TODO(oyins): create an option for the users to choose a random number-->
         <div class="text-center">
           <input
             type="submit"
-            class="btn btn-success btn-lg"
-            value="Update Profile"
+            class="btn btn-dark btn-lg"
+            value="Create Profile"
           />
         </div>
       </form>
