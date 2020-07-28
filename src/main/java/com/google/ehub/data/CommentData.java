@@ -13,7 +13,7 @@ public class CommentData {
   private final String currentEmail;
 
   public CommentData(long itemId, String comment, long timestampMillis, String username,
-      long commentId, boolean belongsToUser,String currentEmail) {
+      long commentId, boolean belongsToUser, String currentEmail) {
     this.itemId = itemId;
     this.comment = comment;
     this.timestampMillis = timestampMillis;

@@ -133,7 +133,7 @@ function getItemPageComments(comments) {
         "(" +
         date.toLocaleString() +
         ")", commentDataManager.belongsToUser
-      ,commentDataManager.currentEmail)
+      , commentDataManager.currentEmail)
     );
   });
 }
