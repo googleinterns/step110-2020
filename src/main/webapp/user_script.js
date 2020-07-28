@@ -176,7 +176,7 @@ function loadRecommendedUsers(recommendedUsers) {
 
   Promise.allSettled(profilePromises)
       .then((results) => results.forEach((result) => {
-        if (result.rejected) {
+        if (result.status === 'rejected') {
           console.log('Failed to fetch recommended user: ' + result.reason);
           return;
         }
