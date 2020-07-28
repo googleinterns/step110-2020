@@ -20,4 +20,8 @@ public class CommentData {
     this.commentId = commentId;
     this.belongsToUser = belongsToUser;
   }
+
+   public boolean getBelongsToUser() {
+    return this.belongsToUser;
+  }
 }
