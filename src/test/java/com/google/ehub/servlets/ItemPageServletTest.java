@@ -151,8 +151,9 @@ public class ItemPageServletTest {
 
     verify(response).setContentType(JSON_CONTENT_TYPE);
     verify(printWriter).println(new Gson().toJson(itemData));
-    Assert.assertEquals(false, comment.belongsToUser);
+    Assert.assertFalse(comment.belongsToUser);  
   }
+
   @Test
   public void doGetReturnsItemPageData_userNotLoggedIn() throws IOException {
     helper.setEnvIsLoggedIn(false);

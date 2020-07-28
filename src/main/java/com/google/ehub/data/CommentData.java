@@ -9,7 +9,7 @@ public class CommentData {
   private final Long timestampMillis;
   private final String username;
   private final Long commentId;
-  private final boolean belongsToUser;
+  public final boolean belongsToUser;
 
   public CommentData(long itemId, String comment, long timestampMillis, String username,
       long commentId, boolean belongsToUser) {
