@@ -2,12 +2,13 @@
 
 <html>
   <head>
-    <title>Edit My Profile</title>
+    <title>Entertainment Hub - Edit Profile Page</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <script src="user_script.js"></script>
+    <script src="dashboard-script.js"></script>
+    <script src="edit-profile-page.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link
@@ -16,7 +17,7 @@
     />
   </head>
 
-  <body onload="loadSelfProfilePage()">
+  <body onload="loadNavBar(); loadEditProfileValues(); addProfileFormValidation();">
     <div id="navbar"></div>
     <div class="container" id="editprofile">
       <h1 class="text-center">Edit Your Profile Page</h1>
@@ -83,33 +84,5 @@
         </div>
       </form>
     </div>
-    <script>
-      (function () {
-        "use strict";
-        window.addEventListener(
-          "load",
-          function () {
-            const forms = document.getElementsByClassName("needs-validation");
-
-            const validation = Array.prototype.filter.call(forms, function (
-              form
-            ) {
-              form.addEventListener(
-                "submit",
-                function (event) {
-                  if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                  }
-                  form.classList.add("was-validated");
-                },
-                false
-              );
-            });
-          },
-          false
-        );
-      })();
-    </script>
   </body>
 </html>

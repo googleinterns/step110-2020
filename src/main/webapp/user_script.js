@@ -90,29 +90,38 @@ function loadFavItems(userEmail) {
  * @param { Array } favoriteItems - the array of item ids
  */
 function populateFavoriteItemGrid(favoriteItems) {
-  const favItemContainer = $('#item-container');
-  const MAX_CELLS_PER_ROW = 3;
-  let currItemIndex = 0;
+  const itemPromises = [];
 
-  while (currItemIndex < favoriteItems.length) {
-    const rowElem = $('<div class="row mb-3"></div>');
+  favoriteItems.forEach((itemId) => {
+    itemPromises.push(fetch('/itempagedata?itemId=' + itemId)
+                          .then((response) => response.json()));
+  });
 
-    for (let cell = 0;
-         cell < MAX_CELLS_PER_ROW && currItemIndex < favoriteItems.length;
-         cell++, currItemIndex++) {
-      const item = favoriteItems[currItemIndex];
-      const colElem = $('<div class="col-md-4"></div>');
+  Promise.all(itemPromises)
+      .then((results) => {
+        const favItemContainer = $('#item-container');
 
-      fetch(`/itempagedata?itemId=${item}`)
-          .then((response) => response.json())
-          .then((itemPageData) => {
-            colElem.append(createFavoriteItemCard(itemPageData.item));
+        const MAX_CELLS_PER_ROW = 3;
+        let currItemIndex = 0;
+
+        while (currItemIndex < favoriteItems.length) {
+          const rowElem = $('<div class="row mb-3"></div>');
+
+          for (let cell = 0;
+               cell < MAX_CELLS_PER_ROW && currItemIndex < favoriteItems.length;
+               cell++, currItemIndex++) {
+            const colElem = $('<div class="col-md-4"></div>');
+
+            colElem.append(createFavoriteItemCard(results[currItemIndex].item));
             rowElem.append(colElem);
-          });
-    }
+          }
 
-    favItemContainer.append(rowElem);
-  }
+          favItemContainer.append(rowElem);
+        }
+      })
+      .catch((error) => {
+        console.log('Failed to fetch favorite items: ' + error);
+      });
 }
 
 /**
@@ -158,19 +167,27 @@ function loadRecommendedUsers(recommendedUsers) {
   const usersRow = $('<div class="row"</div>')
   usersContainer.append(usersRow);
 
-  recommendedUsers.forEach((email) => {
-    fetch('/profile-data?email=' + email)
-        .then((response) => response.json())
-        .then((profile) => {
-          const userCol = $('<div class="col col-md-3"></div>');
-          userCol.append(createProfileCard(profile));
+  const profilePromises = [];
 
-          usersRow.append(userCol);
-        })
-        .catch((error) => {
-          console.log('Failed to fetch data for profile: ' + email);
-        });
+  recommendedUsers.forEach((email) => {
+    profilePromises.push(fetch('/profile-data?email=' + email)
+                             .then((response) => response.json()));
   });
+
+  Promise.allSettled(profilePromises)
+      .then((results) => results.forEach((result) => {
+        if (result.rejected) {
+          console.log('Failed to fetch recommended user: ' + result.reason);
+          return;
+        }
+
+        const profile = result.value;
+
+        const userCol = $('<div class="col col-md-3"></div>');
+        userCol.append(createProfileCard(profile));
+
+        usersRow.append(userCol);
+      }));
 }
 
 /**

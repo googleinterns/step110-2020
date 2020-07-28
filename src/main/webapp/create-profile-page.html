@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Entertainment Hub - Create Profile Page</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <script src="dashboard-script.js"></script>
+    <script src="edit-profile-page.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
   </head>
-  <body>
+  <body onload="loadNavBar(); addProfileFormValidation();">
+    <div id="navbar"></div>
     <div class="container">
       <h1 class="text-center">Create Your Profile Page</h1>
       <form
@@ -65,33 +74,5 @@
         </div>
       </form>
     </div>
-    <script>
-      (function () {
-        "use strict";
-        window.addEventListener(
-          "load",
-          function () {
-            const forms = document.getElementsByClassName("needs-validation");
-
-            const validation = Array.prototype.filter.call(forms, function (
-              form
-            ) {
-              form.addEventListener(
-                "submit",
-                function (event) {
-                  if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                  }
-                  form.classList.add("was-validated");
-                },
-                false
-              );
-            });
-          },
-          false
-        );
-      })();
-    </script>
   </body>
 </html>
