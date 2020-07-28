@@ -3,7 +3,9 @@
  * found.
  */
 function getOmdbItem() {
-  fetch('https://www.omdbapi.com/?apikey=a28d48cd&t=' + $('#itemTitle').val())
+  fetch(
+      'https://www.omdbapi.com/?apikey=' + API_Keys.omdb_key +
+      '&t=' + $('#itemTitle').val())
       .then((response) => response.json())
       .then((omdbItem) => {
         const omdbItemEntry = $('#omdbItemEntry');
