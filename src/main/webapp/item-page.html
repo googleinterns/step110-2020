@@ -2,6 +2,10 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>Entertainment Hub - Item Page</title>
     <link
       rel="stylesheet"
@@ -12,45 +16,36 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="dashboard-script.js"></script>
     <script src="itempagescript.js"></script>
   </head>
-
   <body onload="loadItemPage()">
     <div id="navbar"></div>
-
     <div class="container">
-      <div
-        class="card"
-        style="width: 27em; margin: 0 auto;"
-        style="height: 20rem;"
-      >
-        <div id="item-container"></div>
+      <div class="row row justify-content-center">
+        <div class="col-md-5" id="item-container"></div>
       </div>
-      <footer>
-        <h2>Comments</h2>
-        <ul class="list-group" id="comment-container"></ul>
-        <div id="comments" class="p-1">
-          <form>
-            <div id="comment-box">
-              <h4>Enter a comment below</h4>
-              <textarea id="comment"></textarea>
-              <button
-                type="button"
-                class="btn btn-dark my-sm-0"
-                onclick="sendFormData()"
-              >
-                Submit
-              </button>
-            </div>
-            <div id="login"></div>
-          </form>
-        </div>
-      </footer>
+      <h2 class="mt-3">Comments</h2>
+      <ul class="list-group" id="comment-container"></ul>
+      <div id="comments" class="p-1 mt-3">
+        <form>
+          <div id="comment-box">
+            <h4>Enter a comment below</h4>
+            <textarea id="comment"></textarea>
+            <button
+              type="button"
+              class="btn btn-dark my-sm-0"
+              onclick="sendFormData()"
+            >
+              Submit
+            </button>
+          </div>
+          <div id="login"></div>
+        </form>
+      </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   </body>
 </html>
