@@ -32,7 +32,7 @@ function initializeNavBarProfileSection() {
 
         if (loginResponse.isUserLoggedIn) {
           profileLinks.append($(
-              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+              '<a class="nav-link text-light" href="/profile-page.html">Profile</a>'));
           logLinks.append(
               $('<a class="nav-link text-light" href="' +
                 loginResponse.LogoutURL + '">Logout</a>'));
