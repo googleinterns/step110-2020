@@ -56,18 +56,26 @@ public class ProfileServlet extends HttpServlet {
     String username = request.getParameter(USERNAME_PARAMETER_KEY);
     String bio = request.getParameter(BIO_PARAMETER_KEY);
     boolean edit = Boolean.parseBoolean(request.getParameter(EDIT_PARAMETER_KEY));
-
+    
     if (!areValidParameters(name, username, bio)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Post Request parameters empty");
       return;
+    } 
+
+    Optional<UserProfile> userProfile = profileData.queryProfileByUsername(username);
+    boolean isUserNameTaken = userProfile.isPresent() && !email.equals(userProfile.get().getEmail());
+    
+    if (isUserNameTaken) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username taken, please go back and pick a new username");
+        return;
     }
     if (edit) {
-      profileData.editProfile(name, username, bio);
+        profileData.editProfile(name, username, bio);
+        response.sendRedirect("/profile-page.html"); 
     } else {
       profileData.addUserProfileToDatastore(name, email, username, bio);
+      response.sendRedirect("/profile-page.html");
     }
-
-    response.sendRedirect("/ProfilePage.html");
   }
 
   @Override
@@ -126,8 +134,7 @@ public class ProfileServlet extends HttpServlet {
         && bio != null && !bio.isEmpty());
   }
 
-  private Map<Long, Set<String>> getUsersWhoLikeLoggedInUserItems(
-      String userEmail, Set<Long> itemIds) {
+  private Map<Long, Set<String>> getUsersWhoLikeLoggedInUserItems(String userEmail, Set<Long> itemIds) {
     Map<Long, Set<String>> itemLikes = new HashMap<>();
 
     for (Long itemId : itemIds) {
@@ -142,8 +149,7 @@ public class ProfileServlet extends HttpServlet {
     return itemLikes;
   }
 
-  private void sendUserProfileWithEmail(HttpServletResponse response, String email)
-      throws IOException {
+  private void sendUserProfileWithEmail(HttpServletResponse response, String email) throws IOException {
     UserProfile userProfile = profileData.getUserProfile(email);
 
     if (userProfile == null) {
@@ -156,8 +162,7 @@ public class ProfileServlet extends HttpServlet {
     response.getWriter().println(new Gson().toJson(userProfile));
   }
 
-  private void sendUserProfileWithUsername(HttpServletResponse response, String username)
-      throws IOException {
+  private void sendUserProfileWithUsername(HttpServletResponse response, String username) throws IOException {
     Optional<UserProfile> userProfile = profileData.queryProfileByUsername(username);
 
     if (!userProfile.isPresent()) {

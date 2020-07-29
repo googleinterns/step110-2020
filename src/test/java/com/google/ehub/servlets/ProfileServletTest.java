@@ -53,8 +53,8 @@ public class ProfileServletTest {
   private static final String EMAIL = "honey7100@gmail.com";
   private static final String USERNAME = "honey7100";
   private static final String BIO = "My name means honey!";
-  private static final String REDIRECT = "/ProfilePage.html";
-  private static final String REDIRECT_GET = "/CreateProfilePage.html";
+  private static final String REDIRECT = "/profile-page.html";
+  private static final String REDIRECT_GET = "/create-profile-page.html";
   private final ProfileServlet servlet = new ProfileServlet();
   private final ProfileDatastore profileData = new ProfileDatastore();
 
@@ -78,6 +78,17 @@ public class ProfileServletTest {
   @After
   public void tearDown() throws IOException {
     helper.tearDown();
+  }
+
+  private void createUserEntity(){
+    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
+
+    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
+    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
+    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
+    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
+
+    datastoreService.put(userEntity);
   }
 
   @Test
@@ -108,14 +119,7 @@ public class ProfileServletTest {
 
   @Test
   public void postRequestWithValidParams_SendsRedirect() throws IOException {
-    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
-
-    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
-    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
-    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
-    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
-
-    datastoreService.put(userEntity);
+    createUserEntity();
 
     when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
     when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
@@ -129,14 +133,7 @@ public class ProfileServletTest {
 
   @Test
   public void postResquestWithFalseEditParam_SendsRedirect() throws IOException {
-    Entity userEntity = new Entity(PROFILE_ITEM_KIND);
-
-    userEntity.setProperty(NAME_PROPERTY_KEY, NAME);
-    userEntity.setProperty(EMAIL_PROPERTY_KEY, EMAIL);
-    userEntity.setProperty(USERNAME_PROPERTY_KEY, USERNAME);
-    userEntity.setProperty(BIO_PROPERTY_KEY, BIO);
-
-    datastoreService.put(userEntity);
+    createUserEntity();
 
     when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
     when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
@@ -147,6 +144,44 @@ public class ProfileServletTest {
     servlet.doPost(request, response);
 
     verify(response).sendRedirect(REDIRECT);
+  }
+
+  @Test
+  public void postResquestWithTrueEditParam_SendsRedirect() throws IOException {
+    createUserEntity();
+
+    when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
+    when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
+    when(request.getParameter(BIO_PROPERTY_KEY)).thenReturn(BIO);
+    when(request.getParameter(USERNAME_PROPERTY_KEY)).thenReturn(USERNAME);
+    when(request.getParameter(EDIT_PROPERTY_KEY)).thenReturn("true");
+
+    servlet.doPost(request, response);
+
+    verify(response).sendRedirect(REDIRECT);
+  }
+
+  @Test
+  public void postResquestWithSameUsername_ErrorGetsSent() throws IOException {
+    Entity sameEntity = new Entity(PROFILE_ITEM_KIND);
+    createUserEntity();
+    
+    sameEntity.setProperty(NAME_PROPERTY_KEY, NAME);
+    sameEntity.setProperty(EMAIL_PROPERTY_KEY,"os@gmail.com");
+    sameEntity.setProperty(USERNAME_PROPERTY_KEY, "os");
+    sameEntity.setProperty(BIO_PROPERTY_KEY, BIO);
+
+    datastoreService.put(sameEntity);
+
+    when(request.getParameter(NAME_PROPERTY_KEY)).thenReturn(NAME);
+    when(request.getParameter(EMAIL_PROPERTY_KEY)).thenReturn(EMAIL);
+    when(request.getParameter(BIO_PROPERTY_KEY)).thenReturn(BIO);
+    when(request.getParameter(USERNAME_PROPERTY_KEY)).thenReturn("os");
+    when(request.getParameter(EDIT_PROPERTY_KEY)).thenReturn(FALSE_EDIT_VALUE);
+
+    servlet.doPost(request, response);
+
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
   }
 
   @Test

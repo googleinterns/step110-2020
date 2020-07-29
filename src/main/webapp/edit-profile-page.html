@@ -7,9 +7,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="dashboard-script.js"></script>
     <script src="edit-profile-page.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
@@ -43,7 +45,6 @@
             Please provide a name.
           </div>
         </div>
-        <!--TODO(oyins): validate usernames to make sure it is unique-->
         <div class="form-group col-md-5" style="margin: 0 auto;">
           <label for="username">Username:</label><br />
           <p>*Must contain letters or numbers</p>
@@ -58,7 +59,7 @@
             required
           /><br />
           <div class="invalid-feedback">
-            Please provide a username.
+            Please provide a valid username.
           </div>
         </div>
         <div class="form-group col-md-5 px-auto" style="margin: 0 auto;">
@@ -76,7 +77,6 @@
             Please provide a bio.
           </div>
         </div>
-        <!--TODO(oyins): create an option for the users to choose a random number-->
         <div class="text-center">
           <input
             type="submit"
