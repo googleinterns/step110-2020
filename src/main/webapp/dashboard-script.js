@@ -32,7 +32,7 @@ function initializeNavBarProfileSection() {
 
         if (loginResponse.isUserLoggedIn) {
           profileLinks.append($(
-              '<a class="nav-link text-light" href="/ProfilePage.html">Profile</a>'));
+              '<a class="nav-link text-light" href="/profile-page.html">Profile</a>'));
           logLinks.append(
               $('<a class="nav-link text-light" href="' +
                 loginResponse.LogoutURL + '">Logout</a>'));
@@ -75,36 +75,33 @@ function initializeSortSelector() {
  * item ids from FavoriteItemServlet to initialize the dashboard with items that
  * have correct like button state.
  */
-async function initializeDashboard() {
+function initializeDashboard() {
   Promise
       .allSettled([
         fetch(
             '/dashboard?searchValue=' + $('#searchValue').val() +
-            '&sortType=' + $('#sortType').val()),
-        fetch('/favorite-item'),
+            '&sortType=' + $('#sortType').val())
+            .then((response) => response.json()),
+        fetch('/favorite-item').then((response) => response.json())
       ])
-      .then(async (results) => {
+      .then((results) => {
         dashboardResult = results[0];
         favResult = results[1];
 
-        if (!dashboardResult.value.ok) {
+        if (dashboardResult.status === 'rejected') {
           console.log(
               'Failed to fetch Entertainment Items from DashboardServlet: ' +
               dashboardResult.reason);
           return;
         }
 
-        try {
-          const entertainmentItems = await dashboardResult.value.json();
-          const favoriteItemIds =
-              favResult.value.ok ? await favResult.value.json() : [];
+        const entertainmentItems = dashboardResult.value;
+        const favoriteItemIds =
+            favResult.status === 'fulfilled' ? favResult.value : [];
 
-          setupSeachInputCallback(favoriteItemIds);
-          setupSortSelectorCallback(favoriteItemIds);
-          updateDashboardItems(entertainmentItems, favoriteItemIds);
-        } catch (error) {
-          console.log('Failed to populate dashboard: ' + error);
-        }
+        setupSeachInputCallback(favoriteItemIds);
+        setupSortSelectorCallback(favoriteItemIds);
+        updateDashboardItems(entertainmentItems, favoriteItemIds);
       });
 }
 

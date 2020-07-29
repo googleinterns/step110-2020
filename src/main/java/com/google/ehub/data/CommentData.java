@@ -22,4 +22,8 @@ public class CommentData {
     this.belongsToUser = belongsToUser;
     this.email = email;
   }
+
+   public boolean getBelongsToUser() {
+    return this.belongsToUser;
+  }
 }

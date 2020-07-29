@@ -51,7 +51,7 @@ function hideCommentBox() {
  * Makes Entertainment Item into card
  */
 async function createSelectedItemCard(entertainmentItem) {
-  const card = $('<div class="mt-2" class="card bg-light"></div>');
+  const card = $('<div class="mt-2 card bg-light"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   const cardBody = $('<div class="card-body"></div>');
@@ -68,7 +68,6 @@ async function createSelectedItemCard(entertainmentItem) {
   cardBody.append(
       $('<h5 class="card-title"><b>Cast: </b>' + entertainmentItem.actors +
         '</h5>'));
-
   cardBody.append(
       $('<p class="card-text"><b>Description: </b>' +
         entertainmentItem.description + '</p>'));
@@ -111,6 +110,22 @@ function getItemPageComments(comments) {
 }
 
 /**
+ * Sends delete request to servlet for a specific comment.
+ *
+ * @param { string } commentId - the commentId for the given comment
+ */
+function deleteComment(commentId) {
+  fetch('/itempagedata?commentId=' + commentId, {method: 'DELETE'})
+      .then(() => {
+        location.reload();
+      })
+      .catch((error) => {
+        console.log('Failed to delete comment');
+      });
+}
+
+
+/**
  * Creates list element from given comment
  *
  * @param { string } comment - the comment including the username, message, and
@@ -124,7 +139,9 @@ function createListElement(comment, belongsToUser, email) {
   const liElement = $('<li class="list-group-item"></li>');
   liElement.text(comment);
   if (belongsToUser) {
-    liElement.append($('<i class="fa fa-trash" style="float:right;"></i>'));
+    liElement.append(
+        $('<div onclick="deleteComment(' + commentId +
+          ')"><i class="fa fa-trash" style="float:right;"></i></div>'));
   }
   liElement.append(
       $('<img class="pr-1" src="' + getProfileImageUrl(email) + '.png?s=23'+
