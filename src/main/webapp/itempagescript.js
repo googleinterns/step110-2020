@@ -133,7 +133,7 @@ function getItemPageComments(comments) {
         "(" +
         date.toLocaleString() +
         ")", commentDataManager.belongsToUser
-      , commentDataManager.currentEmail)
+      , commentDataManager.email)
     );
   });
 }
@@ -149,10 +149,9 @@ function createListElement(comment, belongsToUser, email) {
   const liElement = $('<li class="list-group-item"></li>');
   liElement.text(comment);
   if (belongsToUser) {
-    liElement.append($('<i class="fa fa-trash" style="float:right;"></i>'));
-    liElement.append($('<img src="'+ "https://icotar.com/avatar/"+ email.charAt(0) +".png?s=23" + '"style=float:left;"></i>'));
+    liElement.append($('<i class="fa fa-trash" style="float:right;"></i>')); 
   }
-
+    liElement.append($('<img class="pr-1" src="'+ "https://icotar.com/avatar/"+ email.charAt(0) +".png?s=23" + '"style=float:left;"></img>'));
   return liElement;
 }
 

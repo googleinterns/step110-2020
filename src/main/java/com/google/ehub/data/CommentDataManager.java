@@ -77,7 +77,7 @@ public class CommentDataManager {
       String currentEmail = userService.isUserLoggedIn() ? userService.getCurrentUser().getEmail() : null;
       boolean belongsToUser = storedEmail.equals(currentEmail);
       results.add(
-          new CommentData(itemId, comment, timestampMillis, username, commentId, belongsToUser, currentEmail));
+          new CommentData(itemId, comment, timestampMillis, username, commentId, belongsToUser, storedEmail));
     }
     return results;
   }
