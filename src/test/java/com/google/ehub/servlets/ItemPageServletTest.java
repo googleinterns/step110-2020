@@ -111,8 +111,7 @@ public class ItemPageServletTest {
     servlet.doGet(request, response);
 
     CommentData comment = new CommentData(
-        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), BELONGS_TO_USER);
-
+        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), BELONGS_TO_USER, EMAIL);
     Optional<EntertainmentItem> expectedItem =
         EntertainmentItemDatastore.getInstance().queryItem(itemId.getId());
     ItemPageData itemData = new ItemPageData(expectedItem.get(), Lists.newArrayList(comment));
@@ -142,7 +141,7 @@ public class ItemPageServletTest {
 
     Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     CommentData comment = new CommentData(
-        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), DOES_NOT_BELONG_TO_USER);
+        itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), DOES_NOT_BELONG_TO_USER, EMAIL);
 
     servlet.doGet(request, response);
     Optional<EntertainmentItem> expectedItem =
@@ -174,7 +173,7 @@ public class ItemPageServletTest {
 
     Key commentId = commentDataManager.addItemComment(itemId.getId(), COMMENT, TIMESTAMP, EMAIL);
     CommentData comment = new CommentData(
-      itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), DOES_NOT_BELONG_TO_USER);
+      itemId.getId(), COMMENT, TIMESTAMP, USERNAME, commentId.getId(), DOES_NOT_BELONG_TO_USER, EMAIL);
     servlet.doGet(request, response);
 
     Optional<EntertainmentItem> expectedItem =

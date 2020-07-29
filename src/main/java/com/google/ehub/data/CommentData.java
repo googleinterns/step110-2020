@@ -10,15 +10,17 @@ public class CommentData {
   private final String username;
   private final Long commentId;
   private final boolean belongsToUser;
+  private final String email;
 
   public CommentData(long itemId, String comment, long timestampMillis, String username,
-      long commentId, boolean belongsToUser) {
+      long commentId, boolean belongsToUser, String email) {
     this.itemId = itemId;
     this.comment = comment;
     this.timestampMillis = timestampMillis;
     this.username = username;
     this.commentId = commentId;
     this.belongsToUser = belongsToUser;
+    this.email = email;
   }
 
    public boolean getBelongsToUser() {
