@@ -127,7 +127,7 @@ function createListElement(comment, belongsToUser, email) {
     liElement.append($('<i class="fa fa-trash" style="float:right;"></i>'));
   }
   liElement.append(
-      $('<img class="pr-1" src="' + getProfileImageUrl(email) +
+      $('<img class="pr-1" src="' + getProfileImageUrl(email) + '.png?s=23'+
         '"style=float:left;"></img>'));
   return liElement;
 }
@@ -146,15 +146,4 @@ function getUrlParam(param) {
   }
 
   return '';
-}
-
-/**
- * Returns the profile image Url from a custom avatar website.
- *
- * @param { string } email - the email that is used to generate the avatar
- *     picture, this function assumes that the email is not an empty string
- * @returns { string } Url to the image used as the avatar.
- */
-function getProfileImageUrl(email) {
-  return 'https://icotar.com/avatar/' + email.charAt(0) + '.png?s=23';
 }
