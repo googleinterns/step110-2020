@@ -6,6 +6,7 @@ async function loadItemPage() {
     $('#navbar').load('navbar.html', function() {
       initializeNavBarProfileSection();
     });
+
     const itemId = getUrlParam('itemId');
 
     if (itemId !== '') {
@@ -17,8 +18,10 @@ async function loadItemPage() {
                 .then((loginResponse) => {
                   createSelectedItemCard(itemPageData.item);
                   getItemPageComments(itemPageData.comments);
+
                   if (!loginResponse.isUserLoggedIn) {
                     hideCommentBox();
+                    
                     const login = $('#login');
                     login.append($(
                         '<a href="' + loginResponse.LoginURL +
@@ -132,7 +135,6 @@ function deleteComment(commentId) {
         console.log('Failed to delete comment');
       });
 }
-
 
 /**
  * Creates list element from given comment
