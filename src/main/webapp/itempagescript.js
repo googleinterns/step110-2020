@@ -155,7 +155,6 @@ function createListElement(comment) {
       $('<img class="pr-1" src="' + getProfileImageUrl(comment.email) +
         '.png?s=23' + '"style=float:left;"></img>'));
 
-
   if (comment.belongsToUser) {
     liElement.append(
         $('<div onclick="deleteComment(' + comment.commentId +
