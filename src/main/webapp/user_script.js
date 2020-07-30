@@ -14,20 +14,10 @@ function loadSelfProfilePage() {
 
         const profile = userData.profile;
 
-        const nameSection = document.getElementById('name');
-        nameSection.innerHTML = profile.name;
-        nameSection.value = profile.name;
-
-        const usernameSection = document.getElementById('username');
-        usernameSection.innerHTML = profile.username;
-        usernameSection.value = profile.username;
-
-        const bioSection = document.getElementById('bio');
-        bioSection.innerHTML = profile.bio;
-        bioSection.value = profile.bio;
-
-        const profileImage = document.getElementById('avatar');
-        profileImage.src = getProfileImageUrl(profile.email);
+        $('#name').text(profile.name);
+        $('#username').text(profile.username);
+        $('#bio').text(profile.bio);
+        $('#avatar').attr('src', getProfileImageUrl(profile.email));
 
         loadFavItems(profile.email);
         loadRecommendedUsers(userData.recommendedUsers);
@@ -199,8 +189,8 @@ function loadRecommendedUsers(recommendedUsers) {
 function createProfileCard(profile) {
   const card = $('<div class="card bg-light" id="user-card"></div>');
   card.append(
-      $('<img class="card-img-top" src="' +
-        getProfileImageUrl(profile.email) + '">'));
+      $('<img class="card-img-top" src="' + getProfileImageUrl(profile.email) +
+        '">'));
   card.append(
       $('<a class="stretched-link" href="user-profile-page.html?username=' +
         profile.username + '"></a>'));
