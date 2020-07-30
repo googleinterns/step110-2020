@@ -1,7 +1,7 @@
 /**
  * Retrieves ItemPageData and forms page using other functions.
  */
-async function loadItemPage() {
+function loadItemPage() {
   $(document).ready(function() {
     $('#navbar').load('navbar.html', function() {
       initializeNavBarProfileSection();
@@ -94,11 +94,12 @@ function createSelectedItemCard(entertainmentItem) {
 }
 
 /**
- * Sends comment data and ItemId to Servlet
+ * Submits a new comment to the ItemPageServlet
  */
-async function sendFormData() {
+function submitComment() {
   const comment = $('#comment').val();
   const itemId = getUrlParam('itemId');
+
   if (comment != '' && itemId != null) {
     $.post('/itempagedata', {comment: comment, itemId: itemId})
         .done(function() {
@@ -124,15 +125,16 @@ function getItemPageComments(comments) {
 /**
  * Sends delete request to servlet for a specific comment.
  *
+ * @param { jQuery } commentElem - the element displaying the comment data
  * @param { string } commentId - the commentId for the given comment
  */
-function deleteComment(commentId) {
+function deleteComment(commentElem, commentId) {
   fetch('/itempagedata?commentId=' + commentId, {method: 'DELETE'})
       .then(() => {
-        location.reload();
+        commentElem.remove();
       })
       .catch((error) => {
-        console.log('Failed to delete comment');
+        console.log('Failed to delete comment: ' + error);
       });
 }
 
@@ -156,9 +158,13 @@ function createListElement(comment) {
         '.png?s=23' + '"style=float:left;"></img>'));
 
   if (comment.belongsToUser) {
-    liElement.append(
-        $('<div onclick="deleteComment(' + comment.commentId +
-          ')"><i class="fa fa-trash" style="float:right;"></i></div>'));
+    const deleteButton =
+        $('<div><i class="fa fa-trash" style="float:right;"></i></div>');
+    deleteButton.one('click', () => {
+      deleteComment(liElement, comment.commentId);
+    });
+    
+    liElement.append(deleteButton);
   }
 
   return liElement;
