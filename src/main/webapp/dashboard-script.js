@@ -243,7 +243,7 @@ function populateItemGrid(
  * @returns { jQuery } card element representing the entertainment item
  */
 function createEntertainmentItemCard(entertainmentItem, favoriteItemIds) {
-  const card = $('<div class="card bg-light"></div>');
+  const card = $('<div class="card bg-light border-dark"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(

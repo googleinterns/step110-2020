@@ -131,7 +131,7 @@ function populateFavoriteItemGrid(favoriteItems) {
  * @returns card - bootstrap card with item information
  */
 function createFavoriteItemCard(entertainmentItem) {
-  const card = $('<div class="mt-2 card bg-light"></div>');
+  const card = $('<div class="mt-2 card bg-light border-dark"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   card.append(

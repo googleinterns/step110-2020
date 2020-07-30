@@ -51,7 +51,7 @@ function hideCommentBox() {
  * Makes Entertainment Item into card
  */
 async function createSelectedItemCard(entertainmentItem) {
-  const card = $('<div class="mt-2 card bg-light"></div>');
+  const card = $('<div class="mt-2 card bg-light border-dark"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
   const cardBody = $('<div class="card-body"></div>');
