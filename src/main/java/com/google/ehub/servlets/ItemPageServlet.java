@@ -27,7 +27,6 @@ import com.google.ehub.data.CommentDataManager;
 import com.google.ehub.data.EntertainmentItem;
 import com.google.ehub.data.EntertainmentItemDatastore;
 import com.google.ehub.data.ItemPageData;
-import com.google.ehub.data.ProfileDatastore;
 import com.google.ehub.data.UserProfile;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -43,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/itempagedata")
 public class ItemPageServlet extends HttpServlet {
   private final UserService userService = UserServiceFactory.getUserService();
-  private final ProfileDatastore profileData = new ProfileDatastore();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
