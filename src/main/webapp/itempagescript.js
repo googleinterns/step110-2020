@@ -153,8 +153,7 @@ function createListElement(comment) {
 
   liElement.append(
       $('<img class="pr-1" src="' + getProfileImageUrl(comment.email) +
-        '.png?s=23' +
-        '"style=float:left;"></img>'));
+        '.png?s=23' + '"style=float:left;"></img>'));
 
 
   if (comment.belongsToUser) {
