@@ -49,29 +49,43 @@ function hideCommentBox() {
 
 /**
  * Makes Entertainment Item into card
+ *
+ * @param { JSON } entertainmentItem - the item whose data will be displayed in
+ *     the card
  */
-async function createSelectedItemCard(entertainmentItem) {
+function createSelectedItemCard(entertainmentItem) {
   const card = $('<div class="mt-2 card bg-light"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
+
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-      $('<h5 class="card-title">' + entertainmentItem.title + '(' +
-        entertainmentItem.releaseDate + ')' +
-        '</h5>'));
-
-  cardBody.append(
-      $('<h5 class="card-title"><b>Runtime: </b>' + entertainmentItem.runtime +
-        '</h5>'));
-  cardBody.append(
-      $('<h5 class="card-title">' + entertainmentItem.genre + '</h5>'));
-  cardBody.append(
-      $('<h5 class="card-title"><b>Cast: </b>' + entertainmentItem.actors +
+      $('<h5 class="card-title text-center">' + entertainmentItem.title +
         '</h5>'));
   cardBody.append(
       $('<p class="card-text"><b>Description: </b>' +
         entertainmentItem.description + '</p>'));
+  cardBody.append(
+      $('<p class="card-text"><b>Release Date: </b>' +
+        entertainmentItem.releaseDate + '</p>'));
+  cardBody.append(
+      $('<p class="card-text"><b>Runtime: </b>' + entertainmentItem.runtime +
+        '</p>'));
+  cardBody.append(
+      $('<p class="card-text"><b>Genre: </b>' + entertainmentItem.genre +
+        '</p>'));
+  cardBody.append(
+      $('<p class="card-text"><b>Directors: </b>' +
+        entertainmentItem.directors + '</p>'));
+  cardBody.append(
+      $('<p class="card-text"><b>Writers: </b>' + entertainmentItem.writers +
+        '</p>'));
+  cardBody.append(
+      $('<p class="card-text"><b>Actors: </b>' + entertainmentItem.actors +
+        '</p>'));
+
   card.append(cardBody);
+
   const itemContainer = $('#item-container');
   itemContainer.append(card);
 }
@@ -144,7 +158,7 @@ function createListElement(comment, belongsToUser, email) {
           ')"><i class="fa fa-trash" style="float:right;"></i></div>'));
   }
   liElement.append(
-      $('<img class="pr-1" src="' + getProfileImageUrl(email) + '.png?s=23'+
+      $('<img class="pr-1" src="' + getProfileImageUrl(email) + '.png?s=23' +
         '"style=float:left;"></img>'));
   return liElement;
 }
