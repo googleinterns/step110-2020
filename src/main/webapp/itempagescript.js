@@ -21,7 +21,7 @@ async function loadItemPage() {
 
                   if (!loginResponse.isUserLoggedIn) {
                     hideCommentBox();
-                    
+
                     const login = $('#login');
                     login.append($(
                         '<a href="' + loginResponse.LoginURL +
