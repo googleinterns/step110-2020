@@ -86,7 +86,7 @@ public class DashboardServletTest {
   }
 
   @Test
-  public void getRequestWithNullParams_NoContentGetsSent() throws IOException {
+  public void getRequestWithNullParams_noContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY)).thenReturn(null);
     when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(null);
     when(response.getWriter()).thenReturn(printWriter);
@@ -97,7 +97,7 @@ public class DashboardServletTest {
   }
 
   @Test
-  public void getRequestWithEmptyParams_NoContentGetsSent() throws IOException {
+  public void getRequestWithEmptyParams_noContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY)).thenReturn("");
     when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn("");
     when(response.getWriter()).thenReturn(printWriter);
@@ -108,7 +108,7 @@ public class DashboardServletTest {
   }
 
   @Test
-  public void getRequestWithValidParams_ContentGetsSent() throws IOException {
+  public void getRequestWithValidParams_contentGetsSent() throws IOException {
     Entity itemEntity = new Entity(ENTERTAINMENT_ITEM_KIND);
     itemEntity.setProperty(DISPLAY_TITLE_PROPERTY_KEY, TITLE);
     itemEntity.setProperty(NORMALIZED_TITLE_PROPERTY_KEY, TITLE.toLowerCase());
@@ -138,7 +138,7 @@ public class DashboardServletTest {
   }
 
   @Test
-  public void getRequestWithInvalidSortingParam_NoContentGetsSent() throws IOException {
+  public void getRequestWithInvalidSortingParam_noContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY)).thenReturn(TITLE);
     when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(INVALID_SORT_PARAMETER_VALUE);
     when(response.getWriter()).thenReturn(printWriter);
@@ -149,7 +149,7 @@ public class DashboardServletTest {
   }
 
   @Test
-  public void getRequestWithExceedingSearchValueLength_NoContentGetsSent() throws IOException {
+  public void getRequestWithExceedingSearchValueLength_noContentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY))
         .thenReturn(getSearchValue(MAX_SEARCH_VALUE_CHARS + 1));
     when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(ASCENDING_TITLE_PARAMETER_VALUE);
@@ -161,7 +161,7 @@ public class DashboardServletTest {
   }
 
   @Test
-  public void getRequestWithMaximumValidSearchValueLength_ContentGetsSent() throws IOException {
+  public void getRequestWithMaximumValidSearchValueLength_contentGetsSent() throws IOException {
     when(request.getParameter(SEARCH_VALUE_PARAMETER_KEY))
         .thenReturn(getSearchValue(MAX_SEARCH_VALUE_CHARS));
     when(request.getParameter(SORT_TYPE_PARAMETER_KEY)).thenReturn(ASCENDING_TITLE_PARAMETER_VALUE);
