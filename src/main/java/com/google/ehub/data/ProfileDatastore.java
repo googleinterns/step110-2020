@@ -22,6 +22,7 @@ public final class ProfileDatastore {
   private static final String NAME_PROPERTY_KEY = "name";
   private static final String EMAIL_PROPERTY_KEY = "email";
   private static final String USERNAME_PROPERTY_KEY = "username";
+  private static final String NORMALIZED_USERNAME_PROPERTY_KEY = "normalizedUsername";
   private static final String BIO_PROPERTY_KEY = "bio";
 
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -41,6 +42,7 @@ public final class ProfileDatastore {
     userEntity.setProperty(NAME_PROPERTY_KEY, name);
     userEntity.setProperty(EMAIL_PROPERTY_KEY, email);
     userEntity.setProperty(USERNAME_PROPERTY_KEY, username);
+    userEntity.setProperty(NORMALIZED_USERNAME_PROPERTY_KEY, username.toLowerCase());
     userEntity.setProperty(BIO_PROPERTY_KEY, bio);
 
     datastore.put(userEntity);
@@ -93,9 +95,9 @@ public final class ProfileDatastore {
    * optional object will be empty if the user Entity was not found
    */
   public Optional<UserProfile> queryProfileByUsername(String username) {
-    Query query =
-        new Query(PROFILE_ITEM_KIND)
-            .setFilter(new FilterPredicate(USERNAME_PROPERTY_KEY, FilterOperator.EQUAL, username));
+    Query query = new Query(PROFILE_ITEM_KIND)
+                      .setFilter(new FilterPredicate(NORMALIZED_USERNAME_PROPERTY_KEY,
+                          FilterOperator.EQUAL, username.toLowerCase()));
     PreparedQuery queryResults = datastore.prepare(query);
 
     Entity userEntity = queryResults.asSingleEntity();
@@ -121,6 +123,7 @@ public final class ProfileDatastore {
 
     userEntity.setProperty(NAME_PROPERTY_KEY, name);
     userEntity.setProperty(USERNAME_PROPERTY_KEY, username);
+    userEntity.setProperty(NORMALIZED_USERNAME_PROPERTY_KEY, username.toLowerCase());
     userEntity.setProperty(BIO_PROPERTY_KEY, bio);
     datastore.put(userEntity);
   }

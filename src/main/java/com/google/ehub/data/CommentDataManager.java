@@ -40,11 +40,11 @@ public class CommentDataManager {
    */
   public Key addItemComment(long itemId, String comment, long timestampMillis, String email) {
     Entity commentEntity = new Entity(COMMENT_KIND_KEY);
-    Long commentId = commentEntity.getKey().getId();
     commentEntity.setProperty(ITEM_ID_PROPERTY_KEY, itemId);
     commentEntity.setProperty(COMMENT_PROPERTY_KEY, comment);
     commentEntity.setProperty(TIMESTAMP_PROPERTY_KEY, timestampMillis);
     commentEntity.setProperty(EMAIL_PROPERTY_KEY, email);
+    
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     return datastore.put(commentEntity);
   }
