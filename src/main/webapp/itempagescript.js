@@ -109,17 +109,12 @@ async function sendFormData() {
 
 /**
  * Function which builds the comment element from the ItemPageData object
+ * @param { JSON } comments - list of comments to display
  */
 function getItemPageComments(comments) {
   const commentContainer = $('#comment-container');
-  comments.forEach((commentDataManager) => {
-    const date = new Date(commentDataManager.timestampMillis);
-    const commentId = commentDataManager.commentId;
-    commentContainer.append(createListElement(
-        commentDataManager.username + ': ' + commentDataManager.comment +
-            ' - ' +
-            '(' + date.toLocaleString() + ')',
-        commentDataManager.belongsToUser, commentDataManager.email));
+  comments.forEach((comment) => {
+    commentContainer.append(createListElement(comment));
   });
 }
 
@@ -142,24 +137,30 @@ function deleteComment(commentId) {
 /**
  * Creates list element from given comment
  *
- * @param { string } comment - the comment including the username, message, and
- *     timestamp
- * @param { boolean } belongsToUser - boolean that shows whether or not the
- *     current user has posted a comment
- * @param { string } email - the email of the user who posted the comment
- * @returns { html element }  returns a list element
+ * @param { JSON } comment - the comment whose data is displayed on the list
+ *     element
+ * @returns { jQuery }  returns a list element
  */
-function createListElement(comment, belongsToUser, email) {
+function createListElement(comment) {
   const liElement = $('<li class="list-group-item"></li>');
-  liElement.text(comment);
-  if (belongsToUser) {
+  const date = new Date(comment.timestampMillis);
+
+  liElement.text(
+      comment.username + ': ' + comment.comment + ' - ' +
+      '(' + date.toLocaleString() + ')');
+
+  liElement.append(
+      $('<img class="pr-1" src="' + getProfileImageUrl(comment.email) +
+        '.png?s=23' +
+        '"style=float:left;"></img>'));
+
+
+  if (comment.belongsToUser) {
     liElement.append(
-        $('<div onclick="deleteComment(' + commentId +
+        $('<div onclick="deleteComment(' + comment.commentId +
           ')"><i class="fa fa-trash" style="float:right;"></i></div>'));
   }
-  liElement.append(
-      $('<img class="pr-1" src="' + getProfileImageUrl(email) + '.png?s=23' +
-        '"style=float:left;"></img>'));
+
   return liElement;
 }
 
