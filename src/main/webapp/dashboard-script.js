@@ -32,13 +32,13 @@ function initializeNavBarProfileSection() {
 
         if (loginResponse.isUserLoggedIn) {
           profileLinks.append($(
-              '<a class="nav-link text-light" href="/profile-page.html">Profile</a>'));
+              '<a class="nav-link font-weight-bolder text-warning" href="/profile-page.html">Profile</a>'));
           logLinks.append(
-              $('<a class="nav-link text-light" href="' +
+              $('<a class="nav-link font-weight-bolder text-warning" href="' +
                 loginResponse.LogoutURL + '">Logout</a>'));
         } else {
           profileLinks.append(
-              $('<a class="nav-link text-light" href="' +
+              $('<a class="nav-link text-warning" href="' +
                 loginResponse.LoginURL + '">Login</a>'));
         }
       })
