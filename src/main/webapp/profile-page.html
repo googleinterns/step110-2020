@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>E.Hub - My Profile Page</title>
+    <title>My Profile Page</title>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -12,6 +12,7 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="theme.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -23,7 +24,7 @@
     <div id="navbar"></div>
     <div class="container">
       <h1 class="text-center">My Profile Page</h1>
-      <div class="card bg-light mb-3 w-100">
+      <div class="card bg-light mb-3 w-100 border-secondary">
         <div class="row no-gutters">
           <div class="col-md-4">
             <img id="avatar" src="" class="card-img-top" alt="profile avatar" />
@@ -35,7 +36,7 @@
               <p class="card-text" id="bio"></p>
               <button
                 id="edit"
-                class="btn btn-success"
+                class="btn btn-outline-success"
                 onclick="location.href = '/edit-profile-page.html';"
               >
                 Edit Profile
@@ -47,7 +48,7 @@
       <h2 class="text-center mt-3">Favorite Items</h2>
       <div id="item-container"></div>
       <h2 class="text-center mt-3">Recommended Users</h2>
-      <h5 class="text-center text-secondary">
+      <h5 class="text-center text-warning">
         (Based on shared amount of likes)
       </h5>
       <div

@@ -37,7 +37,7 @@ function getOmdbItem() {
 function createOmdbItemCard(omdbItem) {
   const card = $('<div class="card bg-light"></div>');
   card.append(
-      $('<img class="card-img-top mx-auto item-image" src="' + omdbItem.Poster +
+      $('<img class="card-img-top mx-auto col-md-10" src="' + omdbItem.Poster +
         '">'));
 
   const cardBody = $('<div class="card-body"></div>');

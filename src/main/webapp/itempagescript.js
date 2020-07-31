@@ -56,8 +56,8 @@ function hideCommentBox() {
  * @param { JSON } entertainmentItem - the item whose data will be displayed in
  *     the card
  */
-function createSelectedItemCard(entertainmentItem) {
-  const card = $('<div class="mt-2 card bg-light"></div>');
+async function createSelectedItemCard(entertainmentItem) {
+  const card = $('<div class="mt-2 card bg-light border-dark"></div>');
   card.append(
       $('<img class="card-img-top" src="' + entertainmentItem.imageUrl + '">'));
 
