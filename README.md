@@ -1,16 +1,31 @@
-TODO: add project info
+# Entertainment Hub
+Community forum that makes it possible for people to find and talk about the movies and TV-shows they enjoy.
 
-Pull Request Steps:
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=MkHJAbvs0pU
+" target="_blank"><img src="http://img.youtube.com/vi/MkHJAbvs0pU/0.jpg" 
+alt="Entertainment Hub Demo" width="240" height="180" border="10" /></a>
 
-1. Create pull request
-2. Add all other STEP members as reviewers
-3. Each member should review the PR at least once
-4. Get approval from at least 1 person
-5. Add pull request message when you're ready for hosts to review
-6. Get approval from at least 1 host
-7. Merge
+## Technologies
 
-Review Guidelines:
+### Frontend
+* Bootstrap
+* jQuery
 
-- Pull requests should be reviewed within 3 hours (during business hours)
-- If you have not gotten a review within that time, ping the reviewer directly
+### Backend
+* Servlets
+* Google App Engine
+* Google Cloud Datastore
+* JUnit
+* Mockito
+
+### APIs
+* OMDb
+* Icotar
+
+## Authors
+* [Eric Irikannu](https://github.com/AirwreckEye)
+* [Oyin Sholeye](https://github.com/honey7100)
+* [Bryan Triana](https://github.com/BryanTriana)
+
+## Acknowledgments
+We would like to thank Google for the opportunity to be part of the STEP internship program.
