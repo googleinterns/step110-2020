@@ -130,7 +130,7 @@ function createFavoriteItemCard(entertainmentItem) {
 
   const cardBody = $('<div class="card-body"></div>');
   cardBody.append(
-      $('<h5 class="card-title">' + entertainmentItem.title + ' (' +
+      $('<h5 class="card-title text-center">' + entertainmentItem.title + ' (' +
         entertainmentItem.releaseDate + ')' +
         '</h5>'));
   card.append(cardBody);
