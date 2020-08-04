@@ -118,7 +118,7 @@ function submitComment() {
 function getItemPageComments(comments) {
   const commentContainer = $('#comment-container');
   comments.forEach((comment) => {
-    commentContainer.append(createListElement(comment));
+    commentContainer.append(createCommentElement(comment));
   });
 }
 
@@ -139,35 +139,95 @@ function deleteComment(commentElem, commentId) {
 }
 
 /**
- * Creates list element from given comment
+ * Creates list element displaying comment information
  *
  * @param { JSON } comment - the comment whose data is displayed on the list
  *     element
  * @returns { jQuery }  returns a list element
  */
-function createListElement(comment) {
-  const liElement = $('<li class="list-group-item"></li>');
-  const date = new Date(comment.timestampMillis);
+function createCommentElement(comment) {
+  const commentElem = $('<li class="list-group-item border"></li>');
 
-  liElement.text(
-      comment.username + ': ' + comment.comment + ' - ' +
-      '(' + date.toLocaleString() + ')');
+  const commentHeader = $('<div class="row no-gutters my-1"></div>');
+  commentElem.append(commentHeader);
 
-  liElement.append(
-      $('<img class="pr-1" src="' + getProfileImageUrl(comment.email) +
-        '.png?s=23' + '"style=float:left;"></img>'));
+  const userUrl = '/user-profile-page.html?username=' + comment.username;
+
+  commentHeader.append(createUserAvatar(comment.email, userUrl));
+  commentHeader.append(createUsernameText(comment.username, userUrl));
+  commentHeader.append(createCommentDate(comment.timestampMillis));
+
+  commentElem.append($('<p>' + comment.comment + '</p>'));
 
   if (comment.belongsToUser) {
-    const deleteButton =
-        $('<div><i class="fa fa-trash" style="float:right;"></i></div>');
-    deleteButton.one('click', () => {
-      deleteComment(liElement, comment.commentId);
-    });
-    
-    liElement.append(deleteButton);
+    commentElem.append(
+        createDeleteCommentButton(commentElem, comment.commentId));
   }
 
-  return liElement;
+  return commentElem;
+}
+
+/**
+ * Creates image div that displays avatar used in comment.
+ *
+ * @param { string } email - the email used to create the avatar for the comment
+ * @param { string } userUrl - the url that links to the user's profile
+ * @returns { jQuery } image div displaying avatar
+ */
+function createUserAvatar(email, userUrl) {
+  const userAvatar =
+      $('<img class="col-md-auto mr-2" src="' + getProfileImageUrl(email) +
+        '" width="24" height="24">');
+  userAvatar.click(function() {
+    window.location.href = userUrl;
+  });
+
+  return userAvatar;
+}
+
+/**
+ * Creates text div that displays the username that posted a comment
+ *
+ * @param { string } username - the username that posted the comment
+ * @param { string } userUrl - the url that links to the user's profile
+ * @returns { jQuery } text div displaying the username that posted a comment
+ */
+function createUsernameText(username, userUrl) {
+  const usernameText = $('<p class="col-md-auto mr-2">' + username + '</p>');
+  usernameText.append(
+      $('<a class="stretched-link" href="' + userUrl + '"></a>'));
+
+  return usernameText;
+}
+
+/**
+ * Creates text div to display the date of the comment.
+ *
+ * @param { number } timestampMillis - the timestamp when the comment was posted
+ * @returns { jQuery } text div displaying comment date
+ */
+function createCommentDate(timestampMillis) {
+  const date = new Date(timestampMillis);
+  const dateText =
+      $('<p class="col-md-auto">(' + date.toLocaleString() + ')</p>');
+
+  return dateText;
+}
+
+/**
+ * Creates the button used to delete a comment by the user who owns it.
+ * @param { jQuery } commentElem - div that contains comment
+ * @param { number } commentId - unique Id used to identify the comment
+ * @returns { jQuery } button used to delete comment
+ */
+function createDeleteCommentButton(commentElem, commentId) {
+  const deleteButton =
+      $('<div><i class="fa fa-trash" style="float:right;"></i></div>');
+  deleteButton.one('click', () => {
+    deleteComment(commentElem, commentId);
+  });
+
+  return deleteButton;
 }
 
 /**
