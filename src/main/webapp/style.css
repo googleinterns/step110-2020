@@ -28,9 +28,10 @@ hidden {
   max-width: 250px;
 }
 
-ul {
-  list-style-type: none;
+.list-group-item {
+   word-wrap: break-word; 
 }
+
 .selector-for-some-widget {
   box-sizing: content-box;
 }
